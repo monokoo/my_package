@@ -41,12 +41,12 @@ Protect yourself against DNS poisoning in China.
 endef
 
 define Package/ChinaDNS/conffiles
-/etc/chinadns/chnroute.txt
+/etc/chinadns_chnroute.txt
 endef
 
 define Package/ChinaDNS/install
 	$(INSTALL_DIR) $(1)/etc/chinadns
-	$(INSTALL_CONF) $(PKG_BUILD_DIR)/chnroute.txt $(1)/etc/chinadns/chnroute.txt
+	$(INSTALL_CONF) $(PKG_BUILD_DIR)/chnroute.txt $(1)/etc/chinadns_chnroute.txt
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/chinadns $(1)/usr/bin
 endef
