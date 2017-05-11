@@ -1,1 +1,22 @@
+
 config vsftpd
+	option enabled '0'
+	option max_per_ip '5'
+	option ascii 'both'
+	option idle_session_timeout '600'
+	option data_connection_timeout '200'
+	option userlist_type 'allow'
+	option listen_ipv6 '0'
+	option connect_from_port_20 '0'
+	option pasv_enable '0'
+	option anonymous_enable '0'
+	option anon_root '/tmp/'
+	option local_enable '0'
+	option max_clients '5'
+	option async_abor_enable '0'
+	option ls_recurse_enable '0'
+	option proctitle_enable '0'
+	option dirmessage_enable '1'
+	option xferlog_enable '1'
+	option log_path '/tmp/log/vsftpd.log'
+

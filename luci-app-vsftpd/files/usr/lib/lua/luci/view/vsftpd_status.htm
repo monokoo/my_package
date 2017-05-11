@@ -1,5 +1,6 @@
 <script type="text/javascript">//<![CDATA[
 
+
 	XHR.poll(5, '<%=luci.dispatcher.build_url("admin", "services", "vsftpd", "status")%>', null,
 		function(x, st)
 		{
@@ -18,7 +19,7 @@
 					tr.insertCell(-1).innerHTML = st[i].ip;
 					tr.insertCell(-1).innerHTML = st[i].user;
 					tr.insertCell(-1).innerHTML = st[i].act;
-          tr.insertCell(-1).innerHTML = st[i].file;
+					tr.insertCell(-1).innerHTML = st[i].file;
 
 				}
 
