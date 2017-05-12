@@ -21,34 +21,34 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(BUILD_VARIANT)/$(PKG_NAME)-$(PKG_VERSI
 include $(INCLUDE_DIR)/package.mk
 
 define Package/vsftpd/Default
-  SUBMENU:=File Transfer
-  SECTION:=net
-  CATEGORY:=Network
-  TITLE:=A fast and secure FTP server
-  URL:=http://vsftpd.beasts.org/
-  MAINTAINER:=Cezary Jackiewicz <cezary@eko.one.pl>
-  DEPENDS:=+libuci
+	SUBMENU:=File Transfer
+	SECTION:=net
+	CATEGORY:=Network
+	TITLE:=A fast and secure FTP server
+	URL:=http://vsftpd.beasts.org/
+	MAINTAINER:=Cezary Jackiewicz <cezary@eko.one.pl>
+	DEPENDS:=+libuci
 endef
 
 
 define Package/vsftpd
 $(call Package/vsftpd/Default)
-  VARIANT:=notls
-  TITLE+= (no TLS)
+	VARIANT:=notls
+	TITLE+= (no TLS)
 endef
 
 define Package/vsftpd-tls
 $(call Package/vsftpd/Default)
-  VARIANT:=tls
-  TITLE+= (TLS)
-  DEPENDS+=+libopenssl
+	VARIANT:=tls
+	TITLE+= (TLS)
+	DEPENDS+=+libopenssl
 endef
 
 define Package/vsftpd/config
 config VSFTPD_USE_UCI_SCRIPTS
-	bool "Uses UCI scripts"
+	bool "NOT Uses UCI scripts"
 	depends on PACKAGE_vsftpd || PACKAGE_vsftpd-tls
-	default n
+	default y
 endef
 
 define Package/vsftpd/conffiles
@@ -58,9 +58,9 @@ endef
 Package/vsftpd-tls/conffiles=$(Package/vsftpd/conffiles)
 
 ifneq ($(CONFIG_USE_MUSL),)
-  NLSSTRING:=-lcrypt
+	NLSSTRING:=-lcrypt
 else
-  NLSSTRING:=-lcrypt -lnsl
+	NLSSTRING:=-lcrypt -lnsl
 endif
 
 ifeq ($(BUILD_VARIANT),notls)
@@ -97,17 +97,18 @@ endef
 ifeq ($(CONFIG_VSFTPD_USE_UCI_SCRIPTS),y)
 define Package/vsftpd/install
 $(call Package/vsftpd/install/default, $(1))
-	$(INSTALL_BIN) ./files/$(PKG_NAME)-uci.init $(1)/etc/init.d/$(PKG_NAME)
-	$(INSTALL_DIR) $(1)/etc/config
-	$(INSTALL_BIN) ./files/vsftpd.uci $(1)/etc/config/vsftpd
-	$(INSTALL_BIN) ./files/vsftpd_wrapper $(1)/usr/sbin
-	$(INSTALL_BIN) ./files/vsftpd_prepare $(1)/usr/sbin
+	$(INSTALL_CONF) ./files/$(PKG_NAME).conf $(1)/etc/$(PKG_NAME).conf
+	$(INSTALL_BIN) ./files/$(PKG_NAME).init $(1)/etc/init.d/$(PKG_NAME)
 endef
 else
 define Package/vsftpd/install
 $(call Package/vsftpd/install/default, $(1))
+	$(INSTALL_BIN) ./files/$(PKG_NAME)-uci.init $(1)/etc/init.d/$(PKG_NAME)
 	$(INSTALL_CONF) ./files/$(PKG_NAME).conf $(1)/etc/$(PKG_NAME).conf
-	$(INSTALL_BIN) ./files/$(PKG_NAME).init $(1)/etc/init.d/$(PKG_NAME)
+	$(INSTALL_DIR) $(1)/etc/config
+	$(INSTALL_BIN) ./files/vsftpd.uci $(1)/etc/config/vsftpd
+	$(INSTALL_BIN) ./files/vsftpd_wrapper $(1)/usr/sbin
+	$(INSTALL_BIN) ./files/vsftpd_prepare $(1)/usr/sbin
 endef
 endif
 
