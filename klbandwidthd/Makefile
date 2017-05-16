@@ -152,6 +152,8 @@ define Package/klbandwidthd/install
 	$(INSTALL_DATA) ./files/etc/config/bandwidthd $(1)/etc/config/bandwidthd
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/etc/init.d/bandwidthd $(1)/etc/init.d/bandwidthd
+	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
+	$(INSTALL_DATA) ./files/etc/glranslation.zh-cn.lmo $(1)/usr/lib/lua/luci/i18n/
 	$(INSTALL_DIR) $(1)/etc/bandwidthd
 	$(CP) -R ./files/etc/bandwidthd/* $(1)/etc/bandwidthd/
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/view/admin_status
