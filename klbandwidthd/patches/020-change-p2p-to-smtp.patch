@@ -1,0 +1,20 @@
+--- a/graph.c	2017-05-16 17:46:51.073409190 +0800
++++ b/graph.c	2017-05-16 17:47:42.763055345 +0800
+@@ -277,7 +277,7 @@
+ 
+     // PASS 1:  Write out the table
+ 
+-	fprintf(file, "<TR bgcolor=lightblue><TD>IP地址<TD align=center>合计<TD align=center>上传<TD align=center>下载<TD align=center>FTP流量<TD align=center>HTTP流量<TD align=center>P2P流量<TD align=center>TCP流量<TD align=center>UDP流量<TD align=center>ICMP流量\n");
++	fprintf(file, "<TR bgcolor=lightblue><TD>IP地址<TD align=center>合计<TD align=center>上传<TD align=center>下载<TD align=center>FTP流量<TD align=center>HTTP流量<TD align=center>SMTP流量<TD align=center>TCP流量<TD align=center>UDP流量<TD align=center>ICMP流量\n");
+ 	for (Counter=0; Counter < 21 && Counter < NumIps; Counter++)
+ 		PrintTableLine(file, SummaryData[Counter], Counter);
+ 
+@@ -346,7 +346,7 @@
+ 
+         // PASS 1:  Write out the table
+ 
+-		fprintf(file, "<TR bgcolor=lightblue><TD>IP地址<TD align=center>合计<TD align=center>上传<TD align=center>下载<TD align=center>FTP流量<TD align=center>HTTP流量<TD align=center>P2P流量<TD align=center>TCP流量<TD align=center>UDP流量<TD align=center>ICMP流量\n");
++		fprintf(file, "<TR bgcolor=lightblue><TD>IP地址<TD align=center>合计<TD align=center>上传<TD align=center>下载<TD align=center>FTP流量<TD align=center>HTTP流量<TD align=center>SMTP流量<TD align=center>TCP流量<TD align=center>UDP流量<TD align=center>ICMP流量\n");
+ 		for (tCounter=0, Counter=0; Counter < NumIps; Counter++)
+ 			{
+             if (SubnetTable[SubnetCounter].ip == (SummaryData[Counter]->IP & SubnetTable[SubnetCounter].mask))

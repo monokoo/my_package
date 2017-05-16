@@ -1,0 +1,101 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2008-2015 OpenWrt.org
+# Copyright (C) 2016 fw867 <ffkykzs@gmail.com>
+#
+# This is free software, licensed under the GNU General Public License v3.
+# See /LICENSE for more information.
+#
+
+START=99
+
+config_cb() {
+	local cfg_type="$1"
+	local cfg_name="$2"
+
+	case "$cfg_type" in
+	        bandwidthd)
+	                append cfgs "$cfg_name"
+	        ;;
+	esac
+}
+
+export_bool() {
+	local option="$1"
+	local section="$2"
+	local _loctmp
+	config_get_bool _loctmp "$section" "$option"
+	if [ -n "$_loctmp" ]; then
+		conffile="${conffile}$option "
+		if [ 1 -eq "$_loctmp" ]; then
+			conffile="${conffile}true"
+		else
+			conffile="${conffile}false"
+		fi
+		conffile="${conffile}\n"
+	fi
+}
+
+export_number() {
+	local option="$1"
+	local section="$2"
+	local _loctmp
+	config_get _loctmp "$section" "$option"
+	if [ -n "$_loctmp" ]; then
+		conffile="${conffile}$option ${_loctmp}\n"
+	fi
+}
+
+export_string() {
+	local option="$1"
+	local section="$2"
+	local _loctmp
+	config_get _loctmp "$section" "$option"
+	if [ -n "$_loctmp" ]; then
+		conffile="${conffile}$option \"${_loctmp}\"\n"
+	fi
+}
+
+get_lan() {
+  lanip=$(uci show network.lan.ipaddr|cut -d'=' -f 2|sed -e "s/'//g")
+	landev=$(uci show network.lan.ifname|cut -d'=' -f 2|sed -e "s/'//g")
+  uci set bandwidthd.@bandwidthd[0].dev=$landev
+  uci set bandwidthd.@bandwidthd[0].subnets=${lanip%.*}.0/24
+  uci commit
+}
+
+start() {
+	local subnet conffile
+
+	#[ -f /usr/lib/libpcap.so.1.3 ] || ln -s /usr/lib/libpcap.so.1  /usr/lib/libpcap.so.1.3
+	[ -d /etc/bandwidthd ] || mkdir -p /etc/bandwidthd
+	[ -e /htdocs ] || ln -s /etc/bandwidthd /htdocs
+	[ -e /www/bandwidthd ] || ln -s /etc/bandwidthd /www/bandwidthd
+	rm -f /etc/bandwidthd.conf
+	touch /etc/bandwidthd.conf
+	
+	get_lan
+	config_load bandwidthd
+	for cfg in $cfgs; do
+		config_get subnets $cfg subnets
+			for subnet in $subnets; do
+				conffile="${conffile}subnet ${subnet}\n"
+			done
+		export_string dev $cfg
+		export_number skip_intervals $cfg
+		export_number graph_cutoff $cfg
+		export_bool promiscuous $cfg
+		export_bool output_cdf $cfg
+		export_bool recover_cdf $cfg
+		export_string filter $cfg
+		export_bool graph $cfg
+		export_number meta_refresh $cfg
+		[ -n "$conffile" ] && echo -e "$conffile" >>/etc/bandwidthd.conf
+		unset conffile
+	done
+	cd /
+	service_start /usr/sbin/bandwidthd
+}
+
+stop() {
+	service_stop /usr/sbin/bandwidthd
+}

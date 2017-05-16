@@ -1,0 +1,13 @@
+
+config bandwidthd
+	option subnets '192.168.1.0/24'
+	option skip_intervals '0'
+	option graph_cutoff '1024'
+	option promiscuous 'true'
+	option output_cdf 'true'
+	option recover_cdf 'true'
+	option filter 'ip'
+	option graph 'true'
+	option meta_refresh '60'
+	option dev 'eth0'
+
