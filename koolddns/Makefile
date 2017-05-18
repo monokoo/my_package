@@ -13,7 +13,7 @@ define Package/$(PKG_NAME)
 	SECTION:=net
 	CATEGORY:=net
 	TITLE:=ddns for aliddns and dnspod
-        DEPENDS:=+curl +openssl-util
+        DEPENDS:=+curl +openssl-util +bind-dig
 endef
 
 define Package/$(PKG_NAME)/description
