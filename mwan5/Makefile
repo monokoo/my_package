@@ -56,6 +56,9 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/libexec/rpcd
 	$(INSTALL_BIN) ./files/usr/libexec/rpcd/* $(1)/usr/libexec/rpcd/
 	
+	$(INSTALL_DIR) $(1)/usr/share/policy
+	$(INSTALL_DATA) ./files/usr/share/policy/* $(1)/usr/share/policy/
+	
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
