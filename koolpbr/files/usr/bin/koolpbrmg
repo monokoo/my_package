@@ -22,4 +22,4 @@ case "$*" in
   "-h") 
     echo "Use clean|start|stop"
   ;; 
-esac 
+esac

@@ -13,7 +13,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/$(PKG_NAME)
 	SECTION:=net
 	CATEGORY:=net
-	TITLE:=koolpbr
+	TITLE:=Multiple ISP Policy Routes
         DEPENDS:=+libc
 endef
 
