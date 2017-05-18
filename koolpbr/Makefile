@@ -36,12 +36,16 @@ endef
 define Build/Compile
 endef
 
+define Package/$(PKG_NAME)/conffiles
+/etc/config/koolpbr
+endef
+
 define Package/$(PKG_NAME)/install
 
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/etc/init.d/koolpbr $(1)/etc/init.d/koolpbr
 	
-	$(INSTALL_DIR) $(1)/etc/config/koolpbr
+	$(INSTALL_DIR) $(1)/etc/config
 	$(INSTALL_CONF) ./files/etc/config/koolpbr $(1)/etc/config/koolpbr
 	
 	$(INSTALL_DIR) $(1)/usr/bin
