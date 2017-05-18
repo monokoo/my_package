@@ -33,6 +33,10 @@ endef
 define Build/Configure
 endef
 
+define Package/$(PKG_NAME)/conffiles
+/etc/config/koolddns
+endef
+
 define Build/Compile
 endef
 

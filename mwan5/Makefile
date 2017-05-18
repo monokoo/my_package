@@ -15,7 +15,7 @@ PKG_LICENSE:=GPLv2
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/mwan5
+define Package/$(PKG_NAME)
    SECTION:=net
    CATEGORY:=Network
    SUBMENU:=Routing and Redirection
@@ -25,21 +25,37 @@ define Package/mwan5
    PKGARCH:=all
 endef
 
-define Package/mwan5/description
+define Package/$(PKG_NAME)/description
 Hotplug script which makes configuration of multiple WAN interfaces simple
 and manageable. With loadbalancing/failover support for up to 250 wan
 interfaces, connection tracking and an easy to manage traffic ruleset.
 endef
 
-define Package/mwan5/conffiles
+define Package/$(PKG_NAME)/conffiles
 /etc/config/mwan3
 endef
 
 define Build/Compile
 endef
 
-define Package/mwan5/install
-$(CP) ./files/* $(1)
+define Package/$(PKG_NAME)/install
+
+	$(INSTALL_DIR) $(1)/etc/config
+	$(INSTALL_CONF) ./files/etc/config/mwan3 $(1)/etc/config/mwan3
+
+	$(INSTALL_DIR) $(1)/etc/hotplug.d/iface
+	$(INSTALL_BIN) ./files/etc/hotplug.d/iface/15-mwan3 $(1)/etc/hotplug.d/iface/15-mwan3
+	$(INSTALL_BIN) ./files/etc/hotplug.d/iface/16-mwan3-user $(1)/etc/hotplug.d/iface/16-mwan3-user
+
+	$(INSTALL_DIR) $(1)lib/mwan3
+	$(INSTALL_BIN) ./files/lib/mwan3/* $(1)/lib/mwan3/
+
+	$(INSTALL_DIR) $(1)/usr/sbin
+	$(INSTALL_BIN) ./files/usr/sbin/* $(1)/usr/sbin/
+
+	$(INSTALL_DIR) $(1)/usr/libexec/rpcd
+	$(INSTALL_BIN) ./files/usr/libexec/rpcd/* $(1)/usr/libexec/rpcd/
+	
 endef
 
-$(eval $(call BuildPackage,mwan5))
+$(eval $(call BuildPackage,$(PKG_NAME)))
