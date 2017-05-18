@@ -47,7 +47,7 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_BIN) ./files/etc/hotplug.d/iface/15-mwan3 $(1)/etc/hotplug.d/iface/15-mwan3
 	$(INSTALL_BIN) ./files/etc/hotplug.d/iface/16-mwan3-user $(1)/etc/hotplug.d/iface/16-mwan3-user
 
-	$(INSTALL_DIR) $(1)lib/mwan3
+	$(INSTALL_DIR) $(1)/lib/mwan3
 	$(INSTALL_BIN) ./files/lib/mwan3/* $(1)/lib/mwan3/
 
 	$(INSTALL_DIR) $(1)/usr/sbin
