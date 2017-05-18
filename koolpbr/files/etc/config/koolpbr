@@ -1,0 +1,4 @@
+
+config global
+	option enabled '0'
+	option splitmode '1'

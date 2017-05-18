@@ -1,0 +1,7 @@
+#!/bin/sh
+
+wanport=$1
+operator=$2
+path=$3
+
+echo "add $wanport $operator $path"

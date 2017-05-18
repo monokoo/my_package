@@ -1,0 +1,25 @@
+#!/bin/sh
+
+clean() {
+}
+
+start() {
+}
+
+stop() {
+}
+
+case "$*" in 
+  "clean") 
+    clean
+  ;; 
+  "start") 
+    start
+  ;; 
+  "stop") 
+    stop
+  ;; 
+  "-h") 
+    echo "Use clean|start|stop"
+  ;; 
+esac 
