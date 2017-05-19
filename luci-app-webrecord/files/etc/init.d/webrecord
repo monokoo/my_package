@@ -1,0 +1,53 @@
+#!/bin/sh /etc/rc.common
+#
+# Copyright (C) 2015 OpenWrt-dist
+# Copyright (C) 2016 fw867 <ffkykzs@gmail.com>
+#
+# This is free software, licensed under the GNU General Public License v3.
+# See /LICENSE for more information.
+#
+
+START=99
+
+CONFIG=webrecord
+
+uci_get_by_type() {
+	local index=0
+	if [ -n $4 ]; then
+		index=$4
+	fi
+	local ret=$(uci get $CONFIG.@$1[$index].$2 2>/dev/null)
+	echo ${ret:=$3}
+}
+
+is_true() {
+	case $1 in
+		1|on|true|yes|enabled) echo 0;;
+		*) echo 1;;
+	esac
+}
+
+load_config() {
+	ENABLED=$(uci_get_by_type basic enable)
+	return $(is_true $ENABLED)
+}
+
+add_rule(){
+	max_domain=$(uci_get_by_type basic max_domains)
+	max_searche=$(uci_get_by_type basic max_searches)
+  iptables -t filter -I WEB_MONITOR -m webmon --max_domains $max_domain --max_searches $max_searche --clear_domain --clear_search
+}
+
+start(){
+	! load_config && exit 0
+	iptables -L FORWARD|grep -c WEB_MONITOR 2>/dev/null && [ $? -eq 0 ] && exit 0;
+	iptables -t filter -N WEB_MONITOR
+	iptables -t filter -I FORWARD -m comment --comment "Rule For Control" -j WEB_MONITOR
+  add_rule
+}
+stop(){
+  iptables -t filter -D FORWARD -m comment --comment "Rule For Control" -j WEB_MONITOR
+  iptables -t filter -F WEB_MONITOR
+  iptables -t filter -X WEB_MONITOR
+}
+

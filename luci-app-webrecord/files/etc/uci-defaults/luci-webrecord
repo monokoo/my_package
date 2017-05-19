@@ -1,0 +1,18 @@
+#!/bin/sh
+
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@webrecord[-1]
+	add ucitrack webrecord
+	set ucitrack.@webrecord[-1].init=webrecord
+	commit ucitrack
+	delete firewall.webrecord
+	set firewall.webrecord=include
+	set firewall.webrecord.type=script
+	set firewall.webrecord.path=/usr/share/control/webrecord
+	set firewall.webrecord.family=any
+	set firewall.webrecord.reload=1
+	commit firewall
+EOF
+
+rm -f /tmp/luci-indexcache
+exit 0
