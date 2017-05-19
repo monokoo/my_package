@@ -1,6 +1,6 @@
 
 config basic
 	option max_searches '100'
-	option enable '1'
-	option max_domains '500'
+	option enable '0'
+	option max_domains '200'
 
