@@ -1,0 +1,18 @@
+#!/bin/sh
+
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@protocolfiltering[-1]
+	add ucitrack protocolfiltering
+	set ucitrack.@protocolfiltering[-1].init=protocolfiltering
+	commit ucitrack
+	delete firewall.protocolfiltering
+	set firewall.protocolfiltering=include
+	set firewall.protocolfiltering.type=script
+	set firewall.protocolfiltering.path=/usr/share/control/protocolfiltering
+	set firewall.protocolfiltering.family=any
+	set firewall.protocolfiltering.reload=1
+	commit firewall
+EOF
+
+rm -f /tmp/luci-indexcache
+exit 0
