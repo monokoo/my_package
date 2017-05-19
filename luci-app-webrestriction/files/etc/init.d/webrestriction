@@ -1,0 +1,62 @@
+#!/bin/sh /etc/rc.common
+#
+# Copyright (C) 2015 OpenWrt-dist
+# Copyright (C) 2016 fw867 <ffkykzs@gmail.com>
+#
+# This is free software, licensed under the GNU General Public License v3.
+# See /LICENSE for more information.
+#
+
+START=99
+
+CONFIG=webrestriction
+
+uci_get_by_type() {
+	local index=0
+	if [ -n $4 ]; then
+		index=$4
+	fi
+	local ret=$(uci get $CONFIG.@$1[$index].$2 2>/dev/null)
+	echo ${ret:=$3}
+}
+
+is_true() {
+	case $1 in
+		1|on|true|yes|enabled) echo 0;;
+		*) echo 1;;
+	esac
+}
+
+load_config() {
+	ENABLED=$(uci_get_by_type basic enable)
+	return $(is_true $ENABLED)
+}
+
+add_rule(){
+for i in $(seq 0 100)
+	do
+		enable=$(uci_get_by_type macbind enable '' $i)
+		macaddr=$(uci_get_by_type macbind macaddr '' $i)
+		if [ -z $enable ] || [ -z $macaddr ]; then
+			break
+		fi
+		if [ "$enable" == "1" ]; then
+        iptables -t filter -A WEB_RESTRICTION -m mac --mac-source $macaddr -j ACCEPT
+        unset "$macaddr"
+    fi
+done
+}
+
+start(){
+	! load_config && exit 0
+	iptables -L FORWARD|grep -c WEB_RESTRICTION 2>/dev/null && [ $? -eq 0 ] && exit 0;
+  iptables -P FORWARD DROP
+	iptables -t filter -N WEB_RESTRICTION
+  add_rule
+	iptables -t filter -I FORWARD -m comment --comment "Rule For Control" -j WEB_RESTRICTION
+}
+stop(){
+  iptables -t filter -D FORWARD -m comment --comment "Rule For Control" -j WEB_RESTRICTION
+  iptables -t filter -F WEB_RESTRICTION
+  iptables -t filter -X WEB_RESTRICTION
+}
