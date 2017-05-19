@@ -1,0 +1,4 @@
+#!/bin/sh
+# Control integration for firewall3
+
+/etc/init.d/mia reload
