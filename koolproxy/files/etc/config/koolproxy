@@ -1,0 +1,33 @@
+
+config global
+	option time_update '4'
+	option https '0'
+	option filter_mode 'adblock'
+	option adblock '0'
+	option enabled '0'
+
+config source
+	option enabled '0'
+	option kp_desc '视频规则'
+	option kp_url 'http://entware.mirrors.ligux.com/koolproxy/1.dat'
+
+config source
+	option enabled '0'
+	option kp_desc '静态规则'
+	option kp_url 'http://entware.mirrors.ligux.com/koolproxy/koolproxy.txt'
+
+config source
+	option enabled '0'
+	option kp_desc '0day规则'
+	option kp_url 'http://entware.mirrors.ligux.com/koolproxy/add_rules.txt'
+
+config source
+	option enabled '0'
+	option kp_desc '防败家规则'
+	option kp_url 'https://rules.ngrok.wang/no_shopping.txt'
+
+config source
+	option enabled '0'
+	option kp_desc '拯救室友规则'
+	option kp_url 'http://entware.mirrors.ligux.com/koolproxy/filter_game.txt'
+
