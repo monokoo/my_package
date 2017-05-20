@@ -1,4 +1,11 @@
 
+config rule 'https'
+	option enable '1'
+	option dest_port '80,443'
+	option proto 'tcp'
+	option sticky '0'
+	option use_policy 'wan_only'
+
 config rule 'default_rule'
 	option dest_ip '0.0.0.0/0'
 	option proto 'all'
@@ -6,13 +13,17 @@ config rule 'default_rule'
 	option use_policy 'balanced'
 	option enable '1'
 
-config member 'wan_m1_w1'
-	option interface 'wan'
-	option metric '1'
+config policy 'wan_only'
+	list use_member 'wan_m1_w1'
+	option last_resort 'default'
 
 config policy 'balanced'
 	list use_member 'wan_m1_w1'
 	option last_resort 'default'
+
+config member 'wan_m1_w1'
+	option interface 'wan'
+	option metric '1'
 
 config interface 'wan'
 	option enabled '1'
