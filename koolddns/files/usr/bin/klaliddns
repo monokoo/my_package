@@ -18,7 +18,7 @@ if [ "Z$subdomain" == "Z" ]; then
 		alidomain=$domain
 		url_name=%40
 	elif [ "Z$subname" == "Z*" ]; then
-		alidomain=111thisisanimpossiblename.$domain
+		alidomain=$name.$domain
 		url_name=%2A
 	else
 		alidomain=$name.$domain
@@ -30,7 +30,7 @@ else
 		alidomain=$subdomain.$domain
 		url_name=%40.$subdomain
 	elif [ "Z$subname" == "Z*" ]; then
-		alidomain=111thisisanimpossiblename.$subdomain.$domain
+		alidomain=$name.$domain
 		url_name=%2A.$subdomain
 	else
 		alidomain=$name.$domain
