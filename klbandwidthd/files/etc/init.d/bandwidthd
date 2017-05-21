@@ -56,11 +56,11 @@ export_string() {
 }
 
 get_lan() {
-  lanip=$(uci show network.lan.ipaddr|cut -d'=' -f 2|sed -e "s/'//g")
-	landev=$(uci show network.lan.ifname|cut -d'=' -f 2|sed -e "s/'//g")
-  uci set bandwidthd.@bandwidthd[0].dev=$landev
-  uci set bandwidthd.@bandwidthd[0].subnets=${lanip%.*}.0/24
-  uci commit
+	lanip=$(uci show network.lan.ipaddr|cut -d'=' -f 2|sed -e "s/'//g")
+	landev=br-lan
+	uci set bandwidthd.@bandwidthd[0].dev=$landev
+	uci set bandwidthd.@bandwidthd[0].subnets=${lanip%.*}.0/24
+	uci commit
 }
 
 start() {
