@@ -34,7 +34,7 @@ remove_samba(){
 
 device=`basename $DEVPATH`
 sambapath="/mnt/shares"
-logger -t samba "Auto-samba-mount is starting to work...!"
+logger -t Auto-Samba "Auto-samba-mount is starting to work...!"
 case "$ACTION" in
 	add)
 	
@@ -49,31 +49,31 @@ case "$ACTION" in
 		sleep 2
 		
 		[ ! -d "$sambapath" ] && mkdir -p $sambapath
-
-		mountpoint=`sed -ne "s|^[^ ]*/$device ||; T; s/ .*//p" /proc/self/mounts`
-		[ -z "$mountpoint" ] && logger -t samba "The new device /dev/${device} has not been mounted on system! Please mount it manually!"
+		mountpoint=`cat /proc/self/mounts | grep "$device" |awk -F ' ' '{print $2}'`
+		[ -z "$mountpoint" ] && logger -t Auto-Samba "The new device /dev/${device} has not been mounted on system! Please mount it manually!"
 		[ -n "$mountpoint" ] && {
 			get_uuid=`block info | grep "/dev/${device}" | awk -F "UUID=" '{print $2}'| awk -F "\"" '{print $2}'`
 			have_uuid=$(uci show samba | grep -c "$get_uuid")
 			[ "$have_uuid" = "0" ] && { 
 				set_samba
-				logger -t samba "The new device /dev/${device} has been shared in \"/mnt/shares\"."
+				logger -t Auto-Samba "The new device /dev/${device} has been shared in $sambapath ."
 			}
 			[ "$have_uuid" -gt "0" ] && {
 				set_samba_path
-				logger -t samba "The new device /dev/${device} has been shared in \"/mnt/shares\"."
+				logger -t Auto-Samba "The new device /dev/${device} has been shared in $sambapath ."
 			}
 			/etc/init.d/samba restart
 		}
 	;;
 	remove)
-		MOUNT=`mount | grep -o '/mnt/shares'`
+		sleep 1
+		MOUNT=`mount | grep -w '$sambapath'`
 		[ -z "$MOUNT" ] && {
 			samba_uuid=`uci show samba |grep sambashare|awk -F'.' '{print $2}'|awk -F'=' '{print $1}'`
 			[ -z "$samba_uuid" ] && exit 0
 			[ -n "$samba_uuid" ] && {
 				remove_samba
-				logger -t samba "The samba share \"/mnt/shares\" has been removed."
+				logger -t Auto-Samba "The samba share $sambapath  has been removed."
 				/etc/init.d/samba restart
 			}
 		}
