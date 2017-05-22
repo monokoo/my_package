@@ -13,7 +13,7 @@ if [ "$?" == "0" ]; then
 	mv /tmp/dnsmasq.adblock /usr/share/koolproxy/dnsmasq.adblock
 	cp -f /usr/share/koolproxy/dnsmasq.adblock /etc/dnsmasq.d/dnsmasq.adblock
 	/etc/init.d/dnsmasq restart >/dev/null 2>&1
-	echo "$(date "+%F %T"): 检测到adblockplus规则更新完成！"
+	echo "$(date "+%F %T"): adblockplus规则更新完成！"
 else
 	echo "$(date "+%F %T"): 获取在线版本时出现错误! "
 	[ -f /tmp/adlist.txt ] && rm -f /tmp/adlist.txt
