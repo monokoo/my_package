@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=qos-guoguo
-PKG_VERSION:=0.0.1
+PKG_VERSION:=0.0.2
 PKG_RELEASE:=2
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
@@ -12,7 +12,7 @@ define Package/qos-guoguo
 	SECTION:=net
 	CATEGORY:=Network
 	TITLE:=A set of QoS scripts based on qos-gargoyle for Gargoyle Firmware
-	DEPENDS:=+tc +ip-full +kmod-sched +iptables-mod-filter +iptables-mod-ipopt +iptables-mod-imq
+	DEPENDS:=+tc +ip-full +kmod-sched +iptables-mod-filter +iptables-mod-ipopt +iptables-mod-imq +libncurses
 	MAINTAINER:=GuoGuo <gch981213@gmail.com>
 endef
 

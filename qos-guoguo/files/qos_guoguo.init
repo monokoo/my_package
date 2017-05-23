@@ -10,13 +10,14 @@ START=50
 EXTRA_COMMANDS=show
 EXTRA_HELP="	show	Show current Qos configuration (if active)"
 
-. ${IPKG_INSTROOT}/lib/functions/network.sh
-. ${IPKG_INSTROOT}/lib/network/config.sh
+. /lib/functions/network.sh
+. /lib/network/config.sh
 
 config_file_name="qos_guoguo"
 upload_mask="0x007F"
 download_mask="0x7F00"
 qos_mark_file="/etc/qos_class_marks"
+enabled=$(uci get qos_guoguo.global.enabled 2>/dev/null)
 
 #created while qos is being initialized so hotplug and init script don't
 #both try to initialize qos at the same time
@@ -137,6 +138,7 @@ apply_all_rules()
 				;;
 				ndpi)
 					match_str="$match_str -m ndpi --$option_value"
+
 				;;
 				connbytes_kb)
 					match_str="$match_str -m connbytes --connbytes $(($option_value*1024)): --connbytes-dir both --connbytes-mode bytes"
@@ -696,10 +698,10 @@ stop()
 	ipt_delete_rule "mangle" "POSTROUTING" "qos_egress"
 	ipt_delete_rule "mangle" "FORWARD" "qos_ingress"
 	ipt_delete_rule "mangle" "INPUT" "qos_ingress"
-	iptables -t mangle -F qos_ingress
-	iptables -t mangle -F qos_egress
-	iptables -t mangle -X qos_ingress
-	iptables -t mangle -X qos_egress
+	iptables -t mangle -F qos_ingress 2>/dev/null
+	iptables -t mangle -F qos_egress 2>/dev/null
+	iptables -t mangle -X qos_ingress 2>/dev/null
+	iptables -t mangle -X qos_egress 2>/dev/null
 	$echo_off
 
 }
@@ -707,10 +709,10 @@ stop()
 
 start()
 {
+	[ "$enabled" -ne "1" ] && exit 0
 	test_total_up=$(uci get qos_guoguo.upload.total_bandwidth 2>/dev/null)
 	test_total_down=$(uci get qos_guoguo.download.total_bandwidth 2>/dev/null)
 	if [ -z "$test_total_up" ] && [ -z "$test_total_down" ] ;then
-		disable
 		exit 0
 	fi
 
@@ -746,9 +748,14 @@ start()
 
 restart()
 {
-	echo_on="set -x"
-	echo_off="set +x"
-	start "$1"
+	if [ "$enabled" -ne "1" ] ; then
+    stop
+  else
+    echo_on="set -x"
+    echo_off="set +x"
+    #	stop
+    start "$1"
+  fi
 }
 
 show()
@@ -780,4 +787,3 @@ boot()
 	#Do nothing during init.  Start is called by hotplug.
 	return
 }
-
