@@ -7,8 +7,10 @@ if [ "$?" == "0" ]; then
 	sed -i '/youku/d' /tmp/dnsmasq.adblock >/dev/null 2>&1
 	sed -i '/[1-9]\{1,3\}\.[1-9]\{1,3\}\.[1-9]\{1,3\}\.[1-9]\{1,3\}/d' /tmp/dnsmasq.adblock >/dev/null 2>&1
 	echo "$(date "+%F %T"): adblockplus规则转换完成，开始校验..."
-	diff /tmp/dnsmasq.adblock /usr/share/koolproxy/dnsmasq.adblock >/dev/null
-	[ $? = 0 ] && echo "$(date "+%F %T"): adblockplus本地规则和服务器规则相同，无需更新!" && rm -f /tmp/dnsmasq.adblock && exit
+	if [ -f "/usr/share/koolproxy/dnsmasq.adblock" ]; then
+		diff /tmp/dnsmasq.adblock /usr/share/koolproxy/dnsmasq.adblock >/dev/null
+		[	 $? = 0 ] && echo "$(date "+%F %T"): adblockplus本地规则和服务器规则相同，无需更新!" && rm -f /tmp/dnsmasq.adblock && exit
+	fi
 	echo "$(date "+%F %T"): 检测到adblockplus规则有更新，开始应用新规则！"
 	mv /tmp/dnsmasq.adblock /usr/share/koolproxy/dnsmasq.adblock
 	cp -f /usr/share/koolproxy/dnsmasq.adblock /etc/dnsmasq.d/dnsmasq.adblock
