@@ -23,7 +23,6 @@ endef
 define Build/Prepare
 endef
 
-
 define Build/Configure
 endef
 
@@ -61,7 +60,7 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_DATA) ./files/usr/lib/lua/luci/i18n/*.lmo $(1)/usr/lib/lua/luci/i18n/
 	$(INSTALL_BIN) ./files/usr/bin/qosv4 $(1)/usr/bin/qosv4
 	$(INSTALL_CONF) ./files/etc/config/qosv4 $(1)/etc/config/qosv4
-	$(INSTALL_BIN) ./files/etc/init/qosv4 $(1)/etc/init/qosv4
+	$(INSTALL_BIN) ./files/etc/init.d/qosv4 $(1)/etc/init.d/qosv4
 	$(INSTALL_BIN) ./files/etc/hotplug.d/iface/* $(1)/etc/hotplug.d/iface/*
 
 
