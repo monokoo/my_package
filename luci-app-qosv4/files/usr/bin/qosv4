@@ -9,7 +9,7 @@ devdown="imq0"
 qosv4_tmp_pach="/tmp/qosv4"
  [ -d $qosv4_tmp_pach ]|| mkdir -p ${qosv4_tmp_pach}
 load_modules(){
-        insmod imq numdevs=2 
+        #insmod imq numdevs=2 
         insmod cls_fw 
         insmod sch_hfsc 
         insmod sch_sfq 
@@ -146,7 +146,7 @@ tc filter add dev imq1 parent 1:0 protocol ip prio 10 handle 254 fw flowid 1:a25
 
 }
 
-#ËùÓÐÆÕÍ¨IPµ¥¶ÀÏÞËÙ
+#æ‰€æœ‰æ™®é€šIPå•ç‹¬é™é€Ÿ
 qos_ip_limit()
 {
 n=$(echo $1|cut -d '-' -f1|cut -d '.' -f4)
@@ -182,7 +182,7 @@ tc class add dev $devup parent 1:1 classid 1:999 htb rate 1kbps ceil $((UP/5))kb
 tc class add dev $devdown parent 1:1 classid 1:999 htb rate 2kbps ceil $((DOWN))kbps quantum 1500 prio 7
 }
 
-#192.168.1.8,192.168.1.80-192.168.1.90ÓÐzhoutao0712·¢·ÅµÄÃâËÀ½ðÅÆ
+#192.168.1.8,192.168.1.80-192.168.1.90æœ‰zhoutao0712å‘æ”¾çš„å…æ­»é‡‘ç‰Œ
 qos_else(){
 #iptables -t mangle -I PUNISH0 -m iprange --src-range 192.168.1.80-192.168.1.90 -j RETURN
 iptables -t mangle -I PUNISH0 -s $nolimit_ip -j RETURN
@@ -215,9 +215,9 @@ fi
 }
 
 
-#¼ÓÈëÀýÐÐÈÎÎñ£¨5·ÖÖÓÖ´ÐÐÒ»´Î£©£ºµ±ÓÐipÔÚÏßµÄÊ±ºò£¬°´Ðè¿ªÆôtransmissionÏÞËÙºÍqosÏÞËÙ¡£
-#µ±Ö»ÓÐ1¸öIPÔÚÏßÊ±ºò£¬¹Ø±ÕÄÚÍøQOSÏÞËÙ ¡£
-#µ±Ã»ÓÐIPÔÚÏßÊ±ºò£¬¹Ø±ÕQOSÏÞËÙ ¹Ø±ÕtransmissionÏÞËÙ¡£
+#åŠ å…¥ä¾‹è¡Œä»»åŠ¡ï¼ˆ5åˆ†é’Ÿæ‰§è¡Œä¸€æ¬¡ï¼‰ï¼šå½“æœ‰ipåœ¨çº¿çš„æ—¶å€™ï¼ŒæŒ‰éœ€å¼€å¯transmissioné™é€Ÿå’Œqosé™é€Ÿã€‚
+#å½“åªæœ‰1ä¸ªIPåœ¨çº¿æ—¶å€™ï¼Œå…³é—­å†…ç½‘QOSé™é€Ÿ ã€‚
+#å½“æ²¡æœ‰IPåœ¨çº¿æ—¶å€™ï¼Œå…³é—­QOSé™é€Ÿ å…³é—­transmissioné™é€Ÿã€‚
 qos_scheduler(){
 
 cat >${qosv4_tmp_pach}/qos_scheduler <<"EOF"
@@ -233,11 +233,11 @@ ip_num=`eval $RUN`
 old_ip_num=$(cat ${qosv4_tmp_pach}/qosv4_old_ip_num)
 echo "new_ip_num=$ip_num"
 echo "old_ip_num=$old_ip_num"
-#Èç¹ûÔÚÏßipºÍÉÏ´ÎÏàÍ¬ ÍË³ö
+#å¦‚æžœåœ¨çº¿ipå’Œä¸Šæ¬¡ç›¸åŒ é€€å‡º
 if [ "$ip_num" -eq "$old_ip_num" ]
 then
 ip neigh flush dev br-lan
-echo "ÔÚÏßipºÍÉÏ´ÎÏàÍ¬"
+echo "åœ¨çº¿ipå’Œä¸Šæ¬¡ç›¸åŒ"
 exit
 fi
 
@@ -248,7 +248,7 @@ transmission_enable=$(uci get transmission.@transmission[0].enable)
 transmission_enabled=$(uci get transmission.@transmission[0].enabled)
 
 
-#Èç¹ûÔÚÏßipÎª1 ¹Ø±ÕÄÚÍøQOSÏÞËÙ ¸ù¾ÝÉèÖÃ¿ªÆô transmissionÏÞËÙ£¬È»ºóÍË³ö
+#å¦‚æžœåœ¨çº¿ipä¸º1 å…³é—­å†…ç½‘QOSé™é€Ÿ æ ¹æ®è®¾ç½®å¼€å¯ transmissioné™é€Ÿï¼Œç„¶åŽé€€å‡º
 if [ "$ip_num" -eq "1" ]
 then
 ifconfig $devdown down
@@ -272,7 +272,7 @@ exit
 fi
 
 
-# µ±Ã»ÓÐIPÔÚÏßÊ±ºò£¬¹Ø±ÕQOSÏÞËÙ ¹Ø±ÕtransmissionÏÞËÙ¡£
+# å½“æ²¡æœ‰IPåœ¨çº¿æ—¶å€™ï¼Œå…³é—­QOSé™é€Ÿ å…³é—­transmissioné™é€Ÿã€‚
 if [ "$ip_num" -eq "0" ]
 then
 ifconfig $devdown down
@@ -286,7 +286,7 @@ ip neigh flush dev br-lan
 echo "$ip_num" >${qosv4_tmp_pach}/qosv4_old_ip_num
 exit 
 fi
-#Èç¹ûÔÚÏßip ´óÓÚ1 ¿ªÆôÄÚÍøQOSÏÞËÙ ¿ªÆôtransmissionÏÞËÙ
+#å¦‚æžœåœ¨çº¿ip å¤§äºŽ1 å¼€å¯å†…ç½‘QOSé™é€Ÿ å¼€å¯transmissioné™é€Ÿ
 if [ $(ifconfig |grep -c $devdown) -eq 0 ]
 then
 ifconfig $devdown up
@@ -396,6 +396,9 @@ case $1 in
 	 rm -rf ${qosv4_tmp_pach}/qosv4_nolimit_mac
 	config_foreach qos_config_get qos_settings
 		echo "qosv4 enable=$qosv4_enable " 
+	devnum=$(ifconfig|grep -c imq)
+    [ "$devnum" -eq 0 ] && insmod imq numdevs=2
+    [ "$devnum" -eq 1 ] && rmmod imq && insmod imq numdevs=2
 	if [ "$qosv4_enable" == "1" ];then
 	  [ -f ${qosv4_tmp_pach}/insmod ] || load_modules >/dev/null 2>&1
 	  qos_start
