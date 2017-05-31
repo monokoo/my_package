@@ -1,0 +1,4 @@
+# AriaNg WebSite
+
+User-agent: *
+Disallow: /latest/
