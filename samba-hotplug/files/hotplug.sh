@@ -16,6 +16,8 @@ set_samba(){
 	uci set samba.${section}="sambashare"
 	uci set samba.${section}.name="Disk_${device}"
 	uci set samba.${section}.path="${mountpoint}"
+	uci set samba.${section}.create_mask="0777"
+	uci set samba.${section}.dir_mask="0777"
 	uci set samba.${section}.read_only="no"
 	uci set samba.${section}.guest_ok="yes"
 	uci commit samba
