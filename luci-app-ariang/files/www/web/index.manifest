@@ -1,16 +1,16 @@
 CACHE MANIFEST
 
 CACHE:
-css/aria-ng-089c039102.min.css
+css/aria-ng-fd616bb038.min.css
 css/bootstrap-3.3.7.min.css
-css/plugins-a7090b9582.min.css
-js/angular-packages-1.6.4.min.js
-js/aria-ng-4a60d788ec.min.js
+css/plugins-0c3e0064a1.min.css
+js/angular-packages-1.4.10.min.js
+js/aria-ng-b5601d9f1a.min.js
 js/bootstrap-3.3.7.min.js
-js/echarts-common-3.5.4.min.js
+js/echarts-3.2.2.min.js
 js/jquery-2.2.4.min.js
-js/moment-with-locales-2.18.1.min.js
-js/plugins-2cae979f0c.min.js
+js/moment-with-locales-2.14.1.min.js
+js/plugins-5d0eb1c0ac.min.js
 fonts/fontawesome-webfont.woff2
 index.html
 
@@ -20,4 +20,4 @@ NETWORK:
 SETTINGS:
 prefer-online
 
-# hash: 2fefd31861bf6e54e821911cec03db2e16756e3a9c4e5c414b1642be33c5bf92
+# hash: 298b243e2b3592881303f45b7ee1da586dba31a04005f03d1c882a857aa8f2d3
