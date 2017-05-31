@@ -34,10 +34,10 @@ endef
 CONFIGURE_ARGS += --disable-utmp
 
 define Package/shellinabox/install
-	$(INSTALL_DIR) $(1)/usr/sbin $(1)/etc/init.d $(1)/usr/share/shellinabox $(1)/usr/lib/lua/luci/view/admin_status
+	$(INSTALL_DIR) $(1)/usr/sbin $(1)/etc/init.d $(1)/usr/share/shellinabox $(1)/usr/lib/lua/luci/view/admin_system
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/shellinaboxd $(1)/usr/sbin
 	$(INSTALL_BIN) ./files/shellinaboxd.init $(1)/etc/init.d/shellinaboxd
-	$(INSTALL_DATA) ./files/webshell.htm $(1)/usr/lib/lua/luci/view/admin_status/
+	$(INSTALL_DATA) ./files/webshell.htm $(1)/usr/lib/lua/luci/view/admin_system/
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/shellinabox/*.css $(1)/usr/share/shellinabox/
 	$(PKG_BUILD_DIR)/make-chained-cert.sh > $(1)/usr/share/shellinabox/certificate.pem
 endef
