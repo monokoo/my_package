@@ -1,4 +1,12 @@
 [default]
+AriaNg=Web控制台
+Take Over All downloadings=所有下载接管
+Chrome Extensions download=Chrome插件下载
+NetDisk Shortcut=网盘快捷登陆
+Xunlei-Lixian=迅雷离线
+Xunlei-Lixian WebPortal=迅雷离线管理
+BaiDu NetDisk=百度网盘
+Manage BaiDu NetDisk=百度网盘管理
 Operation Succeeded=操作成功
 Connection Succeeded=连接成功
 Error=错误
@@ -48,7 +56,7 @@ Finished / Stopped=已完成 / 已停止
 Uncompleted=未完成
 Click to pin=点击固定
 Settings=系统设置
-AriaNg Settings=AriaNg 设置
+AriaNg Settings=Web控制台设置
 Aria2 Settings=Aria2 设置
 Basic Settings=基本设置
 HTTP/FTP/SFTP Settings=HTTP/FTP/SFTP 设置
