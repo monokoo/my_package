@@ -23,7 +23,7 @@ local t=require"luci.sys"
 local e=require"luci.http"
 local a=require"luci.model.uci".cursor()
 local t={
-running=(t.call("iptables -t mangle -L qos_egress 2> /dev/null")==0),
+running=(t.call("iptables -t mangle -L qos_egress > /dev/null")==0),
 }
 e.prepare_content("application/json")
 e.write_json(t)
