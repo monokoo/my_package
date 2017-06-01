@@ -246,7 +246,18 @@ initialize_qos()
 	# Now, load/insert necessary kernel modules
 	# The following packages are required for the modules:
 	rmmod  imq >&- 2>&-
-	insmod imq numdevs=1 hook_chains="INPUT,FORWARD" hook_tables="mangle,mangle" >&- 2>&-
+
+	# load multi-queue imq
+    # NUM_CPU=$(grep -c 'model name' /proc/cpuinfo)
+    # modprobe imq numqueues=$NUM_CPU
+    NUM_CPU=$(grep -c 'processor' /proc/cpuinfo)
+    # if we get '0' then use one cpu since the line not exists.
+    if [ "$NUM_CPU" = "0"  ] ; then
+        insmod imq numdevs=1 numqueues=1 >&- 2>&-
+    else
+        insmod imq numdevs=1 numqueues=$NUM_CPU >&- 2>&-
+    fi
+	
 	ip link set dev imq0 mtu 1500
 
 	insmod cls_fw >&- 2>&-
