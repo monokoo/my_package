@@ -39,7 +39,7 @@ endef
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/etc/config $(1)/etc/init.d
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/model/cbi
-	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/controller
+	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/controller $(1)/usr/lib/lua/luci/view/admin_status
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/view/smartinfo $(1)/usr/lib/lua/luci/view/admin_status/index
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n $(1)/usr/lib/smartinfo
 	
@@ -50,6 +50,7 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_DATA) ./files/luasrc/controller/* $(1)/usr/lib/lua/luci/controller/
 	$(INSTALL_DATA) ./files/luasrc/view/smartinfo/* $(1)/usr/lib/lua/luci/view/smartinfo/
 	$(INSTALL_DATA) ./files/luasrc/view/admin_status/index/* $(1)/usr/lib/lua/luci/view/admin_status/index/
+	$(INSTALL_DATA) ./files/luasrc/view/admin_status/disc_status.htm $(1)/usr/lib/lua/luci/view/admin_status/disc_status.htm
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/smartinfo.lmo $(1)/usr/lib/lua/luci/i18n/
 
 endef
