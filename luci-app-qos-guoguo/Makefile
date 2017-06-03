@@ -49,7 +49,7 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/view/qos_guoguo
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
 	
-	$(INSTALL_BIN) ./files//etc/uci-defaults/luci-qos_guoguo $(1)/etc/uci-defaults/
+	$(INSTALL_BIN) ./files/etc/uci-defaults/luci-qos_guoguo $(1)/etc/uci-defaults/
 	$(INSTALL_DATA) ./files/usr/lib/lua/luci/model/cbi/qos_guoguo/* $(1)/usr/lib/lua/luci/model/cbi/qos_guoguo/
 	$(INSTALL_DATA) ./files/usr/lib/lua/luci/controller/qos_guoguo.lua $(1)/usr/lib/lua/luci/controller/
 	$(INSTALL_DATA) ./files/usr/lib/lua/luci/view/qos_guoguo/* $(1)/usr/lib/lua/luci/view/qos_guoguo/
