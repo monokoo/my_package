@@ -9,5 +9,5 @@ config bandwidthd
 	option filter 'ip'
 	option graph 'true'
 	option meta_refresh '60'
-	option dev 'eth0'
+	option dev 'br-lan'
 
