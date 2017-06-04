@@ -31,6 +31,14 @@ define Package/luci-app-qos-emong/description
 luci app for qos-emong
 endef
 
+define Build/Prepare
+	$(foreach po,$(wildcard ${CURDIR}/files/i18n/*.po), \
+		po2lmo $(po) $(PKG_BUILD_DIR)/$(patsubst %.po,%.lmo,$(notdir $(po)));)
+endef
+
+define Build/Compile
+endef
+
 define Package/luci-app-qos-emong/postinst
 #!/bin/sh 
 [ -n "$${IPKG_INSTROOT}" ] || {
@@ -38,9 +46,6 @@ define Package/luci-app-qos-emong/postinst
 	/etc/init.d/qos-emong enable
 	exit 0
 }
-endef
-
-define Build/Compile
 endef
 
 define Package/luci-app-qos-emong/conffiles
@@ -62,6 +67,7 @@ define Package/luci-app-qos-emong/install
 	$(INSTALL_DATA) ./files/usr/lib/lua/luci/controller/* $(1)/usr/lib/lua/luci/controller/
 	$(INSTALL_BIN) ./files/usr/bin/qos-emong $(1)/usr/bin/qos-emong
 	$(INSTALL_DATA) ./files/usr/lib/lua/luci/i18n/*.lmo $(1)/usr/lib/lua/luci/i18n/
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/qos-emong.zh-cn.lmo $(1)/usr/lib/lua/luci/i18n/
 	
 endef
 

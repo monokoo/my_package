@@ -57,13 +57,13 @@ do
   tmpstr=${tmpstr%=*}
   [ ! "$tmpstr" == "loopback" ] && if [ ! "$tmpstr" == "lan" ];
   then
-    echo $tmpstr
+    echo InterFace $tmpstr
   fi
 done
 
-echo $LAN_IF
-echo $UP
-echo $DOWN
+echo LanIface $LAN_IF
+echo MaxDownload:${DOWN}K/s  MaxUpload:${UP}K/s 
+
 uci -p /var/state show network|grep "network."|grep =interface|while read line
 do
   tmpstr=${line:8}
@@ -88,7 +88,7 @@ do
 	  tc class add dev $WAN_IF parent 1: classid 1:2 htb rate $((UP))kbit
   fi
 done
-	tc class add dev $LAN_IF parent 1: classid 1:2 htb rate $((DOWN))kbit	#¦Ì£¤?¨¤?T?¨´
+	tc class add dev $LAN_IF parent 1: classid 1:2 htb rate $((DOWN))kbit	#å•ipé™é€Ÿ
 	
 	echo "ip qdisc end"
 
@@ -100,12 +100,12 @@ do
   then
     WAN_IF=$(uci -p /var/state get network.$tmpstr.ifname)
 
-	tc class add dev $WAN_IF parent 1: classid 1:1 htb rate $((UP*95/100))kbit	#?¨´¨¤¨¤
-	tc class add dev $WAN_IF parent 1:1 classid 1:11 htb rate $((UP*5/10))kbit prio 1	#D?¡ã¨¹
-	tc class add dev $WAN_IF parent 1:1 classid 1:12 htb rate $((UP*5/10))kbit ceil $((UP*9/10))kbit prio 2	#????¡ã¨¹
-	tc class add dev $WAN_IF parent 1:12 classid 1:121 htb rate $((UP*4/10))kbit ceil $((UP*8/10))kbit prio 1	#www¡ê?ftp
-	tc class add dev $WAN_IF parent 1:12 classid 1:122 htb rate $((UP*1/10))kbit ceil $((UP*4/10))kbit prio 2	#bit¡ê???¨¤¡Á
-	tc class add dev $WAN_IF parent 1:12 classid 1:123 htb rate $((UP*4/10))kbit ceil $((UP*6/10))kbit prio 3	#??¨¨?
+	tc class add dev $WAN_IF parent 1: classid 1:1 htb rate $((UP*95/100))kbit	#æ ¹ç±»
+	tc class add dev $WAN_IF parent 1:1 classid 1:11 htb rate $((UP*5/10))kbit prio 1	#é«˜é€Ÿåº•æ—¶å»¶åº”ç”¨
+	tc class add dev $WAN_IF parent 1:1 classid 1:12 htb rate $((UP*5/10))kbit ceil $((UP*9/10))kbit prio 2	#æ™®é€šåº”ç”¨æ ¹
+	tc class add dev $WAN_IF parent 1:12 classid 1:121 htb rate $((UP*4/10))kbit ceil $((UP*8/10))kbit prio 1	#www-ftp
+	tc class add dev $WAN_IF parent 1:12 classid 1:122 htb rate $((UP*1/10))kbit ceil $((UP*4/10))kbit prio 2	#p2påº”ç”¨
+	tc class add dev $WAN_IF parent 1:12 classid 1:123 htb rate $((UP*4/10))kbit ceil $((UP*6/10))kbit prio 3	#é»˜è®¤ç­‰çº§
 	tc qdisc add dev $WAN_IF parent 1:11 handle 11: sfq perturb 10
 	tc qdisc add dev $WAN_IF parent 1:121 handle 121: sfq perturb 10
 	tc qdisc add dev $WAN_IF parent 1:122 handle 122: sfq perturb 10
@@ -119,12 +119,12 @@ done
 
 	
 	
-	tc class add dev $LAN_IF parent 1: classid 1:1 htb rate $((DOWN*95/100))kbit	#?¨´¨¤¨¤
-	tc class add dev $LAN_IF parent 1:1 classid 1:11 htb rate $((DOWN*5/10))kbit prio 1	#D?¡ã¨¹
-	tc class add dev $LAN_IF parent 1:1 classid 1:12 htb rate $((DOWN*5/10))kbit ceil $((DOWN*9/10))kbit prio 2	#????¡ã¨¹
-	tc class add dev $LAN_IF parent 1:12 classid 1:121 htb rate $((DOWN*4/10))kbit ceil $((DOWN*8/10))kbit prio 1	#www¡ê?ftp
-	tc class add dev $LAN_IF parent 1:12 classid 1:122 htb rate $((DOWN*1/10))kbit ceil $((DOWN*4/10))kbit prio 10	#??¡¤?¨¤¨¤¦Ì??¨®¨ºy?Y¡ã¨¹
-	tc class add dev $LAN_IF parent 1:12 classid 1:123 htb rate $((DOWN*4/10))kbit ceil $((DOWN*6/10))kbit prio 3	#??¨¨?
+	tc class add dev $LAN_IF parent 1: classid 1:1 htb rate $((DOWN*95/100))kbit	#æ ¹ç±»
+	tc class add dev $LAN_IF parent 1:1 classid 1:11 htb rate $((DOWN*5/10))kbit prio 1	#é«˜é€Ÿåº•æ—¶å»¶åº”ç”¨
+	tc class add dev $LAN_IF parent 1:1 classid 1:12 htb rate $((DOWN*5/10))kbit ceil $((DOWN*9/10))kbit prio 2	#æ™®é€šåº”ç”¨æ ¹
+	tc class add dev $LAN_IF parent 1:12 classid 1:121 htb rate $((DOWN*4/10))kbit ceil $((DOWN*8/10))kbit prio #www-ftp
+	tc class add dev $LAN_IF parent 1:12 classid 1:122 htb rate $((DOWN*1/10))kbit ceil $((DOWN*4/10))kbit prio 10	#p2påº”ç”¨
+	tc class add dev $LAN_IF parent 1:12 classid 1:123 htb rate $((DOWN*4/10))kbit ceil $((DOWN*6/10))kbit prio 3	#é»˜è®¤ç­‰çº§
 	tc qdisc add dev $LAN_IF parent 1:11 handle 11: sfq perturb 10
 	tc qdisc add dev $LAN_IF parent 1:121 handle 121: sfq perturb 10
 	tc qdisc add dev $LAN_IF parent 1:122 handle 122: sfq perturb 10
@@ -174,8 +174,7 @@ done
 }
 
 ip_limit() {
-	#$1 ip, $2 ????¡Á??¨®, $3 ????¡À¡ê?€, $4 ¨¦???¡Á??¨®, $5 ¨¦???¡À¡ê?€
-	#
+	#$1 ip, $2 ????è„³??è´¸, $3 ????å¤é”Ÿ?éˆ§? $4 èŒ…???è„³??è´¸, $5 èŒ…???å¤é”Ÿ?éˆ§?	#
 	#
 	
 	echo $1 

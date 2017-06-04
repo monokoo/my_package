@@ -1,19 +1,19 @@
 local e=require"luci.sys"
-m=Map("qos-emong",translate("Emong's QOS"),translate("Easy to use qos, do not open with other qos at the same time."))
+m=Map("qos-emong",translate("Emong's QOS"),translate("Easy to use qos, <font color=\"red\">do not open with other qos at the same time.</font>"))
 s=m:section(TypedSection,"qos-emong",translate("QOS Goble Setting"))
 s.anonymous=true
 s.addremove=false
 o=s:option(Flag,"enable",translate("QOS Enable"))
 o.default=false
 o.rmempty=false
-o=s:option(Value,"down",translate("Total Download Speed(KB/s)"))
+o=s:option(Value,"down",translate("Total Download Speed(Kbps)"))
 o.default=102400
 o.rmempty=false
-o=s:option(Value,"up",translate("Total Upload Speed(KB/s)"))
+o=s:option(Value,"up",translate("Total Upload Speed(Kbps)"))
 o.default=4096
 o.rmempty=false
 s=m:section(TypedSection,"ip-limit",translate("Single IP or IP Segment Speed Limit"),
-translate("For example: 192.168.1.100 192.168.1.100/25, Please do not use 192.168.1.100-192.168.1.150"))
+translate("For example: 192.168.1.100 192.168.1.100/25, Please do not use 192.168.1.100-192.168.1.150, unit Kbps,1Mbps=1024Kbps"))
 s.template="cbi/tblsection"
 s.sortable=false
 s.anonymous=true
