@@ -1,5 +1,5 @@
 local e=require"luci.sys"
-m=Map("qos-emong",translate("Emong-QOS"),translate("Easy to use qos, do not open with other qos at the same time."))
+m=Map("qos-emong",translate("Emong's QOS"),translate("Easy to use qos, do not open with other qos at the same time."))
 s=m:section(TypedSection,"qos-emong",translate("QOS Goble Setting"))
 s.anonymous=true
 s.addremove=false
