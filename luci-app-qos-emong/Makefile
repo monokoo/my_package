@@ -54,7 +54,7 @@ define Package/luci-app-qos-emong/install
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/controller
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n $(1)/usr/bin
 	
-	$(INSTALL_BIN) ./files/etc/uci-defaults/luci-qos_guoguo $(1)/etc/uci-defaults/
+	$(INSTALL_BIN) ./files/etc/uci-defaults/luci-qos-emong $(1)/etc/uci-defaults/
 	$(INSTALL_CONF) ./files/etc/config/* $(1)/etc/config/
 	$(INSTALL_BIN) ./files/etc/init.d/* $(1)/etc/init.d/
 	$(INSTALL_BIN) ./files/etc/hotplug.d/iface/* $(1)/etc/hotplug.d/iface/
