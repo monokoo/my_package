@@ -48,8 +48,21 @@ define Build/Compile
 endef
 
 define Package/luci-app-qos-emong/install
-	$(INSTALL_DIR) $(1)
-	$(CP) ./files/* $(1)/
+	
+	$(INSTALL_DIR) $(1)/etc/uci-defaults $(1)/etc/config $(1)/etc/init.d $(1)/etc/hotplug.d/iface
+	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/model/cbi
+	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/controller
+	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n $(1)/usr/bin
+	
+	$(INSTALL_BIN) ./files/etc/uci-defaults/luci-qos_guoguo $(1)/etc/uci-defaults/
+	$(INSTALL_CONF) ./files/etc/config/* $(1)/etc/config/
+	$(INSTALL_BIN) ./files/etc/init.d/* $(1)/etc/init.d/
+	$(INSTALL_BIN) ./files/etc/hotplug.d/iface/* $(1)/etc/hotplug.d/iface/
+	$(INSTALL_DATA) ./files/usr/lib/lua/luci/model/cbi/* $(1)/usr/lib/lua/luci/model/cbi/
+	$(INSTALL_DATA) ./files/usr/lib/lua/luci/controller/* $(1)/usr/lib/lua/luci/controller/
+	$(INSTALL_BIN) ./files/usr/bin/qos-emong $(1)/usr/bin/qos-emong
+	$(INSTALL_DATA) ./files/usr/lib/lua/luci/i18n/*.lmo $(1)/usr/lib/lua/luci/i18n/
+	
 endef
 
 $(eval $(call BuildPackage,luci-app-qos-emong))
