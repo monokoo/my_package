@@ -1,26 +1,26 @@
 config 'qos-emong' 'main'
-	option 'down' '6000'
-	option 'up' '640'
+	option 'down' '204800'
+	option 'up' '10240'
 	option 'enable' '0'
 
 config 'ip-limit'
-	option 'ip' '192.168.1.0/24'
+	option 'ip' '192.168.4.0/24'
 	option 'enable' '1'
-	option 'upc' '500'
-	option 'upr' '200'
-	option 'downc' '1000'
-	option 'downr' '500'
+	option 'upc' '2048'
+	option 'upr' '1024'
+	option 'downc' '10240'
+	option 'downr' '2048'
 
 config 'ip-limit'
-	option 'ip' '192.168.1.2'
+	option 'ip' '192.168.4.2'
 	option 'enable' '1'
-	option 'upc' '500'
-	option 'upr' '100'
-	option 'downc' '4000'
-	option 'downr' '1000'
+	option 'upc' '2048'
+	option 'upr' '1024'
+	option 'downc' '10240'
+	option 'downr' '2048'
 
 config 'connlmt'
-	option 'ip' '192.168.1.10'
+	option 'ip' '192.168.4.10'
 	option 'enable' '0'
 	option 'udp' '100'
 	option 'tcp' '100'
@@ -54,8 +54,3 @@ config 'port_first'
 	option 'enable' '1'
 	option 'proto' 'tcp'
 	option 'port' '3389'
-
-
-
-
-
