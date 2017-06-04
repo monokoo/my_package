@@ -12,8 +12,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Easy to use qos, do not open with other qos at the same time."
-msgstr "简单易用的qos，不要和其它qos同时开启。"
+msgid "Easy to use qos, <font color=\"red\">do not open with other qos at the same time.</font>"
+msgstr "简单易用的qos，<font color=\"red\">不要和其它qos同时开启。</font>"
 
 msgid "QOS Goble Setting"
 msgstr "QOS全局配置"
