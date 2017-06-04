@@ -11,6 +11,9 @@ PKG_NAME:=luci-app-qos-emong
 PKG_VERSION:=1.4
 PKG_RELEASE:=1
 
+
+PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
+
 include $(INCLUDE_DIR)/package.mk
 
 define Package/luci-app-qos-emong
@@ -25,14 +28,28 @@ define Package/luci-app-qos-emong
 endef
 
 define Package/luci-app-qos-emong/description
-qos-emong
+luci app for qos-emong
+endef
+
+define Package/luci-app-qos-emong/postinst
+#!/bin/sh 
+[ -n "$${IPKG_INSTROOT}" ] || {
+	( . /etc/uci-defaults/luci-qos-emong ) && rm -f /etc/uci-defaults/luci-qos-emong
+	/etc/init.d/qos-emong enable
+	exit 0
+}
+endef
+
+define Package/luci-app-qos-emong/conffiles
+  /etc/config/qos-emong
 endef
 
 define Build/Compile
 endef
 
 define Package/luci-app-qos-emong/install
-	$(CP) ./files/* $(1)
+	$(INSTALL_DIR) $(1)
+	$(CP) ./files/* $(1)/
 endef
 
 $(eval $(call BuildPackage,luci-app-qos-emong))
