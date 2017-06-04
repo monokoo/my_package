@@ -66,7 +66,6 @@ define Package/luci-app-qos-emong/install
 	$(INSTALL_DATA) ./files/usr/lib/lua/luci/model/cbi/* $(1)/usr/lib/lua/luci/model/cbi/
 	$(INSTALL_DATA) ./files/usr/lib/lua/luci/controller/* $(1)/usr/lib/lua/luci/controller/
 	$(INSTALL_BIN) ./files/usr/bin/qos-emong $(1)/usr/bin/qos-emong
-	$(INSTALL_DATA) ./files/usr/lib/lua/luci/i18n/*.lmo $(1)/usr/lib/lua/luci/i18n/
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/qos-emong.zh-cn.lmo $(1)/usr/lib/lua/luci/i18n/
 	
 endef
