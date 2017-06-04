@@ -40,11 +40,11 @@ define Package/luci-app-qos-emong/postinst
 }
 endef
 
-define Package/luci-app-qos-emong/conffiles
-  /etc/config/qos-emong
+define Build/Compile
 endef
 
-define Build/Compile
+define Package/luci-app-qos-emong/conffiles
+/etc/config/qos-emong
 endef
 
 define Package/luci-app-qos-emong/install
@@ -55,8 +55,8 @@ define Package/luci-app-qos-emong/install
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n $(1)/usr/bin
 	
 	$(INSTALL_BIN) ./files/etc/uci-defaults/luci-qos-emong $(1)/etc/uci-defaults/
-	$(INSTALL_CONF) ./files/etc/config/* $(1)/etc/config/
-	$(INSTALL_BIN) ./files/etc/init.d/* $(1)/etc/init.d/
+	$(INSTALL_CONF) ./files/etc/config/qos-emong $(1)/etc/config/qos-emong
+	$(INSTALL_BIN) ./files/etc/init.d/qos-emong $(1)/etc/init.d/qos-emong
 	$(INSTALL_BIN) ./files/etc/hotplug.d/iface/* $(1)/etc/hotplug.d/iface/
 	$(INSTALL_DATA) ./files/usr/lib/lua/luci/model/cbi/* $(1)/usr/lib/lua/luci/model/cbi/
 	$(INSTALL_DATA) ./files/usr/lib/lua/luci/controller/* $(1)/usr/lib/lua/luci/controller/
