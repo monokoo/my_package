@@ -13,7 +13,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/luci-app-xunlei
   SECTION:=luci
   CATEGORY:=LuCI
-  SUBMENU:=1. Luci Applications
+  SUBMENU:=3. Applications
   DEPENDS:=+libc
   TITLE:=xunlei
   PKGARCH:=all
