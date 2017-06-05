@@ -1,11 +1,11 @@
 #!/bin/sh
 
-IP4="/usr/sbin/ip -4"
-IP6="/usr/sbin/ip -6"
-IPS="/usr/sbin/ipset"
-IPT4="/usr/sbin/iptables -t mangle -w"
-IPT6="/usr/sbin/ip6tables -t mangle -w"
-LOG="/usr/bin/logger -t mwan3 -p"
+IP4="ip -4"
+IP6="ip -6"
+IPS="ipset"
+IPT4="iptables -t mangle -w"
+IPT6="ip6tables -t mangle -w"
+LOG="logger -t mwan3 -p"
 CONNTRACK_FILE="/proc/net/nf_conntrack"
 
 mwan3_get_iface_id()
@@ -90,10 +90,6 @@ mwan3_set_general_iptables()
 			$IPT -A mwan3_connected -m set --match-set mwan3_connected dst -j MARK --set-xmark 0xff00/0xff00
 		fi
 
-		if ! $IPT -S mwan3_track &> /dev/null; then
-			$IPT -N mwan3_track
-		fi
-
 		if ! $IPT -S mwan3_ifaces_out &> /dev/null; then
 			$IPT -N mwan3_ifaces_out
 		fi
@@ -107,7 +103,6 @@ mwan3_set_general_iptables()
 			$IPT -A mwan3_hook -j CONNMARK --restore-mark --nfmask 0xff00 --ctmask 0xff00
 			$IPT -A mwan3_hook -m mark --mark 0x0/0xff00 -j mwan3_ifaces_in
 			$IPT -A mwan3_hook -m mark --mark 0x0/0xff00 -j mwan3_connected
-			$IPT -A mwan3_hook -m mark --mark 0x0/0xff00 -j mwan3_track
 			$IPT -A mwan3_hook -m mark --mark 0x0/0xff00 -j mwan3_ifaces_out
 			$IPT -A mwan3_hook -m mark --mark 0x0/0xff00 -j mwan3_rules
 			$IPT -A mwan3_hook -j CONNMARK --save-mark --nfmask 0xff00 --ctmask 0xff00
@@ -387,7 +382,7 @@ mwan3_delete_iface_ipset_entries()
 
 mwan3_track()
 {
-	local track_ip track_ips reliability count timeout interval down up
+	local track_ip track_ips
 
 	mwan3_list_track_ips()
 	{
@@ -395,11 +390,7 @@ mwan3_track()
 	}
 	config_list_foreach $1 track_ip mwan3_list_track_ips
 
-	if [ -e /var/run/mwan3track-$1.pid ] ; then
-		kill $(cat /var/run/mwan3track-$1.pid) &> /dev/null
-		rm /var/run/mwan3track-$1.pid &> /dev/null
-	fi
-
+	kill $(pgrep -f "mwan3track $1") &> /dev/null
 	if [ -n "$track_ips" ]; then
 		[ -x /usr/sbin/mwan3track ] && /usr/sbin/mwan3track $1 $2 $track_ips &
 	fi
@@ -407,18 +398,13 @@ mwan3_track()
 
 mwan3_track_signal()
 {
-	local pid status
+	local pid
 
-	if [ -f "/var/run/mwan3track-${1}.pid" ]; then
-		pid="$(cat "/var/run/mwan3track-${1}.pid")"
-		status="$(pgrep -f mwan3track | grep "${pid}")"
-		if [ "${status}" != "" ]; then
-			kill -USR1 "${pid}"
-		else
-			$LOG warn "Unable to send signal USR1 to mwan3track on interface $1 with pid ${pid}"
-		fi
+	pid="$(pgrep -f "mwan3track $1")"
+	if [ "${pid}" != "" ]; then
+		kill -USR1 "${pid}"
 	else
-		$LOG warn "Unable to find \"/var/run/mwan3track-${1}.pid\" file for mwan3track on interface $1"
+		$LOG warn "Unable to send signal USR1 to mwan3track on interface $1 with pid ${pid}"
 	fi
 }
 
@@ -875,4 +861,3 @@ mwan3_flush_conntrack()
 		$LOG warning "connection tracking not enabled"
 	fi
 }
-
