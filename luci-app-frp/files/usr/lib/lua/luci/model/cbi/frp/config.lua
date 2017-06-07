@@ -73,7 +73,7 @@ e:depends("enable_http_auth",1)
 e = t:option(Value, "http_pwd", translate("HTTP PassWord"))
 e.default = "frp"
 e:depends("enable_http_auth",1)
-e = t:option(Flag, "enable_host_header_rewrite", translate("Rewriting the Host Header"), translate("Frp can rewrite your requests with a modified Host header."))
+e = t:option(Flag, "enable_host_header_rewrite", translate("Rewriting the Host Header"), translate("Frp can rewrite http requests with a modified Host header."))
 e.default = "0"
 e:depends("type","http")
 e = t:option(Value, "host_header_rewrite", translate("Host Header"), translate("The Host header will be rewritten to match the hostname portion of the forwarding address."))
