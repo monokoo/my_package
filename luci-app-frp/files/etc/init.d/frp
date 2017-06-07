@@ -1,0 +1,162 @@
+#!/bin/sh /etc/rc.common
+#Author: monokoo <realstones2012@gmail.com>
+#Thanks to FW867's help
+
+START=99
+SERVICE_WRITE_PID=1
+SERVICE_DAEMONIZE=1
+
+LOGFILE="/var/etc/frp/frpc.log"
+
+Reduce_Log(){
+	local log=$1
+	[ ! -f "$log" ] && return
+	local sc=100
+	[ -n "$2" ] && sc=$2
+	local count=$(grep -c "" $log)
+	if [ $count -gt $sc ];then
+		let count=count-$sc
+		sed -i "1,$count d" $log
+	fi
+}
+
+conf_proxy_add() {
+
+	local cfg="$1"
+	local tmpconf="$2"
+	local enable type domain_type custom_domains remote_port local_ip local_port enable_http_auth enable_host_header_rewrite host_header_rewrite
+	local subdomain use_encryption use_compression http_user http_pwd remark
+	local enable_plugin plugin plugin_http_user plugin_http_passwd plugin_unix_path
+	
+	config_get_bool enable "$cfg" enable 1
+	[ "$enable" -gt 0 ] || return 1
+	
+	config_get type "$cfg" type
+	config_get custom_domains "$cfg" custom_domains
+	config_get subdomain "$cfg" subdomain
+	config_get remote_port "$cfg" remote_port
+	config_get local_ip "$cfg" local_ip
+	config_get local_port "$cfg" local_port
+	config_get host_header_rewrite "$cfg" host_header_rewrite
+	config_get http_user "$cfg" http_user
+	config_get http_pwd "$cfg" http_pwd
+	config_get remark "$cfg" remark
+	config_get plugin "$cfg" plugin
+	config_get plugin_http_user "$cfg" plugin_http_user
+	config_get plugin_http_passwd "$cfg" plugin_http_passwd
+	config_get plugin_unix_path "$cfg" plugin_unix_path 
+
+	echo "" >>$tmpconf
+	echo "[$remark]" >>$tmpconf
+	echo "type=$type" >>$tmpconf
+	[ -n "$custom_domains" ] && echo "custom_domains=$custom_domains" >>$tmpconf
+	[ -n "$subdomain" ] && echo "subdomain=$subdomain" >>$tmpconf
+	[ -n "$remote_port" ] && echo "remote_port=$remote_port" >>$tmpconf
+	[ -n "$local_ip" ] && echo "local_ip=$local_ip" >>$tmpconf
+	[ -n "$local_port" ] && echo "local_port=$local_port" >>$tmpconf
+	[ -n "$http_user" -a -n "$http_pwd" ] && {
+		echo "http_user=$http_user" >>$tmpconf
+		echo "http_pwd=$http_pwd" >>$tmpconf
+	}
+	[ -n "$host_header_rewrite" ] && echo "host_header_rewrite=$host_header_rewrite" >>$tmpconf
+	[ -n "$plugin" ] && echo "plugin=$plugin" >>$tmpconf
+	[ -n "$plugin_http_user" -a -n "$plugin_http_passwd" ] && {
+		echo "plugin_http_user=$plugin_http_user" >>$tmpconf
+		echo "plugin_http_passwd=$plugin_http_passwd" >>$tmpconf
+	}
+	[ -n "$plugin_unix_path" ] && echo "plugin_unix_path=$plugin_unix_path" >>$tmpconf
+
+	frp_write_bool use_encryption $cfg 1
+	frp_write_bool use_compression $cfg 1
+
+}
+
+frp_write_bool() {
+	local opt="$1"
+	local config="$2"
+	local def="$3"
+	local val
+
+	config_get_bool val $config "$opt" "$def"
+	if [ "$val" -eq 0 ]; then
+		echo "${opt}=false" >> $tmpconf
+	else
+		echo "${opt}=true" >> $tmpconf
+	fi
+}
+
+frp_add_cru(){
+time=$1
+frpcron=$(cat /etc/crontabs/root | grep "00 $time * * *" | grep frp)
+if [ -z "$frpcron" ];then
+  sed -i '/frp/d' /etc/crontabs/root >/dev/null 2>&1
+  echo "0 $time * * * /etc/init.d/frp restart" >> /etc/crontabs/root 
+fi
+}
+
+frp_del_cru(){
+frpcron=$(cat /etc/crontabs/root | grep frp)
+if [ -z "$frpcron" ];then
+  sed -i '/frp/d' /etc/crontabs/root >/dev/null 2>&1
+fi
+}
+
+boot() {
+	return
+}
+
+start() {
+
+	config_load "frp"
+	local enabled server_addr server_port time privilege_token tcp_mux enable_cpool 
+	local pool_count log_level log_max_days login_fail_exit
+
+	config_get_bool enabled common enabled 1
+
+	[ "$enabled" -gt 0 ] || return 1
+
+	config_get server_addr common server_addr
+	config_get server_port common server_port
+	config_get privilege_token common privilege_token
+	config_get enable_cpool common enable_cpool
+	config_get pool_count common pool_count
+	config_get log_level common log_level
+	config_get log_max_days common log_max_days
+	config_get time common time
+	
+	local tmpconf="/var/etc/frp/frpc.conf"
+	args="-f $tmpconf"
+	mkdir -p /var/etc/frp
+
+	echo "[common]" >$tmpconf
+	echo "server_addr=${server_addr}" >>$tmpconf
+	echo "server_port=${server_port}" >>$tmpconf
+	echo "privilege_token=${privilege_token}" >>$tmpconf
+	echo "log_level=${log_level}" >>$tmpconf
+	echo "log_max_days=${log_max_days}" >>$tmpconf
+	echo "log_file=$LOGFILE" >>$tmpconf
+	[ -n "$pool_count" ] && echo "pool_count=$pool_count" >>$tmpconf
+
+	config_load "frp"
+	frp_write_bool tcp_mux common 1
+	frp_write_bool login_fail_exit common 1
+	config_foreach conf_proxy_add proxy "$tmpconf"
+		
+	logger -t FRPC 'Starting frp service'
+	SERVICE_DAEMONIZE=1 \
+		service_start /usr/bin/frpc -c $tmpconf
+		
+	[ "$time" -gt 0 ] && frp_add_cru $time
+
+	return 0
+}
+
+stop() {
+	if [ -n "`pidof frpc`" ]; then
+		logger -t FRPC 'Shutting down frp service'
+		service_stop /usr/bin/frpc
+		frp_del_cru
+		Reduce_Log $LOGFILE
+	fi
+	return 0
+}

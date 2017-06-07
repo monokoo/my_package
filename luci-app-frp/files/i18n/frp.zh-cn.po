@@ -1,0 +1,163 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2009-06-10 03:40+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Frp Setting"
+msgstr "Frp 内网穿透"
+
+msgid "Frp is a fast reverse proxy to help you expose a local server behind a NAT or firewall to the internet."
+msgstr "frp 是一个可用于内网穿透的高性能的反向代理应用，支持 tcp, udp, http, https 协议。"
+
+msgid "Service registration interval"
+msgstr "服务注册间隔"
+
+msgid "unit: min"
+msgstr "单位：分钟"
+
+msgid "Time duration between server of frpc and frps mustn't exceed 15 minutes."
+msgstr "frpc 所在机器和 frps 所在机器的时间相差不能超过 15 分钟。"
+
+msgid "TCP Stream Multiplexing"
+msgstr "TCP 多路复用"
+
+msgid "Default is Ture. This feature in frps.ini and frpc.ini must be same."
+msgstr "该功能默认启用，该配置项在服务端和客户端必须保持一致。"
+
+msgid "Enable Connection Pool"
+msgstr "启用连接池功能"
+
+msgid "This feature is fit for a large number of short connections."
+msgstr "适合有大量短连接请求时开启"
+
+msgid "Connection Pool"
+msgstr "指定预创建连接的数量"
+
+msgid "Connections will be established in advance."
+msgstr "frpc 会预先和服务端建立起指定数量的连接。"
+
+msgid "Log Level"
+msgstr "日志记录等级"
+
+msgid "Trace"
+msgstr "追踪"
+
+msgid "Log Keepd Max Days"
+msgstr "日志记录天数"
+
+msgid "Exit program when first login failed"
+msgstr "初始登录失败即退出程序"
+
+msgid "decide if exit program when first login failed, otherwise continuous relogin to frps."
+msgstr "第一次登录失败就退出程序，否则将持续尝试登陆 Frp 服务器。"
+
+msgid "Services List"
+msgstr "服务列表"
+
+msgid "Service Remark Name"
+msgstr "服务备注名"
+
+msgid "Frp Type"
+msgstr "Frp 类型"
+
+msgid "Remote Port"
+msgstr "远程主机端口"
+
+msgid "IP Address"
+msgstr "内网主机地址"
+
+msgid "Local Port"
+msgstr "内网主机端口"
+
+msgid "Http Auth"
+msgstr "Web加密访问"
+
+msgid "Use Encryption"
+msgstr "开启数据加密"
+
+msgid "Frp Config"
+msgstr "Frp 参数配置"
+
+msgid "Domain Type"
+msgstr "域名类型"
+
+msgid "Custom Domains"
+msgstr "域名"
+
+msgid "subdomain_host must be configured in server: frps in advance."
+msgstr "使用子域名时，必须预先在服务端配置主域名(subdomain_host)参数。"
+
+msgid "Use Plugin"
+msgstr "使用插件"
+
+msgid "If plugin is defined, local_ip and local_port is useless, plugin will handle connections got from frps."
+msgstr "使用插件模式时，本地 IP 地址和端口无需配置，插件将会处理来自服务端的链接请求。"
+
+msgid "On"
+msgstr "开启"
+
+msgid "Off"
+msgstr "关闭"
+
+msgid "Choose Plugin"
+msgstr "选择插件"
+
+msgid "Plugin HTTP UserName"
+msgstr "HTTP插件用户名"
+
+msgid "Plugin HTTP Passwd"
+msgstr "HTTP插件密码"
+
+msgid "Plugin Unix Sock Path"
+msgstr "Unix Sock 插件路径"
+
+msgid "Password protecting your web service"
+msgstr "使用密码访问web服务"
+
+msgid "HTTP UserName"
+msgstr "HTTP 用户名"
+
+msgid "HTTP PassWord"
+msgstr "HTTP 密码"
+
+msgid "Rewriting the Host Header"
+msgstr "修改 Host Header"
+
+msgid "Http username and password are safety certification for http protocol."
+msgstr "使用HTTP 用户名、密码作为http协议时的安全验证"
+
+msgid "Frp can rewrite http requests with a modified Host header."
+msgstr "Frp 可以动态修改 http 请求中的 host 字段"
+
+msgid "The Host header will be rewritten to match the hostname portion of the forwarding address."
+msgstr "原始 http 请求中的 host 字段转发到后端服务时会被替换为该值"
+
+msgid "Encrypted the communication between frpc and frps, will effectively prevent the traffic intercepted."
+msgstr "将 frpc 与 frps 之间的通信内容加密传输，将会有效防止流量被拦截。"
+
+msgid "The contents will be compressed to speed up the traffic forwarding speed, but this will consume some additional cpu resources."
+msgstr "对传输内容进行压缩，加快流量转发速度，但是会额外消耗一些 cpu 资源。"
+
+msgid "Please ensure the remark name is unique."
+msgstr "请确保备注名的唯一性"
+
+msgid "Client Log"
+msgstr "客户端日志"
+
+msgid "The Frp service is running."
+msgstr "Frp服务正在运行中"
+
+msgid "The Frp service is not running."
+msgstr "未运行"
+
+msgid "Frp Status"
+msgstr "Frp运行状态"
+
+msgid "Warning"
+msgstr "警告"
