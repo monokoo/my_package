@@ -161,3 +161,6 @@ msgstr "Frp运行状态"
 
 msgid "Warning"
 msgstr "警告"
+
+msgid "Config Frp"
+msgstr "配置Frp参数"
