@@ -5,7 +5,6 @@ local e=luci.model.uci.cursor()
 local i="frp"
 local a,t,e
 local n={}
-
 a=Map(i,translate("Frp Setting"), translate("Frp is a fast reverse proxy to help you expose a local server behind a NAT or firewall to the internet."))
 a:section(SimpleSection).template="frp/frp_status"
 t=a:section(NamedSection,"common","frp",translate("Global Setting"))
@@ -22,6 +21,12 @@ e.optional=false
 e.rmempty=false
 e=t:option(Value, "privilege_token", translate("Privilege Token"), translate("Time duration between server of frpc and frps mustn't exceed 15 minutes."))
 e.optional=false
+e.rmempty=false
+e=t:option(Value, "vhost_http_port", translate("Vhost HTTP Port"))
+e.datatype = "port"
+e.rmempty=false
+e=t:option(Value, "vhost_https_port", translate("Vhost HTTPs Port"))
+e.datatype = "port"
 e.rmempty=false
 e=t:option(Flag, "tcp_mux", translate("TCP Stream Multiplexing"), translate("Default is Ture. This feature in frps.ini and frpc.ini must be same."))
 e.default = "1"
@@ -69,10 +74,10 @@ end
 local o=""
 e=t:option(DummyValue,"remark",translate("Service Remark Name"))
 e.width="10%"
-e=t:option(DummyValue,"type",translate("Frp Type"))
+e=t:option(DummyValue,"type",translate("Frp Protocol Type"))
 e.width="10%"
-e=t:option(DummyValue,"custom_domains",translate("Domain"))
-e.width="15%"
+e=t:option(DummyValue,"custom_domains",translate("Domain/Subdomain"))
+e.width="20%"
 e.cfgvalue=function(t,n)
 local t=a.uci:get(i,n,"domain_type")or""
 if t==""or b==""then return""end
@@ -82,16 +87,29 @@ return b end
 if t=="subdomain" then
 local b=a.uci:get(i,n,"subdomain")or""
 return b end
+if t=="both_dtype" then
+local b=a.uci:get(i,n,"custom_domains")or""
+local c=a.uci:get(i,n,"subdomain")or""
+b="%s/%s"%{b,c} return b end
 return b
 end
 e=t:option(DummyValue,"remote_port",translate("Remote Port"))
 e.width="10%"
-e=t:option(DummyValue,"local_ip",translate("IP Address"))
+e.cfgvalue=function(t,b)
+local t=a.uci:get(i,b,"type")or""
+if t==""or b==""then return""end
+if t=="http" then
+local b=a.uci:get(i,"common","vhost_http_port")or""
+return b end
+if t=="https" then
+local b=a.uci:get(i,"common","vhost_https_port")or""
+return b end
+return b
+end
+e=t:option(DummyValue,"local_ip",translate("Local Host Address"))
 e.width="15%"
-e=t:option(DummyValue,"local_port",translate("Local Port"))
+e=t:option(DummyValue,"local_port",translate("Local Host Port"))
 e.width="10%"
-e=t:option(DummyValue,"enable_http_auth",translate("Http Auth"))
-e.width="15%"
 e=t:option(DummyValue,"use_encryption",translate("Use Encryption"))
 e.width="15%"
 e.cfgvalue=function(t,n)

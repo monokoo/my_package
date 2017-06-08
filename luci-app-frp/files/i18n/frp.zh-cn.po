@@ -10,10 +10,16 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid "Frp Setting"
-msgstr "Frp 内网穿透"
+msgstr "Frp内网穿透"
 
 msgid "Frp is a fast reverse proxy to help you expose a local server behind a NAT or firewall to the internet."
-msgstr "frp 是一个可用于内网穿透的高性能的反向代理应用，支持 tcp, udp, http, https 协议。"
+msgstr "Frp是一个可用于内网穿透的高性能的反向代理应用，支持 tcp, udp, http, https 协议。"
+
+msgid "Vhost HTTP Port"
+msgstr "HTTP穿透服务端口"
+
+msgid "Vhost HTTPS Port"
+msgstr "HTTPS穿透服务端口"
 
 msgid "Service registration interval"
 msgstr "服务注册间隔"
@@ -63,16 +69,19 @@ msgstr "服务列表"
 msgid "Service Remark Name"
 msgstr "服务备注名"
 
-msgid "Frp Type"
-msgstr "Frp 类型"
+msgid "Frp Protocol Type"
+msgstr "Frp 协议类型"
+
+msgid "Domain/Subdomain"
+msgstr "域名/子域名"
 
 msgid "Remote Port"
 msgstr "远程主机端口"
 
-msgid "IP Address"
+msgid "Local Host Address"
 msgstr "内网主机地址"
 
-msgid "Local Port"
+msgid "Local Host Port"
 msgstr "内网主机端口"
 
 msgid "Http Auth"
@@ -88,10 +97,13 @@ msgid "Domain Type"
 msgstr "域名类型"
 
 msgid "Custom Domains"
-msgstr "域名"
+msgstr "自定义域名"
 
 msgid "subdomain_host must be configured in server: frps in advance."
 msgstr "使用子域名时，必须预先在服务端配置主域名(subdomain_host)参数。"
+
+msgid "If SubDomain is used, Custom Domains couldn't be subdomain or wildcard domain of the maindomain(subdomain_host)."
+msgstr "如果服务端配置了主域名(subdomain_host)，则自定义域名不能是属于主域名(subdomain_host) 的子域名或者泛域名。"
 
 msgid "Use Plugin"
 msgstr "使用插件"
@@ -130,7 +142,7 @@ msgid "Rewriting the Host Header"
 msgstr "修改 Host Header"
 
 msgid "Http username and password are safety certification for http protocol."
-msgstr "使用HTTP 用户名、密码作为http协议时的安全验证"
+msgstr "使用HTTP 用户名、密码来安全访问web服务"
 
 msgid "Frp can rewrite http requests with a modified Host header."
 msgstr "Frp 可以动态修改 http 请求中的 host 字段"
@@ -151,7 +163,7 @@ msgid "Client Log"
 msgstr "客户端日志"
 
 msgid "The Frp service is running."
-msgstr "Frp服务正在运行中"
+msgstr "正在运行中"
 
 msgid "The Frp service is not running."
 msgstr "未运行"
@@ -164,3 +176,6 @@ msgstr "警告"
 
 msgid "Config Frp"
 msgstr "配置Frp参数"
+
+msgid "Both the above two Domain types"
+msgstr "同时使用以上两种域名类型"
