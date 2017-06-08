@@ -59,6 +59,7 @@ start(){
 		add_rule DROP
 	else
 		add_rule ACCEPT
+		iptables -t filter -A WEB_RESTRICTION -j DROP
 	fi
 
 	
