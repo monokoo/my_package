@@ -10,6 +10,7 @@
 START=99
 
 CONFIG=webrestriction
+MACFILE=/usr/share/control/maclist
 
 uci_get_by_type() {
 	local index=0
@@ -33,8 +34,8 @@ load_config() {
 }
 
 add_rule(){
-action=$1
-for i in $(seq 0 100)
+	action=$1
+	for i in $(seq 0 100)
 	do
 		enable=$(uci_get_by_type macbind enable '' $i)
 		macaddr=$(uci_get_by_type macbind macaddr '' $i)
@@ -42,31 +43,69 @@ for i in $(seq 0 100)
 			break
 		fi
 		if [ "$enable" == "1" ]; then
-        iptables -t filter -A WEB_RESTRICTION -m mac --mac-source $macaddr -j $action
-        unset "$macaddr"
-    fi
-done
+			[ ! -f "$MACFILE" ] && cat /dev/null > $MACFILE
+			echo $macaddr >> $MACFILE
+			iptables -t filter -A WEB_RESTRICTION -m mac --mac-source $macaddr -j $action
+			if [ "$limit_type" == "blacklist" ]; then
+				#禁止使用ss访问外网
+				iptables -t nat -I SHADOWSOCKS $((i+1)) -m mac --mac-source $macaddr -j RETURN
+			else
+				iptables -t nat -I SHADOWSOCKS $((i+1)) -m mac ! --mac-source $macaddr -j RETURN
+			fi
+			unset "$macaddr"
+		fi
+	done
 }
 
+del_ss_rule(){
+	blackMacAdd=$(iptables -t nat -L SHADOWSOCKS |grep -w MAC |awk -F ' ' '{print $7}')
+	whiteMacAdd=$(iptables -t nat -L SHADOWSOCKS |grep -w MAC |awk -F ' ' '{print $8}')
+	if [ "$limit_type" == "blacklist" ]; then
+		[ -n "$blackMacAdd" ] && {
+			for macaddr in $blackMacAdd
+			do
+				iptables -t nat -D SHADOWSOCKS -m mac --mac-source $blackMacAdd -j RETURN
+			done
+		}
+	else
+		[ -n "$whiteMacAdd" ] && {
+			for macaddr in $whiteMacAdd
+			do
+				iptables -t nat -D SHADOWSOCKS -m mac ! --mac-source $whiteMacAdd -j RETURN
+			done
+		}
+	fi
+}
+
+limit_type=$(uci get webrestriction.@basic[0].limit_type)
+echo limit_type is $limit_type
 
 start(){
 	! load_config && exit 0
 	iptables -L FORWARD|grep -c WEB_RESTRICTION 2>/dev/null && [ $? -eq 0 ] && exit 0;
 	iptables -P FORWARD DROP
 	iptables -t filter -N WEB_RESTRICTION
-	limit_type=$(uci_get_by_type basic limit_type)
+	#limit_type=$(uci_get_by_type basic limit_type)
+	#limit_type=$(uci get webrestriction.@basic[0].limit_type)
 	if [ "$limit_type" == "blacklist" ]; then
-		add_rule DROP
+		add_rule DROP		
 	else
 		add_rule ACCEPT
 		iptables -t filter -A WEB_RESTRICTION -j DROP
 	fi
 
-	
-	iptables -t filter -I FORWARD -m comment --comment "Rule For Control" -j WEB_RESTRICTION
+	#获取FORWARD ACCEPT规则行号
+	FA_INDEX=`iptables -t filter -L FORWARD|tail -n +3|sed -n -e '/^ACCEPT/='`
+	if [ -n "$FA_INDEX" ]; then
+			let FA_INDEX+=1
+	fi
+	#确保添加到FORWARD ACCEPT规则之后
+	iptables -t filter -I FORWARD $FA_INDEX -m comment --comment "Rule For Control" -j WEB_RESTRICTION
+
 }
 stop(){
-  iptables -t filter -D FORWARD -m comment --comment "Rule For Control" -j WEB_RESTRICTION
-  iptables -t filter -F WEB_RESTRICTION
-  iptables -t filter -X WEB_RESTRICTION
+	iptables -t filter -D FORWARD -m comment --comment "Rule For Control" -j WEB_RESTRICTION
+	iptables -t filter -F WEB_RESTRICTION
+	iptables -t filter -X WEB_RESTRICTION
+	del_ss_rule 
 }
