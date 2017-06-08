@@ -21,11 +21,32 @@ msgstr "HTTP穿透服务端口"
 msgid "Vhost HTTPS Port"
 msgstr "HTTPS穿透服务端口"
 
+msgid "Connect frps by HTTP PROXY"
+msgstr "通过代理连接 frps"
+
+msgid "frpc can connect frps using HTTP PROXY"
+msgstr "frpc 支持通过 HTTP PROXY 和 frps 进行通信"
+
+msgid "HTTP PROXY"
+msgstr "HTTP代理"
+
+msgid "URL routing"
+msgstr "URL 路由"
+
+msgid "Enable URL routing"
+msgstr "使用 URL 路由"
+
+msgid "Frp support forward http requests to different backward web services by url routing."
+msgstr "Frp 支持根据请求的 URL 路径路由转发到不同的后端服务。"
+
+msgid "Http requests with url prefix /news will be forwarded to this service."
+msgstr "例如指定 locations = /news，则所有 URL 以 /news 开头的请求都会被转发到这个服务。"
+
 msgid "Service registration interval"
 msgstr "服务注册间隔"
 
-msgid "unit: min"
-msgstr "单位：分钟"
+msgid "0 means disable this feature, unit: min"
+msgstr "0表示禁用定时注册功能，单位：分钟"
 
 msgid "Time duration between server of frpc and frps mustn't exceed 15 minutes."
 msgstr "frpc 所在机器和 frps 所在机器的时间相差不能超过 15 分钟。"
@@ -156,8 +177,8 @@ msgstr "将 frpc 与 frps 之间的通信内容加密传输，将会有效防止
 msgid "The contents will be compressed to speed up the traffic forwarding speed, but this will consume some additional cpu resources."
 msgstr "对传输内容进行压缩，加快流量转发速度，但是会额外消耗一些 cpu 资源。"
 
-msgid "Please ensure the remark name is unique."
-msgstr "请确保备注名的唯一性"
+msgid "<font color=\"red\">Please ensure the remark name is unique.</font>"
+msgstr "<font color=\"red\">请确保备注名的唯一性</font>"
 
 msgid "Client Log"
 msgstr "客户端日志"

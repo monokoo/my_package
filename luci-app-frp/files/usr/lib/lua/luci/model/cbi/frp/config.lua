@@ -54,6 +54,10 @@ e:depends("type","udp")
 e:depends("type","http")
 e:depends("type","https")
 e:depends("enable_plugin",0)
+e = t:option(Flag, "enable_locations", translate("Enable URL routing"), translate("Frp support forward http requests to different backward web services by url routing."))
+e:depends("type","http")
+e = t:option(Value, "locations ", translate("URL routing"), translate("Http requests with url prefix /news will be forwarded to this service."))
+e:depends("enable_locations",1)
 e = t:option(ListValue, "plugin", translate("Choose Plugin"))
 e:value("http_proxy",translate("http_proxy"))
 e:value("unix_domain_socket",translate("unix_domain_socket"))
@@ -88,6 +92,6 @@ e.rmempty = false
 e = t:option(Flag, "use_compression", translate("Use Compression"), translate("The contents will be compressed to speed up the traffic forwarding speed, but this will consume some additional cpu resources."))
 e.default = "1"
 e.rmempty = false
-e = t:option(Value, "remark", translate("Service Remark Name"), translate("Please ensure the remark name is unique."))
+e = t:option(Value, "remark", translate("Service Remark Name"), translate("<font color=\"red\">Please ensure the remark name is unique.</font>"))
 e.rmempty = false
 return a

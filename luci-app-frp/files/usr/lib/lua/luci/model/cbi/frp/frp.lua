@@ -34,6 +34,14 @@ e.rmempty=false
 e=t:option(Flag, "login_fail_exit", translate("Exit program when first login failed"),translate("decide if exit program when first login failed, otherwise continuous relogin to frps."))
 e.default = "1"
 e.rmempty=false
+e=t:option(Flag, "enable_http_proxy", translate("Connect frps by HTTP PROXY"), translate("frpc can connect frps using HTTP PROXY"))
+e.default = "0"
+e.rmempty=false
+e=t:option(Value, "http_proxy", translate("HTTP PROXY"))
+e.datatype="uinteger"
+e.placeholder="http://user:pwd@192.168.1.128:8080"
+e:depends("enable_http_proxy",1)
+e.optional=false
 e=t:option(Flag, "enable_cpool", translate("Enable Connection Pool"), translate("This feature is fit for a large number of short connections."))
 e.rmempty=false
 e=t:option(Value, "pool_count", translate("Connection Pool"), translate("Connections will be established in advance."))
@@ -41,7 +49,7 @@ e.datatype="uinteger"
 e.default = "1"
 e:depends("enable_cpool",1)
 e.optional=false
-e=t:option(Value,"time",translate("Service registration interval"),translate("unit: min"))
+e=t:option(Value,"time",translate("Service registration interval"),translate("0 means disable this feature, unit: min"))
 e.datatype="uinteger"
 e.default=30
 e.rmempty=false
