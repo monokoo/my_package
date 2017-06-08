@@ -1,5 +1,5 @@
 
 config basic
 	option enable '0'
-	option timeon '00:00'
-	option timeoff '23:59'
+	option limit_type 'blacklist'
+
