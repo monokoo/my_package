@@ -11,7 +11,7 @@ e=a:section(TypedSection,"basic",translate("全局设置"))
 e.anonymous=true
 t=e:option(Flag,"enable",translate("开启"))
 t.rmempty=false
-t=e:option(ListValue,"limit_type",translate("限制类型"))
+t=e:option(ListValue,"limit_type",translate("限制模式"))
 t.default="blacklist"
 t:value("whitelist",translate("白名单"))
 t:value("blacklist",translate("Blacklist"))
