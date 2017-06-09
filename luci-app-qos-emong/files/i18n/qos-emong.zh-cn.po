@@ -30,8 +30,8 @@ msgstr "总上传带宽(Kbps)"
 msgid "Single IP or IP Segment Speed Limit"
 msgstr "单IP或者IP段限速"
 
-msgid "For example: 192.168.4.100 192.168.4.100/25, Please do not use 192.168.4.100-192.168.4.150, unit Kbps,1Mbps=1024Kbps"
-msgstr "内部IP地址可写成192.168.4.100或192.168.4.100/25，但不要使用192.168.4.100-192.168.4.150,单位Kbps,1Mbps=1024Kbps"
+msgid "For example: 192.168.1.100 192.168.1.100/25, Please do not use 192.168.1.100-192.168.1.150, unit Kbps,1Mbps=1024Kbps"
+msgstr "内部IP地址可写成192.168.1.100或192.168.1.100/25，但不要使用192.168.1.100-192.168.1.150,单位Kbps,1Mbps=1024Kbps"
 
 msgid "Maximum Download Speed"
 msgstr "最大下载速度"
