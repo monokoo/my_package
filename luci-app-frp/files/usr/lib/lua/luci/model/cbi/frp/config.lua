@@ -57,6 +57,7 @@ e:depends("enable_plugin",0)
 e = t:option(Flag, "enable_locations", translate("Enable URL routing"), translate("Frp support forward http requests to different backward web services by url routing."))
 e:depends("type","http")
 e = t:option(Value, "locations ", translate("URL routing"), translate("Http requests with url prefix /news will be forwarded to this service."))
+e.default="locations=/"
 e:depends("enable_locations",1)
 e = t:option(ListValue, "plugin", translate("Choose Plugin"))
 e:value("http_proxy",translate("http_proxy"))

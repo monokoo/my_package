@@ -40,7 +40,7 @@ msgid "Frp support forward http requests to different backward web services by u
 msgstr "Frp 支持根据请求的 URL 路径路由转发到不同的后端服务。"
 
 msgid "Http requests with url prefix /news will be forwarded to this service."
-msgstr "例如指定 locations = /news，则所有 URL 以 /news 开头的请求都会被转发到这个服务。"
+msgstr "例如指定 locations=/news，则所有 URL 以 /news 开头的请求都会被转发到这个服务。"
 
 msgid "Service registration interval"
 msgstr "服务注册间隔"
