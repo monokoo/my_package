@@ -173,7 +173,7 @@ add_rule() {
 	#获取SHADOWSOCKS规则行号
 	SS_INDEX=`iptables -t nat -L PREROUTING|tail -n +3|sed -n -e '/^SHADOWSOCKS/='`
 	if [ -n "SS_INDEX" ]; then
-		let SS_INDEX+=1
+		let SS_INDEX+=2
 	fi
 	#确保添加到SHADOWSOCKS规则之后
 	iptables -t nat -I PREROUTING $SS_INDEX -p tcp -j KOOLPROXY
