@@ -4,6 +4,8 @@ uci -q batch <<-EOF >/dev/null
 	delete ucitrack.@webrestriction[-1]
 	add ucitrack webrestriction
 	set ucitrack.@webrestriction[-1].init=webrestriction
+	del_list ucitrack.@shadowsocks[0].affects=webrestriction
+	add_list ucitrack.@shadowsocks[0].affects=webrestriction
 	commit ucitrack
 	delete firewall.webrestriction
 	set firewall.webrestriction=include

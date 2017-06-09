@@ -10,7 +10,6 @@
 START=99
 
 CONFIG=webrestriction
-MACFILE=/usr/share/control/maclist
 
 uci_get_by_type() {
 	local index=0
@@ -43,15 +42,16 @@ add_rule(){
 			break
 		fi
 		if [ "$enable" == "1" ]; then
-			[ ! -f "$MACFILE" ] && cat /dev/null > $MACFILE
-			echo $macaddr >> $MACFILE
 			iptables -t filter -A WEB_RESTRICTION -m mac --mac-source $macaddr -j $action
-			if [ "$limit_type" == "blacklist" ]; then
-				#禁止使用ss访问外网
-				iptables -t nat -I SHADOWSOCKS $((i+1)) -m mac --mac-source $macaddr -j RETURN
-			else
-				iptables -t nat -I SHADOWSOCKS $((i+1)) -m mac ! --mac-source $macaddr -j RETURN
-			fi
+			ss=`iptables -t nat -C PREROUTING -p tcp -j SHADOWSOCKS 2>/dev/null`
+			[ $? -eq 0 ] && {
+				if [ "$limit_type" == "blacklist" ]; then
+					#禁止使用ss访问外网
+					iptables -t nat -I SHADOWSOCKS $((i+1)) -m mac --mac-source $macaddr -j RETURN
+				else
+					iptables -t nat -I SHADOWSOCKS $((i+1)) -m mac ! --mac-source $macaddr -j RETURN
+				fi
+			}
 			unset "$macaddr"
 		fi
 	done
@@ -78,15 +78,12 @@ del_ss_rule(){
 }
 
 limit_type=$(uci get webrestriction.@basic[0].limit_type)
-echo limit_type is $limit_type
 
 start(){
 	! load_config && exit 0
 	iptables -L FORWARD|grep -c WEB_RESTRICTION 2>/dev/null && [ $? -eq 0 ] && exit 0;
 	iptables -P FORWARD DROP
 	iptables -t filter -N WEB_RESTRICTION
-	#limit_type=$(uci_get_by_type basic limit_type)
-	#limit_type=$(uci get webrestriction.@basic[0].limit_type)
 	if [ "$limit_type" == "blacklist" ]; then
 		add_rule DROP		
 	else
@@ -107,5 +104,5 @@ stop(){
 	iptables -t filter -D FORWARD -m comment --comment "Rule For Control" -j WEB_RESTRICTION
 	iptables -t filter -F WEB_RESTRICTION
 	iptables -t filter -X WEB_RESTRICTION
-	del_ss_rule 
+	iptables -t nat -C PREROUTING -p tcp -j SHADOWSOCKS 2>/dev/null && [ $? -eq 0 ] && del_ss_rule
 }
