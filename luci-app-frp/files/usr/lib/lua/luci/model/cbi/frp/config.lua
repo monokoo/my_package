@@ -42,7 +42,7 @@ e:depends("type","tcp")
 e = t:option(Value, "local_ip", translate("Local Host Address"))
 luci.sys.net.arptable(function(x)
 e:value(x["IP address"])
-end)  
+end)
 e.datatype = "ip4addr"
 e:depends("type","udp")
 e:depends("type","http")

@@ -11,12 +11,12 @@ if running then
 	xunleiinfo = luci.sys.exec("wget http://localhost:9000/getsysinfo -O - 2>/dev/null")
 	--upinfo = luci.sys.exec("wget -qO- http://dl.lazyzhu.com/file/Thunder/Xware/latest 2>/dev/null")
         button = "&nbsp;&nbsp;&nbsp;&nbsp;" .. translate("运行状态：") .. xunleiinfo	
-	m = Map("xunlei", translate("Xware"), translate("迅雷远程下载 正在运行...") .. button)
+	m = Map("xunlei", translate("Xware"), translate("迅雷远程下载 <font color=\"green\">正在运行...</font>") .. button)
 	string.gsub(string.sub(xunleiinfo, 2, -2),'[^,]+',function(w) table.insert(tblXLInfo, w) end)
 	
-	detailInfo = [[<p>启动信息：]] .. xunleiinfo .. [[</p>]]
+	detailInfo = [[<p style="color:blue">启动信息：]] .. xunleiinfo .. [[</p>]]
 	if tonumber(tblXLInfo[1]) == 0 then
-	  detailInfo = detailInfo .. [[<p>状态正常</p>]]
+	  detailInfo = detailInfo .. [[<p style="color:green">状态正常</p>]]
 	else
 	  detailInfo = detailInfo .. [[<p style="color:red">执行异常</p>]]
 	end
@@ -24,29 +24,29 @@ if running then
 	if tonumber(tblXLInfo[2]) == 0 then
 	  detailInfo = detailInfo .. [[<p style="color:red">网络异常</p>]]
 	else
-	  detailInfo = detailInfo .. [[<p>网络正常</p>]]
+	  detailInfo = detailInfo .. [[<p style="color:green">网络正常</p>]]
 	end
 	
 	if tonumber(tblXLInfo[4]) == 0 then
-	  detailInfo = detailInfo .. [[<p>未绑定]].. [[&nbsp;&nbsp;激活码：]].. tblXLInfo[5] ..[[</p>]]	  
+	  detailInfo = detailInfo .. [[<p style="color:red">未绑定]].. [[&nbsp;&nbsp;激活码：]].. tblXLInfo[5] ..[[</p>]]	  
 	else
-	  detailInfo = detailInfo .. [[<p>已绑定</p>]]
+	  detailInfo = detailInfo .. [[<p style="color:green">已绑定</p>]]
 	end
 
 	if tonumber(tblXLInfo[6]) == 0 then
 	  detailInfo = detailInfo .. [[<p style="color:red">磁盘挂载检测失败</p>]]
 	else
-	  detailInfo = detailInfo .. [[<p>磁盘挂载检测成功</p>]]
+	  detailInfo = detailInfo .. [[<p style="color:green">磁盘挂载检测成功</p>]]
 	end	
 else
-	m = Map("xunlei", translate("Xware"), translate("[迅雷远程下载 尚未启动]"))
+	m = Map("xunlei", translate("Xware"), translate("[迅雷远程下载 <font color=\"red\">尚未启动]</font>"))
 end
 
 -----------
 --Xware--
 -----------
 
-s = m:section(TypedSection, "xunlei", translate("Xware 设置"),translate("第一次启动将下载迅雷启动程序，时间稍长，请稍安勿躁..."))
+s = m:section(TypedSection, "xunlei", translate("Xware 设置"),translate("第一次启动将下载迅雷启动程序，时间稍长，请稍安勿躁...</br>如果下载到错误版本，请手动删除\"/etc/xware/xlfile\"文件。"))
 s.anonymous = true
 
 s:tab("basic",  translate("Settings"))
@@ -61,8 +61,8 @@ device = s:taboption("basic", Value, "device", translate("挂载点"), translate
 for i, dev in ipairs(devices) do
 	device:value(dev)
 end
-if nixio.fs.access("/etc/config/xunlei") then
-        device.titleref = luci.dispatcher.build_url("admin", "system", "fstab")
+if fs.access("/etc/config/xunlei") then
+	device.titleref = luci.dispatcher.build_url("admin", "system", "fstab")
 end
 if not fs.access("/etc/xware/xlfile") then
 file = s:taboption("basic", Value, "file", translate("迅雷程序安装路径"), translate("迅雷程序安装路径，例如：/mnt/sda1，将会安装在/mnt/sda1/xunlei 下。"))
