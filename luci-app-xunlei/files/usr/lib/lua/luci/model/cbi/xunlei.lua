@@ -46,7 +46,7 @@ end
 --Xware--
 -----------
 
-s = m:section(TypedSection, "xunlei", translate("Xware 设置"))
+s = m:section(TypedSection, "xunlei", translate("Xware 设置"),translate("第一次启动将下载迅雷启动程序，时间稍长，请稍安勿躁..."))
 s.anonymous = true
 
 s:tab("basic",  translate("Settings"))
@@ -57,74 +57,47 @@ enable.rmempty = false
 local devices = {}
 util.consume((fs.glob("/mnt/sd??*")), devices)
 
-device = s:taboption("basic", Value, "device", translate("挂载点"), translate("<br />迅雷程序下载目录所在的“挂载点”。"))
+device = s:taboption("basic", Value, "device", translate("挂载点"), translate("迅雷程序下载目录所在的“挂载点”。"))
 for i, dev in ipairs(devices) do
 	device:value(dev)
 end
 if nixio.fs.access("/etc/config/xunlei") then
         device.titleref = luci.dispatcher.build_url("admin", "system", "fstab")
 end
-
-file = s:taboption("basic", Value, "file", translate("迅雷程序安装路径"), translate("<br />迅雷程序安装路径，例如：/mnt/sda1，将会安装在/mnt/sda1/xunlei 下。"))
+if not fs.access("/etc/xware/xlfile") then
+file = s:taboption("basic", Value, "file", translate("迅雷程序安装路径"), translate("迅雷程序安装路径，例如：/mnt/sda1，将会安装在/mnt/sda1/xunlei 下。"))
 for i, dev in ipairs(devices) do
 	file:value(dev)
 end
 
-upinfo = luci.sys.exec("cat /tmp/etc/xlver")
-
-op = s:taboption("basic", Button, "upxlast", translate("查看更新."),translate("<strong><font color=\"red\">当前最新版：</font></strong>") .. upinfo)
-op.inputstyle = "apply"
-
-op.write = function(self, section)
-	opstatus = (luci.sys.exec("/etc/xware/xlatest" %{ self.option }) == 0)
-	if  opstatus then
-	self.inputstyle = "apply"
-	end
-luci.model.uci.cursor()
-end
-
-up = s:taboption("basic", Flag, "up", translate("升级迅雷远程下载"), translate("<script type=\"text/javascript\"></script><input type=\"button\" class=\"cbi-button cbi-button-apply\" value=\"查看更新.\" onclick=\"window.open('http://dl.lazyzhu.com/file/Thunder/Xware/latest')\" />"))
-up.rmempty = false
-
-zurl = s:taboption("basic", Value, "url", translate("地址"), translate("自定义迅雷远程下载地址。默认：http://dl.lazyzhu.com/file/Thunder/Xware"))
+zurl = s:taboption("basic", Value, "url", translate("地址"), translate("自定义迅雷远程下载地址。默认：https://github.com/monokoo/Xware/raw/master/software"))
 zurl.rmempty = false
-zurl:value("http://dl.lazyzhu.com/file/Thunder/Xware")
+zurl:value("https://github.com/monokoo/Xware/raw/master/software")
 
-zversion = s:taboption("basic", Flag, "zversion", translate("自定义版本"), translate("自定义迅雷远程下载版本。"))
-zversion.rmempty = false
-zversion:depends("up",1)
-
-ver = s:taboption("basic", Value, "ver", translate("版本号"), translate("自定义迅雷远程下载版本号。"))
-ver:depends("zversion",1)
-ver:value("1.0.11")
-ver:value("1.0.27")
-ver:value("1.0.28")
-ver:value("1.0.29")
-ver:value("1.0.30")
 
 vod = s:taboption("basic", Flag, "vod", translate("删除迅雷VOD服务器"), translate("删除迅雷VOD服务器。"))
 vod.rmempty = false
 
 xwareup = s:taboption("basic", Value, "xware", translate("Xware 程序版本："),translate("<br />ar71xx系列的选择默认版本，其他型号的路由根据CPU选择。"))
 xwareup.rmempty = false
-xwareup:value("Xware_mipseb_32_uclibc.tar.gz", translate("Xware_mipseb_32_uclibc.tar.gz"))
-xwareup:value("Xware_mipsel_32_uclibc.tar.gz", translate("Xware_mipsel_32_uclibc.tar.gz"))
-xwareup:value("Xware_x86_32_glibc.tar.gz", translate("Xware_x86_32_glibc.tar.gz"))
-xwareup:value("Xware_x86_32_uclibc.tar.gz", translate("Xware_x86_32_uclibc.tar.gz"))
-xwareup:value("Xware_pogoplug.tar.gz", translate("Xware_pogoplug.tar.gz"))
-xwareup:value("Xware_armeb_v6j_uclibc.tar.gz", translate("Xware_armeb_v6j_uclibc.tar.gz"))
-xwareup:value("Xware_armeb_v7a_uclibc.tar.gz", translate("Xware_armeb_v7a_uclibc.tar.gz"))
-xwareup:value("Xware_armel_v5t_uclibc.tar.gz", translate("Xware_armel_v5t_uclibc.tar.gz"))
-xwareup:value("Xware_armel_v5te_android.tar.gz", translate("Xware_armel_v5te_android.tar.gz"))
-xwareup:value("Xware_armel_v5te_glibc.tar.gz", translate("Xware_armel_v5te_glibc.tar.gz"))
-xwareup:value("Xware_armel_v6j_uclibc.tar.gz", translate("Xware_armel_v6j_uclibc.tar.gz"))
-xwareup:value("Xware_armel_v7a_uclibc.tar.gz", translate("Xware_armel_v7a_uclibc.tar.gz"))
-xwareup:value("Xware_asus_rt_ac56u.tar.gz", translate("Xware_asus_rt_ac56u.tar.gz"))
-xwareup:value("Xware_cubieboard.tar.gz", translate("Xware_cubieboard.tar.gz"))
-xwareup:value("Xware_iomega_cloud.tar.gz", translate("Xware_iomega_cloud.tar.gz"))
-xwareup:value("Xware_my_book_live.tar.gz", translate("Xware_my_book_live.tar.gz"))
-xwareup:value("Xware_netgear_6300v2.tar.gz", translate("Xware_netgear_6300v2.tar.gz"))
-
+xwareup:value("Xware1.0.31_mipseb_32_uclibc.zip", translate("Xware1.0.31_mipseb_32_uclibc.zip"))
+xwareup:value("Xware1.0.31_mipsel_32_uclibc.zip", translate("Xware1.0.31_mipsel_32_uclibc.zip"))
+xwareup:value("Xware1.0.31_x86_32_glibc.zip", translate("Xware1.0.31_x86_32_glibc.zip"))
+xwareup:value("Xware1.0.31_x86_32_uclibc.zip", translate("Xware1.0.31_x86_32_uclibc.zip"))
+xwareup:value("Xware1.0.31_pogoplug.zip", translate("Xware1.0.31_pogoplug.zip"))
+xwareup:value("Xware1.0.31_armeb_v6j_uclibc.zip", translate("Xware1.0.31_armeb_v6j_uclibc.zip"))
+xwareup:value("Xware1.0.31_armeb_v7a_uclibc.zip", translate("Xware1.0.31_armeb_v7a_uclibc.zip"))
+xwareup:value("Xware1.0.31_armel_v5t_uclibc.zip", translate("Xware1.0.31_armel_v5t_uclibc.zip"))
+xwareup:value("Xware1.0.31_armel_v5te_android.zip", translate("Xware1.0.31_armel_v5te_android.zip"))
+xwareup:value("Xware1.0.31_armel_v5te_glibc.zip", translate("Xware1.0.31_armel_v5te_glibc.zip"))
+xwareup:value("Xware1.0.31_armel_v6j_uclibc.zip", translate("Xware1.0.31_armel_v6j_uclibc.zip"))
+xwareup:value("Xware1.0.31_armel_v7a_uclibc.zip", translate("Xware1.0.31_armel_v7a_uclibc.zip"))
+xwareup:value("Xware1.0.31_asus_rt_ac56u.zip", translate("Xware1.0.31_asus_rt_ac56u.zip"))
+xwareup:value("Xware1.0.31_cubieboard.zip", translate("Xware1.0.31_cubieboard.zip"))
+xwareup:value("Xware1.0.31_iomega_cloud.zip", translate("Xware1.0.31_iomega_cloud.zip"))
+xwareup:value("Xware1.0.31_my_book_live.zip", translate("Xware1.0.31_my_book_live.zip"))
+xwareup:value("Xware1.0.31_netgear_6300v2.zip", translate("Xware1.0.31_netgear_6300v2.zip"))
+end
 s:taboption("basic", DummyValue,"opennewwindow" ,translate("<br /><p align=\"justify\"><script type=\"text/javascript\"></script><input type=\"button\" class=\"cbi-button cbi-button-apply\" value=\"获取启动信息\" onclick=\"window.open('http://'+window.location.host+':9000/getsysinfo')\" /></p>"), detailInfo)
 
 
@@ -133,9 +106,8 @@ s:taboption("basic", DummyValue,"opennewwindow" ,translate("<br /><p align=\"jus
 s:taboption("basic", DummyValue,"opennewwindow" ,translate("<br /><p align=\"justify\"><script type=\"text/javascript\"></script><input type=\"button\" class=\"cbi-button cbi-button-apply\" value=\"迅雷论坛\" onclick=\"window.open('http://luyou.xunlei.com/forum-51-1.html')\" /></p>"))
 
 s:tab("editconf_mounts", translate("挂载点配置"))
-editconf_mounts = s:taboption("editconf_mounts", Value, "_editconf_mounts", 
-	translate("挂载点配置(一般情况下只需填写你的挂载点目录即可)"), 
-	translate("Comment Using #"))
+editconf_mounts = s:taboption("editconf_mounts", TextValue, "_editconf_mounts")
+editconf_mounts.description=translate("一般情况下只需填写你的挂载点目录即可，注释用 #")
 editconf_mounts.template = "cbi/tvalue"
 editconf_mounts.rows = 20
 editconf_mounts.wrap = "off"
@@ -156,9 +128,8 @@ function editconf_mounts.write(self, section, value1)
 end
 
 s:tab("editconf_etm", translate("Xware 配置"))
-editconf_etm = s:taboption("editconf_etm", Value, "_editconf_etm", 
-	translate("Xware 配置："), 
-	translate("注释用“ ; ”"))
+editconf_etm = s:taboption("editconf_etm", TextValue, "_editconf_etm")
+editconf_etm.description=translate("注释用“ ; ”")
 editconf_etm.template = "cbi/tvalue"
 editconf_etm.rows = 20
 editconf_etm.wrap = "off"
@@ -178,9 +149,8 @@ function editconf_etm.write(self, section, value2)
 end
 
 s:tab("editconf_download", translate("下载配置"))
-editconf_download = s:taboption("editconf_download", Value, "_editconf_download", 
-	translate("下载配置"), 
-	translate("注释用“ ; ”"))
+editconf_download = s:taboption("editconf_download", TextValue, "_editconf_download")
+editconf_download.description=translate("注释用“ ; ”")
 editconf_download.template = "cbi/tvalue"
 editconf_download.rows = 20
 editconf_download.wrap = "off"
