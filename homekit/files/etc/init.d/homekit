@@ -1,0 +1,44 @@
+#!/bin/sh /etc/rc.common
+#
+# Copyright (C) 2015 OpenWrt-dist
+# Copyright (C) 2016 fw867 <ffkykzs@gmail.com>
+#
+# This is free software, licensed under the GNU General Public License v3.
+# See /LICENSE for more information.
+#
+
+START=83
+
+CONFIG=homekit
+LOGFILE="/var/log/$CONFIG.log"
+
+uci_get_by_type() {
+	local index=0
+	if [ -n $4 ]; then
+		index=$4
+	fi
+	local ret=$(uci get $CONFIG.@$1[$index].$2 2>/dev/null)
+	echo ${ret:=$3}
+}
+
+is_true() {
+	case $1 in
+		1|on|true|yes|enabled) echo 0;;
+		*) echo 1;;
+	esac
+}
+
+load_config() {
+	ENABLED=$(uci_get_by_type global enabled)
+	return $(is_true $ENABLED)
+}
+
+start(){
+  ! load_config && exit 0
+  /usr/sbin/PHK >> $LOGFILE &
+}
+
+stop(){
+  killall -q -9 PHK
+}
+
