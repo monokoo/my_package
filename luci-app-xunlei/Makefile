@@ -61,6 +61,9 @@ define Package/luci-app-xunlei/install
 	$(INSTALL_DATA) ./files/usr/lib/lua/luci/controller/xunlei.lua $(1)/usr/lib/lua/luci/controller/xunlei.lua
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/model/cbi
 	$(INSTALL_DATA) ./files/usr/lib/lua/luci/model/cbi/xunlei.lua $(1)/usr/lib/lua/luci/model/cbi/xunlei.lua
+	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/view
+	$(INSTALL_DATA) ./files/usr/lib/lua/luci/view/xunlei_status.htm $(1)/usr/lib/lua/luci/view/xunlei_status.htm
+
 endef
 
 $(eval $(call BuildPackage,luci-app-xunlei))
