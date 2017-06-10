@@ -132,10 +132,10 @@ msgstr "使用插件"
 msgid "If plugin is defined, local_ip and local_port is useless, plugin will handle connections got from frps."
 msgstr "使用插件模式时，本地 IP 地址和端口无需配置，插件将会处理来自服务端的链接请求。"
 
-msgid "On"
+msgid "ON"
 msgstr "开启"
 
-msgid "Off"
+msgid "OFF"
 msgstr "关闭"
 
 msgid "Choose Plugin"
