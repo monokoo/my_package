@@ -1,0 +1,23 @@
+<script type="text/javascript">//<![CDATA[
+XHR.poll(5, '<%=url([[admin]], [[services]], [[xunlei]], [[status]])%>', null,
+	function(x, data) {
+		var tb = document.getElementById('xunlei_status');
+		if (data && tb) {
+			if (data.running) {
+				var links = '<em><b><font color=green><%:正在运行中...%></font></b></em>';
+				tb.innerHTML = links;
+			} else {
+				tb.innerHTML = '<em><b><font color=red><%:尚未启动%></font></b></em>';
+			}
+		}
+	}
+);
+//]]>
+</script>
+<style>.mar-10 {margin-left: 50px; margin-right: 10px;}</style>
+<fieldset class="cbi-section">
+	<legend><%:迅雷运行状态%></legend>
+	<p id="xunlei_status">
+		<em><%:Collecting data...%></em>
+	</p>
+</fieldset>

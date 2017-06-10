@@ -25,7 +25,11 @@ start() {
 	ln -s "$path1" /tmp/etc/thunder_mounts.cfg
 	ln -s "$path2" /tmp/etc/etm.cfg
 	ln -s "$path3" /tmp/etc/download.cfg
-
+	
+	local_port=$(cat $path3 | grep ptl_setting.tcp_port | awk -F'=' '{print $2}')
+	echo local_port is $local_port
+	[ "$local_port"="1080" ] && sed -i 's/ptl_setting.tcp_port=1080/ptl_setting.tcp_port=1081/' $path3
+	
 	"$installdir"/xunlei/portal
 	sleep 5
 }

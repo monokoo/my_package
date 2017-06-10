@@ -14,7 +14,7 @@ URL=$(uci get xunlei.config.url)
 wget --no-check-certificate -q ${URL}/${FILE}
 
 rm -rf portal && rm -rf lib && unzip ${FILE}
-touch /etc/xware/xlfile
+[ -f "${DIR}/portal" ] && touch /etc/xware/xlfile
 chmod +x *
 rm -rf ${FILE}
 rm -rf $installdir/xunlei/cfg/thunder_mounts.cfg>> /dev/null 2>&1
