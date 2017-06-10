@@ -223,7 +223,7 @@ start() {
 	
 	viedoswitch=$(config_t_get global viedoswitch 1)
 	local arg=
-	[ $viedoswitch -eq 0 ] && arg="--video"
+	[ $viedoswitch -eq 1 ] && arg="--video"
 	
 	/usr/share/koolproxy/koolproxy -d $arg >/dev/null 2>&1 &
 	add_rule
