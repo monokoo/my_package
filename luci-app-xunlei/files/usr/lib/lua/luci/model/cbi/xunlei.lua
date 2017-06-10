@@ -11,7 +11,7 @@ if running then
 	xunleiinfo = luci.sys.exec("wget http://localhost:9000/getsysinfo -O - 2>/dev/null")
 	--upinfo = luci.sys.exec("wget -qO- http://dl.lazyzhu.com/file/Thunder/Xware/latest 2>/dev/null")
         button = "&nbsp;&nbsp;&nbsp;&nbsp;" .. translate("运行状态：") .. xunleiinfo	
-	m = Map("xunlei", translate("Xware"), translate("迅雷远程下载 <font color=\"green\">正在运行...</font>") .. button)
+	m = Map("xunlei", translate("Xware"), translate("[迅雷远程下载 <font color=\"green\">正在运行...]</font>") .. button)
 	string.gsub(string.sub(xunleiinfo, 2, -2),'[^,]+',function(w) table.insert(tblXLInfo, w) end)
 	
 	detailInfo = [[<p style="color:blue">启动信息：]] .. xunleiinfo .. [[</p>]]
@@ -46,7 +46,7 @@ end
 --Xware--
 -----------
 
-s = m:section(TypedSection, "xunlei", translate("Xware 设置"),translate("第一次启动将下载迅雷启动程序，时间稍长，请稍安勿躁...</br>如果下载到错误版本，请手动删除\"/etc/xware/xlfile\"文件。"))
+s = m:section(TypedSection, "xunlei", translate("Xware 设置"),translate("第一次启动将下载迅雷启动程序，时间稍长，请稍安勿躁...</br>如果下载到错误版本，请手动删除\"/etc/xware/xlfile\"文件。</br><font color=\"red\">Koolss 和迅雷下载不能同时开启！</font>"))
 s.anonymous = true
 
 s:tab("basic",  translate("Settings"))

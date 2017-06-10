@@ -220,7 +220,12 @@ start() {
 	#防止并发开启服务
 	[ -f "$LOCK_FILE" ] && return 3
 	touch "$LOCK_FILE"
-	/usr/share/koolproxy/koolproxy -d >/dev/null 2>&1 &
+	
+	viedoswitch=$(config_t_get global viedoswitch 1)
+	local arg=
+	[ $viedoswitch -eq 0 ] && arg="--video"
+	
+	/usr/share/koolproxy/koolproxy -d $arg >/dev/null 2>&1 &
 	add_rule
 	add_koolproxy_cru
 	rm -f "$LOCK_FILE"
