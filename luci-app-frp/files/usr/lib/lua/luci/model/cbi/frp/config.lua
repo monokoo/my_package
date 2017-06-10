@@ -6,7 +6,7 @@ local a,t,e
 arg[1]=arg[1]or""
 a=Map(n,translate("Frp Config"))
 a.redirect=i.build_url("admin","services","frp")
-t=a:section(NamedSection,arg[1],"frp","Config Frp")
+t=a:section(NamedSection,arg[1],"frp",translate("Config Frp"))
 t.addremove=false
 t.dynamic=false
 e=t:option(ListValue,"enable",translate("Enable State"))
