@@ -60,6 +60,9 @@ define Package/$(PKG_NAME)/install
 	
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/etc/init.d/* $(1)/etc/init.d/
+	
+	$(INSTALL_DIR) $(1)/etc/uci-defaults
+	$(INSTALL_BIN) ./files/etc/uci-defaults/luci-frp $(1)/etc/uci-defaults/luci-frp
 
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) ./files/usr/bin/frpc $(1)/usr/bin/frpc

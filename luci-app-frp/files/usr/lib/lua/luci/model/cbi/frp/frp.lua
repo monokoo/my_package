@@ -21,6 +21,7 @@ e.optional=false
 e.rmempty=false
 e=t:option(Value, "privilege_token", translate("Privilege Token"), translate("Time duration between server of frpc and frps mustn't exceed 15 minutes."))
 e.optional=false
+e.password=true
 e.rmempty=false
 e=t:option(Value, "vhost_http_port", translate("Vhost HTTP Port"))
 e.datatype = "port"
