@@ -65,7 +65,7 @@ zurl.rmempty = false
 zurl:value("https://github.com/monokoo/Xware/raw/master/software")
 vod = s:taboption("basic", Flag, "vod", translate("删除迅雷VOD服务器"), translate("删除迅雷VOD服务器。"))
 vod.rmempty = false
-xwareup = s:taboption("basic", Value, "xware", translate("Xware 程序版本："),translate("<br />ar71xx系列的选择默认版本，其他型号的路由根据CPU选择。"))
+xwareup = s:taboption("basic", Value, "xware", translate("Xware 程序版本："),translate("<br />ARM系列的选择默认版本，其他型号的路由根据CPU选择。"))
 xwareup.rmempty = false
 xwareup:value("Xware1.0.31_mipseb_32_uclibc.zip", translate("Xware1.0.31_mipseb_32_uclibc.zip"))
 xwareup:value("Xware1.0.31_mipsel_32_uclibc.zip", translate("Xware1.0.31_mipsel_32_uclibc.zip"))
