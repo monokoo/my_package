@@ -13,7 +13,7 @@ URL=$(uci get xunlei.config.url)
 
 wget --no-check-certificate -q ${URL}/${FILE}
 
-rm -rf portal && rm -rf ETMDaemon EmbedThunderManager vod_httpserver && rm -rf lib && unzip ${FILE}
+rm -rf portal && rm -rf lib && unzip ${FILE}
 touch /etc/xware/xlfile
 chmod +x *
 rm -rf ${FILE}
