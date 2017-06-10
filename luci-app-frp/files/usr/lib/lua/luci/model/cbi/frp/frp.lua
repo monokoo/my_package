@@ -124,24 +124,18 @@ e.cfgvalue=function(t,n)
 local t=a.uci:get(i,n,"use_encryption")or""
 local b
 if t==""or b==""then return""end
-if t=="1" then
-b="On"
-else
-b="Off"
-end
+if t=="1" then b="ON"
+else b="OFF" end
 return b
 end
 e=t:option(DummyValue,"use_compression",translate("Use Compression"))
 e.width="15%"
 e.cfgvalue=function(t,n)
-local t=a.uci:get(i,n,"use_encryption")or""
+local t=a.uci:get(i,n,"use_compression")or""
 local b
 if t==""or b==""then return""end
-if t=="1" then
-b="On"
-else
-b="Off"
-end
+if t=="1" then b="ON"
+else b="OFF" end
 return b
 end
 e=t:option(Flag,"enable",translate("Enable State"))
