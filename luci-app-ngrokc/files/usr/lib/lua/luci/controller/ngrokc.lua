@@ -17,6 +17,6 @@ function index()
 		return
 	end
 
-	entry({"admin", "services", "ngrokc"}, cbi("ngrokc/overview"), _("Ngrok Settings")).dependent = true
+	entry({"admin", "services", "ngrokc"}, cbi("ngrokc/overview"), _("Ngrok Settings"),4).dependent = true
 	entry({"admin", "services", "ngrokc", "detail"}, cbi("ngrokc/detail"), nil ).leaf = true
 end
