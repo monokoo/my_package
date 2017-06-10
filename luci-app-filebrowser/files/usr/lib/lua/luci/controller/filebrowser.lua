@@ -1,6 +1,6 @@
 module("luci.controller.filebrowser",package.seeall)
 function index()
-page=entry({"admin","system","filebrowser"},template("filebrowser"),_("FileBrowser"),89)
+page=entry({"admin","system","filebrowser"},template("filebrowser"),_("FileBrowser"),51)
 page.i18n="base"
 page.dependent=true
 page=entry({"admin","system","filebrowser_list"},call("filebrowser_list"),nil)
