@@ -11,7 +11,7 @@ function index()
 
 	local page
 
-	page = entry({"admin", "services", "frp"}, cbi("frp/frp"), _("Frp Setting"))
+	page = entry({"admin", "services", "frp"}, cbi("frp/frp"), _("Frp Setting"),3)
 	page.dependent = true
 	entry({"admin","services","frp","config"},cbi("frp/config")).leaf=true
 	entry({"admin","services","frp","status"},call("status")).leaf=true
