@@ -53,6 +53,7 @@ define Package/luci-app-xunlei/install
 	$(INSTALL_DIR) $(1)/etc/xware
 	$(INSTALL_BIN) ./files/etc/xware/cfg $(1)/etc/xware/cfg
 	$(INSTALL_BIN) ./files/etc/xware/xlup $(1)/etc/xware/xlup
+	$(INSTALL_BIN) ./files/etc/xware/download.cfg $(1)/etc/xware/download.cfg
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/etc/init.d/xunlei $(1)/etc/init.d/xunlei
 	$(INSTALL_DIR) $(1)/etc/uci-defaults

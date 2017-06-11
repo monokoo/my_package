@@ -1,19 +1,14 @@
 #!/bin/sh /etc/rc.common
 START=99
 
-start() {
-	config_load "xunlei"
-	
-	config_get enable config enable 0
-	[ "$enable" -eq 0 ] && exit 0
-	
-	[ ! -f "/etc/xware/xlfile" ] && /etc/xware/xlup
+start_xlup(){
+	[ ! -f "/etc/xware/xlfile" ] && sh /etc/xware/xlup
+}
+get_version(){
+	"$installdir"/xunlei/portal -h|grep Version|awk -F',' '{print $1}' > /etc/xware/version
+}
+update_cfg(){
 
-	installdir=$(uci get xunlei.config.file)
-	#mountpoint="`mount | grep "$device" | awk '{print $3}'`"
-	#mountpoint=/mnt/sda1
-	[ ! -f "$installdir/xunlei/portal" ] && rm -f /etc/xware/xlfile && exit 0
-	
 	rm -f /tmp/etc/thunder_mounts.cfg
 	rm -f /tmp/etc/etm.cfg
 	rm -f /tmp/etc/download.cfg
@@ -25,19 +20,37 @@ start() {
 	ln -s "$path1" /tmp/etc/thunder_mounts.cfg
 	ln -s "$path2" /tmp/etc/etm.cfg
 	ln -s "$path3" /tmp/etc/download.cfg
+
+	[ ! -f "$path3" ] && {
+	    mkdir -p $installdir/xunlei/cfg
+	    cp /etc/xware/download.cfg $path3
+	}
+}
+
+start() {
+	config_load "xunlei"
+	config_get enable config enable 0
+	config_get vod config vod 0
+	[ "$enable" -eq 0 ] && exit 0
+
+	installdir=$(uci get xunlei.config.file)
+	start_xlup
+	[ ! -f "$installdir/xunlei/portal" ] && rm -f /etc/xware/xlfile && start_xlup		
+	update_cfg
+	get_version
 	
 	local_port=$(cat $path3 | grep ptl_setting.tcp_port | awk -F'=' '{print $2}')
-	echo local_port is $local_port
+	echo local_port1 is $local_port
 	[ "$local_port"="1080" ] && sed -i 's/ptl_setting.tcp_port=1080/ptl_setting.tcp_port=1081/' $path3
+	[ "$vod" -eq 1 -a  -f "$installdir/xunlei/vod_httpserver" ] && rm -f "$installdir"/xunlei/vod_httpserver
 	
-	"$installdir"/xunlei/portal
+	"$installdir"/xunlei/portal	
 	sleep 5
 }
 
 stop() {
 	installdir=$(uci get xunlei.config.file)
-	#installdir="`mount | grep "$device" | awk '{print $3}'`"
-        "$installdir"/xunlei/portal -s
+	"$installdir"/xunlei/portal -s
 }
 
 restart() {

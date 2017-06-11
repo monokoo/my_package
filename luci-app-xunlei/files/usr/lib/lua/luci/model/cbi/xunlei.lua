@@ -1,5 +1,4 @@
 local fs = require "nixio.fs"
-local util = require "nixio.util"
 local running=(luci.sys.call("pidof EmbedThunderManager > /dev/null") == 0)
 local button=""
 local xunleiinfo=""
@@ -46,25 +45,29 @@ s.anonymous = true
 s:tab("basic",  translate("Settings"))
 enable = s:taboption("basic", Flag, "enable", translate("启用 迅雷远程下载"))
 enable.rmempty = false
-local devices = {}
-util.consume((fs.glob("/mnt/sd??*")), devices)
-device = s:taboption("basic", Value, "device", translate("挂载点"), translate("迅雷程序下载目录所在的“挂载点”。"))
-for i, dev in ipairs(devices) do
-	device:value(dev)
-end
+
+file = s:taboption("basic", Value, "file", translate("迅雷下载目录"), translate("迅雷下载的文件所保存的目录，迅雷程序将安装在：“迅雷下载目录”/xunlei。例如：“迅雷下载目录”为 /mnt/sda1，迅雷就会安装在 /mnt/sda1/xunlei 下。"))
 if fs.access("/etc/config/xunlei") then
-	device.titleref = luci.dispatcher.build_url("admin", "system", "fstab")
+	file.titleref = luci.dispatcher.build_url("admin", "system", "fstab")
 end
+
+upinfo = luci.sys.exec("cat /etc/xware/version")
+op = s:taboption("basic", Button, "upxlast", translate("重新下载"),translate("<strong><font color=\"red\">当前版本：</font></strong>") .. upinfo)
+op.inputstyle = "apply"
+op.write = function(self, section)
+	opstatus = (luci.sys.exec("/etc/xware/xlup" %{ self.option }) == 0)
+	if  opstatus then
+	self.inputstyle = "apply"
+	end
+luci.model.uci.cursor()
+end
+vod = s:taboption("basic", Flag, "vod", translate("删除迅雷VOD服务器"), translate("删除迅雷VOD服务器。"))
+vod.rmempty = false
+
 if not fs.access("/etc/xware/xlfile") then
-file = s:taboption("basic", Value, "file", translate("迅雷程序安装路径"), translate("迅雷程序安装路径，例如：/mnt/sda1，将会安装在/mnt/sda1/xunlei 下。"))
-for i, dev in ipairs(devices) do
-	file:value(dev)
-end
 zurl = s:taboption("basic", Value, "url", translate("地址"), translate("自定义迅雷远程下载地址。默认：https://github.com/monokoo/Xware/raw/master/software"))
 zurl.rmempty = false
 zurl:value("https://github.com/monokoo/Xware/raw/master/software")
-vod = s:taboption("basic", Flag, "vod", translate("删除迅雷VOD服务器"), translate("删除迅雷VOD服务器。"))
-vod.rmempty = false
 xwareup = s:taboption("basic", Value, "xware", translate("Xware 程序版本："),translate("<br />ARM系列的选择默认版本，其他型号的路由根据CPU选择。"))
 xwareup.rmempty = false
 xwareup:value("Xware1.0.31_mipseb_32_uclibc.zip", translate("Xware1.0.31_mipseb_32_uclibc.zip"))
