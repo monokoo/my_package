@@ -29,7 +29,7 @@ o.placeholder = 1688
 o.rmempty = false
 
 o = s:taboption("basic", Flag, "use_conf_file")
-o.title = translate("使用配置")
+o.title = translate("使用配置自动激活")
 o.rmempty = false
 --配置
 s:tab("config", translate("配置"))
