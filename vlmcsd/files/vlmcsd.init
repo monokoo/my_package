@@ -22,10 +22,15 @@ start()
 	config_load vlmcsd
 	config_foreach get_config vlmcsd
 	[ $enable -ne 1 ] && exit 0
-	
+	[ -f "/etc/dnsmasq.conf" ] && {
+		isvlmcs=$(cat /etc/dnsmasq.conf1 |grep -w "srv-host=_vlmcs._tcp.lan")
+		[ -n "$isvlmcs" ] && sed -i '/srv-host=_vlmcs._tcp.lan/d' /etc/dnsmasq.conf
+	}
 	if [ $use_conf_file -ne 1 ]; then
 		/usr/bin/vlmcsd -d -P $port -l /var/log/vlmcsd.log
 	else
+		hostname=$(uci get system.@system[0].hostname)
+		echo srv-host=_vlmcs._tcp.lan,$hostname.lan,1688,0,100 >> /etc/dnsmasq.conf	
 		/usr/bin/vlmcsd -i /usr/share/vlmcsd/vlmcsd.ini
 	fi
 }
