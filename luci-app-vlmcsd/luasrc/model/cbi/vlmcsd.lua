@@ -21,16 +21,18 @@ o = s:taboption("basic", Flag, "enable")
 o.title = translate("开启")
 o.rmempty = false
 
+o = s:taboption("basic", Flag, "use_conf_file")
+o.title = translate("使用配置自动激活")
+o.rmempty = false
+
 o = s:taboption("basic", Value, "port")
 o.title = translate("本地端口")
 o.datatype = "port"
 o.default = 1688
 o.placeholder = 1688
-o.rmempty = false
+o:depends("use_conf_file",0)
 
-o = s:taboption("basic", Flag, "use_conf_file")
-o.title = translate("使用配置自动激活")
-o.rmempty = false
+
 --配置
 s:tab("config", translate("配置"))
 
