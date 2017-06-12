@@ -1,6 +1,5 @@
 
 config xunlei 'config'
-	option file '/mnt/sda1'
 	option vod '0'
 	option url 'https://github.com/monokoo/Xware/raw/master/software'
 	option enable '0'

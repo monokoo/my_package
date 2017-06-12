@@ -31,9 +31,16 @@ start() {
 	config_load "xunlei"
 	config_get enable config enable 0
 	config_get vod config vod 0
+	config_get file config file
+	config_get device config device
 	[ "$enable" -eq 0 ] && exit 0
-
-	installdir=$(uci get xunlei.config.file)
+	
+	mountpoint="`mount | grep -w "$device" | awk '{print $3}'`"
+	[ -z "$mountpoint" ] && {
+		echo "当前所选择的挂载点无效，请先挂载好硬盘，再启动！" > /etc/xware/version
+		exit 0
+	}
+	installdir=$file
 	start_xlup
 	[ ! -f "$installdir/xunlei/portal" ] && rm -f /etc/xware/xlfile && start_xlup		
 	update_cfg
