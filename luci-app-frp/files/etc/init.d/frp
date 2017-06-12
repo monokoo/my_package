@@ -89,17 +89,15 @@ frp_write_bool() {
 
 frp_add_cru(){
 time=$1
-[ "$time" -gt 0 ] || return 1
-frpcron=$(cat /etc/crontabs/root | grep "00 $time * * *" | grep frp)
-if [ -z "$frpcron" ];then
+if [ ! -f "/etc/crontabs/root" ] || [ -z "$(cat /etc/crontabs/root | grep frp)" ]; then
   sed -i '/frp/d' /etc/crontabs/root >/dev/null 2>&1
-  echo "0 $time * * * /etc/init.d/frp restart" >> /etc/crontabs/root 
+  echo "*/$time * * * * /etc/init.d/frp restart" >> /etc/crontabs/root 
 fi
+
 }
 
 frp_del_cru(){
-frpcron=$(cat /etc/crontabs/root | grep frp)
-if [ -n "$frpcron" ];then
+if [ ! -f "/etc/crontabs/root" ] || [ -n "$(cat /etc/crontabs/root | grep frp)" ]; then
   sed -i '/frp/d' /etc/crontabs/root >/dev/null 2>&1
 fi
 }
