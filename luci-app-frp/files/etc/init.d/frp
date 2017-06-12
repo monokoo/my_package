@@ -144,7 +144,8 @@ start() {
 	frp_write_bool tcp_mux common 1
 	frp_write_bool login_fail_exit common 1
 	config_foreach conf_proxy_add proxy "$tmpconf"
-		
+
+	[ -f "$tmpconf" ] && [ "$(cat "$tmpconf" | grep -c "type=")" -ne 0 ] || return 1
 	logger -t FRPC 'Starting frp service'
 	SERVICE_DAEMONIZE=1 \
 		service_start /usr/bin/frpc -c $tmpconf
