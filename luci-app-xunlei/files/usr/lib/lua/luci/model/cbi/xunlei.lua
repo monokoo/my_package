@@ -1,4 +1,5 @@
 local fs = require "nixio.fs"
+local util = require "nixio.util"
 local running=(luci.sys.call("pidof EmbedThunderManager > /dev/null") == 0)
 local button=""
 local xunleiinfo=""
@@ -46,10 +47,16 @@ s:tab("basic",  translate("Settings"))
 enable = s:taboption("basic", Flag, "enable", translate("启用 迅雷远程下载"))
 enable.rmempty = false
 
+local devices = {}
+util.consume((fs.glob("/mnt/sd?*")), devices)
 file = s:taboption("basic", Value, "file", translate("迅雷下载目录"), translate("迅雷下载的文件所保存的目录，迅雷程序将安装在：“迅雷下载目录”/xunlei。例如：“迅雷下载目录”为 /mnt/sda1，迅雷就会安装在 /mnt/sda1/xunlei 下。"))
+for i, dev in ipairs(devices) do
+        file:value(dev)
+end
 if fs.access("/etc/config/xunlei") then
 	file.titleref = luci.dispatcher.build_url("admin", "system", "fstab")
 end
+
 if fs.access("/etc/xware/version") then
 upinfo = luci.sys.exec("cat /etc/xware/version")
 else
