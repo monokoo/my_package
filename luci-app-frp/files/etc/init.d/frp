@@ -99,7 +99,7 @@ fi
 
 frp_del_cru(){
 frpcron=$(cat /etc/crontabs/root | grep frp)
-if [ -z "$frpcron" ];then
+if [ -n "$frpcron" ];then
   sed -i '/frp/d' /etc/crontabs/root >/dev/null 2>&1
 fi
 }
@@ -157,10 +157,10 @@ start() {
 }
 
 stop() {
+	frp_del_cru
 	if [ -n "`pidof frpc`" ]; then
 		logger -t FRPC 'Shutting down frp service'
 		service_stop /usr/bin/frpc
-		frp_del_cru
 		Reduce_Log $LOGFILE
 	fi
 	return 0
