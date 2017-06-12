@@ -50,8 +50,11 @@ file = s:taboption("basic", Value, "file", translate("迅雷下载目录"), tran
 if fs.access("/etc/config/xunlei") then
 	file.titleref = luci.dispatcher.build_url("admin", "system", "fstab")
 end
-
+if fs.access("/etc/xware/version") then
 upinfo = luci.sys.exec("cat /etc/xware/version")
+else
+upinfo = "<font color=\"red\">暂未安装</font>"
+end
 op = s:taboption("basic", Button, "upxlast", translate("重新下载"),translate("<strong><font color=\"red\">当前版本：</font></strong>") .. upinfo)
 op.inputstyle = "apply"
 op.write = function(self, section)
