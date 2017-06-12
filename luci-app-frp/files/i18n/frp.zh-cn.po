@@ -111,8 +111,8 @@ msgstr "Web加密访问"
 msgid "Use Encryption"
 msgstr "开启数据加密"
 
-msgid "Frp Config"
-msgstr "Frp 参数配置"
+msgid "Frp Domain Config"
+msgstr "Frp域名配置"
 
 msgid "Domain Type"
 msgstr "域名类型"
@@ -195,8 +195,8 @@ msgstr "Frp运行状态"
 msgid "Warning"
 msgstr "警告"
 
-msgid "Config Frp"
-msgstr "配置Frp参数"
+msgid "Config Frp Protocol"
+msgstr "配置Frp协议参数"
 
 msgid "Both the above two Domain types"
 msgstr "同时使用以上两种域名类型"

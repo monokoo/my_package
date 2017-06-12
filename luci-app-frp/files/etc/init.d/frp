@@ -47,6 +47,8 @@ conf_proxy_add() {
 	config_get plugin_http_passwd "$cfg" plugin_http_passwd
 	config_get plugin_unix_path "$cfg" plugin_unix_path 
 
+	[ -n "$remark" ] && [ -n "$type" ] || return 1
+	
 	echo "" >>$tmpconf
 	echo "[$remark]" >>$tmpconf
 	echo "type=$type" >>$tmpconf
@@ -145,7 +147,7 @@ start() {
 	frp_write_bool login_fail_exit common 1
 	config_foreach conf_proxy_add proxy "$tmpconf"
 
-	[ -f "$tmpconf" ] && [ "$(cat "$tmpconf" | grep -c "type=")" -ne 0 ] || return 1
+	[ "$(cat "$tmpconf" | grep -c "type=")" -gt 0 ] || return 1
 	logger -t FRPC 'Starting frp service'
 	SERVICE_DAEMONIZE=1 \
 		service_start /usr/bin/frpc -c $tmpconf

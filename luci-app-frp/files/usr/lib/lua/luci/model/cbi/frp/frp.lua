@@ -10,58 +10,61 @@ a:section(SimpleSection).template="frp/frp_status"
 t=a:section(NamedSection,"common","frp",translate("Global Setting"))
 t.anonymous=true
 t.addremove=false
-e=t:option(Flag, "enabled", translate("Enabled"))
+t:tab("base",translate("Basic Settings"))
+t:tab("other",translate("Other Settings"))
+e=t:taboption("base",Flag, "enabled", translate("Enabled"))
 e.rmempty=false
-e=t:option(Value, "server_addr", translate("Server"))
+e=t:taboption("base",Value, "server_addr", translate("Server"))
 e.optional=false
 e.rmempty=false
-e=t:option(Value, "server_port", translate("Port"))
+e=t:taboption("base",Value, "server_port", translate("Port"))
 e.datatype = "port"
 e.optional=false
 e.rmempty=false
-e=t:option(Value, "privilege_token", translate("Privilege Token"), translate("Time duration between server of frpc and frps mustn't exceed 15 minutes."))
+e=t:taboption("base",Value, "privilege_token", translate("Privilege Token"), translate("Time duration between server of frpc and frps mustn't exceed 15 minutes."))
 e.optional=false
 e.password=true
 e.rmempty=false
-e=t:option(Value, "vhost_http_port", translate("Vhost HTTP Port"))
+e=t:taboption("base",Value, "vhost_http_port", translate("Vhost HTTP Port"))
 e.datatype = "port"
 e.rmempty=false
-e=t:option(Value, "vhost_https_port", translate("Vhost HTTPS Port"))
+e=t:taboption("base",Value, "vhost_https_port", translate("Vhost HTTPS Port"))
 e.datatype = "port"
 e.rmempty=false
-e=t:option(Flag, "login_fail_exit", translate("Exit program when first login failed"),translate("decide if exit program when first login failed, otherwise continuous relogin to frps."))
+
+e=t:taboption("other",Flag, "login_fail_exit", translate("Exit program when first login failed"),translate("decide if exit program when first login failed, otherwise continuous relogin to frps."))
 e.default = "1"
 e.rmempty=false
-e=t:option(Flag, "tcp_mux", translate("TCP Stream Multiplexing"), translate("Default is Ture. This feature in frps.ini and frpc.ini must be same."))
+e=t:taboption("other",Flag, "tcp_mux", translate("TCP Stream Multiplexing"), translate("Default is Ture. This feature in frps.ini and frpc.ini must be same."))
 e.default = "1"
 e.rmempty=false
-e=t:option(Flag, "enable_http_proxy", translate("Connect frps by HTTP PROXY"), translate("frpc can connect frps using HTTP PROXY"))
+e=t:taboption("other",Flag, "enable_http_proxy", translate("Connect frps by HTTP PROXY"), translate("frpc can connect frps using HTTP PROXY"))
 e.default = "0"
 e.rmempty=false
-e=t:option(Value, "http_proxy", translate("HTTP PROXY"))
+e=t:taboption("other",Value, "http_proxy", translate("HTTP PROXY"))
 e.datatype="uinteger"
 e.placeholder="http://user:pwd@192.168.1.128:8080"
 e:depends("enable_http_proxy",1)
 e.optional=false
-e=t:option(Flag, "enable_cpool", translate("Enable Connection Pool"), translate("This feature is fit for a large number of short connections."))
+e=t:taboption("other",Flag, "enable_cpool", translate("Enable Connection Pool"), translate("This feature is fit for a large number of short connections."))
 e.rmempty=false
-e=t:option(Value, "pool_count", translate("Connection Pool"), translate("Connections will be established in advance."))
+e=t:taboption("other",Value, "pool_count", translate("Connection Pool"), translate("Connections will be established in advance."))
 e.datatype="uinteger"
 e.default = "1"
 e:depends("enable_cpool",1)
 e.optional=false
-e=t:option(Value,"time",translate("Service registration interval"),translate("0 means disable this feature, unit: min"))
+e=t:taboption("base",Value,"time",translate("Service registration interval"),translate("0 means disable this feature, unit: min"))
 e.datatype="uinteger"
 e.default=30
 e.rmempty=false
-e=t:option(ListValue, "log_level", translate("Log Level"))
+e=t:taboption("other",ListValue, "log_level", translate("Log Level"))
 e.default = "warn"
 e:value("trace",translate("Trace"))
 e:value("debug",translate("Debug"))
 e:value("info",translate("Info"))
 e:value("warn",translate("Warning"))
 e:value("error",translate("Error"))
-e=t:option(Value, "log_max_days", translate("Log Keepd Max Days"))
+e=t:taboption("other",Value, "log_max_days", translate("Log Keepd Max Days"))
 e.datatype = "uinteger"
 e.default = "3"
 e.rmempty=false
@@ -89,18 +92,17 @@ e=t:option(DummyValue,"custom_domains",translate("Domain/Subdomain"))
 e.width="20%"
 e.cfgvalue=function(t,n)
 local t=a.uci:get(i,n,"domain_type")or""
-if t==""or b==""then return""end
+local m=a.uci:get(i,n,"type")or""
 if t=="custom_domains" then
-local b=a.uci:get(i,n,"custom_domains")or""
-return b end
+local b=a.uci:get(i,n,"custom_domains")or"" return b end
 if t=="subdomain" then
-local b=a.uci:get(i,n,"subdomain")or""
-return b end
+local b=a.uci:get(i,n,"subdomain")or"" return b end
 if t=="both_dtype" then
 local b=a.uci:get(i,n,"custom_domains")or""
 local c=a.uci:get(i,n,"subdomain")or""
 b="%s/%s"%{b,c} return b end
-return b
+if m=="tcp" or m=="udp" then
+local b=a.uci:get(i,"common","server_addr")or"" return b end
 end
 e=t:option(DummyValue,"remote_port",translate("Remote Port"))
 e.width="10%"
@@ -108,12 +110,11 @@ e.cfgvalue=function(t,b)
 local t=a.uci:get(i,b,"type")or""
 if t==""or b==""then return""end
 if t=="http" then
-local b=a.uci:get(i,"common","vhost_http_port")or""
-return b end
+local b=a.uci:get(i,"common","vhost_http_port")or"" return b end
 if t=="https" then
-local b=a.uci:get(i,"common","vhost_https_port")or""
-return b end
-return b
+local b=a.uci:get(i,"common","vhost_https_port")or"" return b end
+if t=="tcp" or t=="udp" then
+local b=a.uci:get(i,b,"remote_port")or"" return b end
 end
 e=t:option(DummyValue,"local_ip",translate("Local Host Address"))
 e.width="15%"
