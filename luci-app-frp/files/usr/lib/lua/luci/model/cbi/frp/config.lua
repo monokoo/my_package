@@ -42,8 +42,8 @@ e = t:taboption("other",Flag, "enable_plugin", translate("Use Plugin"),translate
 e.default = "0"
 e:depends("type","tcp")
 e = t:taboption("base",Value, "local_ip", translate("Local Host Address"))
-luci.sys.net.arptable(function(x)
-e:value(x["IP address"])
+luci.sys.net.ipv4_hints(function(x,d)
+e:value(x,"%s (%s)"%{x,d})
 end)
 e.datatype = "ip4addr"
 e:depends("type","udp")
