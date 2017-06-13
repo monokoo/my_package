@@ -12,6 +12,7 @@ t.anonymous=true
 t.addremove=false
 t:tab("base",translate("Basic Settings"))
 t:tab("other",translate("Other Settings"))
+t:tab("log",translate("Client Log"))
 e=t:taboption("base",Flag, "enabled", translate("Enabled"))
 e.rmempty=false
 e=t:taboption("base",Value, "server_addr", translate("Server"))
@@ -69,6 +70,15 @@ e.datatype = "uinteger"
 e.default = "3"
 e.rmempty=false
 e.optional=false
+e=t:taboption("log",TextValue,"log")
+e.rows=25
+e.wrap="off"
+e.readonly=true
+e.cfgvalue=function(t,t)
+return s.readfile("/var/etc/frp/frpc.log")or""
+end
+e.write=function(e,e,e)
+end
 t=a:section(TypedSection,"proxy",translate("Services List"))
 t.anonymous=true
 t.addremove=true
@@ -143,15 +153,4 @@ end
 e=t:option(Flag,"enable",translate("Enable State"))
 e.width="10%"
 e.rmempty=false
-t=a:section(TypedSection,"frp",translate("Client Log"))
-t.anonymous=true
-e=t:option(TextValue,"log")
-e.rows=15
-e.wrap="on"
-e.readonly=true
-e.cfgvalue=function(t,t)
-return s.readfile("/var/etc/frp/frpc.log")or""
-end
-e.write=function(e,e,e)
-end
 return a
