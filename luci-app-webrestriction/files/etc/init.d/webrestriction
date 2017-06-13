@@ -75,7 +75,6 @@ del_ss_rule(){
 }
 
 limit_type=$(uci get webrestriction.@basic[0].limit_type)
-enable_status=$(uci get webrestriction.@basic[0].enable)
 
 start(){
 	
