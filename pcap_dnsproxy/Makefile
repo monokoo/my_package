@@ -147,6 +147,10 @@ define Package/pcap-dnsproxy/install
 	$(SED) 's,Listen Port = 53,Listen Port = $(CONFIG_PCAP_DNSPROXY_LISTENPORT),g'    $(PKG_BUILD_DIR)/Source/Auxiliary/ExampleConfig/Config.ini
 	$(SED) 's,Log Maximum Size = 8MB,Log Maximum Size = 50KB,g'                       $(PKG_BUILD_DIR)/Source/Auxiliary/ExampleConfig/Config.ini
 	$(SED) 's,Operation Mode = Private,Operation Mode = Server,g'                     $(PKG_BUILD_DIR)/Source/Auxiliary/ExampleConfig/Config.ini
+	$(SED) 's,Local Hosts = 0,Local Hosts = 1,g'                                      $(PKG_BUILD_DIR)/Source/Auxiliary/ExampleConfig/Config.ini
+	$(SED) 's,Local Main = 1,Local Main = 0,g'                                        $(PKG_BUILD_DIR)/Source/Auxiliary/ExampleConfig/Config.ini
+	$(SED) 's,Local Routing = 1,Local Routing = 0,g'                                  $(PKG_BUILD_DIR)/Source/Auxiliary/ExampleConfig/Config.ini
+	$(SED) 's,DNSCurve = 0,DNSCurve = 1,g'                                            $(PKG_BUILD_DIR)/Source/Auxiliary/ExampleConfig/Config.ini
 	$(INSTALL_CONF) $(PKG_BUILD_DIR)/Source/Auxiliary/ExampleConfig/Config.ini $(1)/etc/pcap-dnsproxy/Config.conf
 	$(INSTALL_CONF) $(PKG_BUILD_DIR)/Source/Auxiliary/ExampleConfig/Hosts.ini $(1)/etc/pcap-dnsproxy/Hosts.conf
 	$(INSTALL_CONF) $(PKG_BUILD_DIR)/Source/Auxiliary/ExampleConfig/IPFilter.ini $(1)/etc/pcap-dnsproxy/IPFilter.conf
