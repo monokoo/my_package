@@ -14,7 +14,6 @@ include $(INCLUDE_DIR)/package.mk
 define Package/$(PKG_NAME)
 	SECTION:=net
 	CATEGORY:=Network
-	SUBMENU:=3. Applications
 	TITLE:=Geoip
 endef
 
