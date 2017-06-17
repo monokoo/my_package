@@ -2,9 +2,9 @@ local NXFS = require "nixio.fs"
 local SYS  = require "luci.sys"
 
 if SYS.call("pidof vlmcsd >/dev/null") == 0 then
-	Status = "免配置自动激活密钥管理服务 运行中"
+	Status = "<font color=\"green\">免配置自动激活密钥管理服务 运行中</font>"
 else
-	Status = "免配置自动激活密钥管理服务 未运行"
+	Status = "<font color=\"red\">免配置自动激活密钥管理服务 未运行</font>"
 end
 
 m = Map("vlmcsd")

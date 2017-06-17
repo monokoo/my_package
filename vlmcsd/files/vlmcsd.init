@@ -33,6 +33,7 @@ start()
 		echo srv-host=_vlmcs._tcp.lan,$hostname.lan,1688,0,100 >> /etc/dnsmasq.conf	
 		/usr/bin/vlmcsd -i /usr/share/vlmcsd/vlmcsd.ini
 	fi
+	/etc/init.d/dnsmasq restart
 }
 
 stop()
