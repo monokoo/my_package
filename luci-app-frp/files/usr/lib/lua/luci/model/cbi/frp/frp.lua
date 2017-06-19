@@ -45,6 +45,7 @@ e:value("kcp",translate("KCP Protocol"))
 e=t:taboption("other",Flag, "enable_http_proxy", translate("Connect frps by HTTP PROXY"), translate("frpc can connect frps using HTTP PROXY"))
 e.default = "0"
 e.rmempty=false
+e:depends("protocol","tcp")
 e=t:taboption("other",Value, "http_proxy", translate("HTTP PROXY"))
 e.datatype="uinteger"
 e.placeholder="http://user:pwd@192.168.1.128:8080"
