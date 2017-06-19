@@ -32,13 +32,16 @@ e.rmempty=false
 e=t:taboption("base",Value, "vhost_https_port", translate("Vhost HTTPS Port"))
 e.datatype = "port"
 e.rmempty=false
-
 e=t:taboption("other",Flag, "login_fail_exit", translate("Exit program when first login failed"),translate("decide if exit program when first login failed, otherwise continuous relogin to frps."))
 e.default = "1"
 e.rmempty=false
 e=t:taboption("other",Flag, "tcp_mux", translate("TCP Stream Multiplexing"), translate("Default is Ture. This feature in frps.ini and frpc.ini must be same."))
 e.default = "1"
 e.rmempty=false
+e=t:taboption("other",ListValue, "protocol", translate("Protocol Type"),translate("Frp support kcp protocol since v0.12.0"))
+e.default = "tcp"
+e:value("tcp",translate("TCP Protocol"))
+e:value("kcp",translate("KCP Protocol"))
 e=t:taboption("other",Flag, "enable_http_proxy", translate("Connect frps by HTTP PROXY"), translate("frpc can connect frps using HTTP PROXY"))
 e.default = "0"
 e.rmempty=false

@@ -112,7 +112,7 @@ start() {
 
 	config_load "frp"
 	local enabled server_addr server_port time privilege_token tcp_mux enable_cpool 
-	local pool_count log_level log_max_days login_fail_exit http_proxy
+	local pool_count log_level log_max_days login_fail_exit http_proxy protocol
 
 	config_get_bool enabled common enabled 1
 
@@ -126,6 +126,7 @@ start() {
 	config_get log_level common log_level
 	config_get log_max_days common log_max_days
 	config_get http_proxy common http_proxy
+	config_get protocol common protocol
 	config_get time common time
 	
 	local tmpconf="/var/etc/frp/frpc.conf"
@@ -138,6 +139,7 @@ start() {
 	echo "privilege_token=${privilege_token}" >>$tmpconf
 	echo "log_level=${log_level}" >>$tmpconf
 	echo "log_max_days=${log_max_days}" >>$tmpconf
+	echo "protocol=${protocol}" >>$tmpconf
 	echo "log_file=$LOGFILE" >>$tmpconf
 	[ -n "$http_proxy" ] && echo "http_proxy=$http_proxy" >>$tmpconf
 	[ -n "$pool_count" ] && echo "pool_count=$pool_count" >>$tmpconf

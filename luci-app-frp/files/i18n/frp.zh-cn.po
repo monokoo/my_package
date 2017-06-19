@@ -21,6 +21,12 @@ msgstr "HTTP穿透服务端口"
 msgid "Vhost HTTPS Port"
 msgstr "HTTPS穿透服务端口"
 
+msgid "Protocol Type"
+msgstr "协议类型"
+
+msgid "Frp support kcp protocol since v0.12.0"
+msgstr "从 v0.12.0 版本开始，底层通信协议支持选择 kcp 协议加速。"
+
 msgid "Connect frps by HTTP PROXY"
 msgstr "通过代理连接 frps"
 
@@ -40,7 +46,7 @@ msgid "Frp support forward http requests to different backward web services by u
 msgstr "Frp 支持根据请求的 URL 路径路由转发到不同的后端服务。"
 
 msgid "Http requests with url prefix /news will be forwarded to this service."
-msgstr "例如指定 locations=/news，则所有 URL 以 /news 开头的请求都会被转发到这个服务。"
+msgstr "例如指定 locations=/news，则所有 URL 以 /news 开头的请求都会被转发到这个服务。多个URL地址以英文逗号分隔，如 locations=/news,/about "
 
 msgid "Service registration interval"
 msgstr "服务注册间隔"
@@ -141,11 +147,17 @@ msgstr "关闭"
 msgid "Choose Plugin"
 msgstr "选择插件"
 
-msgid "Plugin HTTP UserName"
-msgstr "HTTP插件用户名"
+msgid "Proxy Authentication"
+msgstr "HTTP代理身份验证"
 
-msgid "Plugin HTTP Passwd"
-msgstr "HTTP插件密码"
+msgid "Other PCs could access the Internet through frpc's network by using http_proxy plugin."
+msgstr "http proxy 插件，可以使其他机器通过 frpc 的网络访问互联网；开启身份验证之后需要用户名、密码才能连接到 HTTP 代理。"
+
+msgid "HTTP Proxy UserName"
+msgstr "HTTP代理用户名"
+
+msgid "HTTP Proxy Password"
+msgstr "HTTP代理密码"
 
 msgid "Plugin Unix Sock Path"
 msgstr "Unix Sock 插件路径"

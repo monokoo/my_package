@@ -65,12 +65,15 @@ e = t:taboption("other",ListValue, "plugin", translate("Choose Plugin"))
 e:value("http_proxy",translate("http_proxy"))
 e:value("unix_domain_socket",translate("unix_domain_socket"))
 e:depends("enable_plugin",1)
-e = t:taboption("other",Value, "plugin_http_user", translate("Plugin HTTP UserName"))
-e.default = "abc"
+e = t:taboption("other",Flag, "enable_plugin_httpuserpw", translate("Proxy Authentication"),translate("Other PCs could access the Internet through frpc's network by using http_proxy plugin."))
+e.default = "0"
 e:depends("plugin","http_proxy")
-e = t:taboption("other",Value, "plugin_http_passwd", translate("Plugin HTTP Passwd"))
+e = t:taboption("other",Value, "plugin_http_user", translate("HTTP Proxy UserName"))
 e.default = "abc"
-e:depends("plugin","http_proxy")
+e:depends("enable_plugin_httpuserpw",1)
+e = t:taboption("other",Value, "plugin_http_passwd", translate("HTTP Proxy Password"))
+e.default = "abc"
+e:depends("enable_plugin_httpuserpw",1)
 e = t:taboption("other",Value, "plugin_unix_path", translate("Plugin Unix Sock Path"))
 e.default = "/var/run/docker.sock"
 e:depends("plugin","unix_domain_socket")
