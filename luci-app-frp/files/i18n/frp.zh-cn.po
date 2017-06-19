@@ -24,6 +24,12 @@ msgstr "HTTPS穿透服务端口"
 msgid "Protocol Type"
 msgstr "协议类型"
 
+msgid "TCP Protocol"
+msgstr "TCP 协议"
+
+msgid "KCP Protocol"
+msgstr "KCP 协议"
+
 msgid "Frp support kcp protocol since v0.12.0"
 msgstr "从 v0.12.0 版本开始，底层通信协议支持选择 kcp 协议加速。"
 
