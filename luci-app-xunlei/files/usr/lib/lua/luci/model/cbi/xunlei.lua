@@ -76,7 +76,7 @@ op.write = function(self, section)
 	end
 luci.model.uci.cursor()
 end
-vod = s:taboption("basic", Flag, "vod", translate("删除迅雷VOD服务器"), translate("删除迅雷VOD服务器。"))
+vod = s:taboption("basic", Flag, "vod", translate("删除迅雷VOD服务器"), translate("删除迅雷VOD服务器可以减少上传量。"))
 vod.rmempty = false
 
 if not fs.access("/etc/xware/xlfile") then

@@ -1,5 +1,5 @@
 #!/bin/sh /etc/rc.common
-START=110
+START=99
 
 start_xlup(){
 	[ ! -f "/etc/xware/xlfile" ] && sh /etc/xware/xlup
@@ -27,6 +27,16 @@ update_cfg(){
 	}
 }
 
+kill_all() {
+  kill -9 $(pidof $@) >/dev/null 2>&1
+}
+
+boot() {
+	sleep 3s
+	start "$@"
+}
+
+
 start() {
 	config_load "xunlei"
 	config_get enable config enable 0
@@ -44,24 +54,32 @@ start() {
 	start_xlup
 	[ ! -f "$installdir/xunlei/portal" ] && rm -f /etc/xware/xlfile && start_xlup		
 	update_cfg
-	get_version
+	[ ! -f "/etc/xware/version" ] || [ -z "$(cat /etc/xware/version|grep Version)" ] && get_version
 	
 	local_port=$(cat $path3 | grep ptl_setting.tcp_port | awk -F'=' '{print $2}')
 	echo local_port1 is $local_port
 	[ "$local_port"="1080" ] && sed -i 's/ptl_setting.tcp_port=1080/ptl_setting.tcp_port=1081/' $path3
-	[ "$vod" -eq 1 -a  -f "$installdir/xunlei/lib/vod_httpserver" ] && rm -f "$installdir"/xunlei/lib/vod_httpserver
-	
+	[ "$vod" -eq 1 ] && {
+		[ -f "$installdir/xunlei/vod_httpserver" ] && {
+			mkdir -p $installdir/xunlei/lib
+			mv "$installdir"/xunlei/vod_httpserver "$installdir"/xunlei/lib/bak-vod_httpserver
+		}
+		[ -f "$installdir/xunlei/lib/vod_httpserver" ] && mv "$installdir"/xunlei/lib/vod_httpserver "$installdir"/xunlei/lib/bak-vod_httpserver
+	}
 	"$installdir"/xunlei/portal	
-	sleep 5
+	sleep 1s
+	[ -z "$(pidof EmbedThunderManager)" ] && "$installdir"/xunlei/portal
 }
 
 stop() {
 	installdir=$(uci get xunlei.config.file)
+	[ -f "$installdir/xunlei/lib/bak-vod_httpserver" ] && mv "$installdir"/xunlei/lib/bak-vod_httpserver "$installdir"/xunlei/lib/vod_httpserver
 	"$installdir"/xunlei/portal -s
+	sleep 1s
+	[ -n "$(pidof EmbedThunderManager)" ] && kill_all ETMDaemon EmbedThunderManager
 }
 
 restart() {
 	stop
-	sleep 1
 	start
 }
