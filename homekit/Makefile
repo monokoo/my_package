@@ -20,6 +20,7 @@ include $(TOPDIR)/rules.mk
 
 # Name and release number of this package
 PKG_NAME:=homekit
+PKG_VERSION:=20170625
 PKG_RELEASE:=1
 
 

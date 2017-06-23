@@ -13,8 +13,7 @@ PKG_RELEASE:=2
 
 PKG_MAINTAINER:=Ted Hess <thess@kitschensync.net>
 
-PKG_INSTALL:=1
-PKG_BUILD_PARALLEL:=1
+PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -22,7 +21,7 @@ define Package/libavahi-compat-libdnssd-dev
   SECTION:=libs
   CATEGORY:=Libraries
   DEPENDS:=+libavahi-client
-  TITLE+= (libdnssd-dev)
+  TITLE:= libavahi-compat-libdnssd-dev library
 endef
 
 define Package/libavahi-compat-libdnssd-dev/description
