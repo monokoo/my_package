@@ -21,7 +21,6 @@ include $(INCLUDE_DIR)/package.mk
 define Package/libavahi-compat-libdnssd-dev
   SECTION:=libs
   CATEGORY:=Libraries
-  VARIANT:=dbus
   DEPENDS:=+libavahi-client
   TITLE+= (libdnssd-dev)
 endef
