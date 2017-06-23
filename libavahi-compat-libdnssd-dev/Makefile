@@ -12,10 +12,14 @@ PKG_VERSION:=0.6.32
 PKG_RELEASE:=2
 
 PKG_MAINTAINER:=Ted Hess <thess@kitschensync.net>
-
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
 include $(INCLUDE_DIR)/package.mk
+
+define Build/Prepare
+	mkdir -p $(PKG_BUILD_DIR)/files
+	$(CP) ./files/* $(PKG_BUILD_DIR)/files/
+endef
 
 define Package/libavahi-compat-libdnssd-dev
   SECTION:=libs
