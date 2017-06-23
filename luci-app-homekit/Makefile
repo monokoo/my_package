@@ -49,10 +49,12 @@ define Package/$(PKG_NAME)/install
 	
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
 	$(INSTALL_BIN) ./files/etc/uci-defaults/* $(1)/etc/uci-defaults/
-	
 
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/controller
 	$(INSTALL_DATA) ./files/usr/lib/lua/luci/controller/*.lua $(1)/usr/lib/lua/luci/controller/
+	
+	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
+	$(INSTALL_DATA) ./files/usr/lib/lua/luci/i18n/*.lmo $(1)/usr/lib/lua/luci/i18n/
 	
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/view/homekit
 	$(INSTALL_DATA) ./files/usr/lib/lua/luci/view/homekit/* $(1)/usr/lib/lua/luci/view/homekit/
