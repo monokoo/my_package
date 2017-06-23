@@ -36,146 +36,6 @@ void *announce(void *info) {
 
 //Wrap to JSON
 inline string wrap(const char *str) { return (string)"\""+str+"\""; }
-//Value String
-inline string attribute(unsigned int type, unsigned short acclaim, int p, string value) {
-    string result;
-    if (p & premission_read) {
-        result += wrap("value")+":";
-        result += value;
-        result += ",";
-    }
-    
-    result += wrap("perms")+":";
-    result += "[";
-    if (p & premission_read) result += wrap("pr")+",";
-    if (p & premission_write) result += wrap("pw")+",";
-    if (p & premission_notify) result += wrap("ev")+",";
-    result = result.substr(0, result.size()-1);
-    result += "]";
-    result += ",";
-    
-    char tempStr[4];
-    snprintf(tempStr, 4, "%X", type);
-    result += wrap("type")+":"+wrap(tempStr);
-    result += ",";
-    
-    snprintf(tempStr, 4, "%hd", acclaim);
-    result += wrap("iid")+":"+tempStr;
-    result += ",";
-    
-    result += "\"format\":\"bool\"";
-    
-    return "{"+result+"}";
-}
-inline string attribute(unsigned int type, unsigned short acclaim, int p, string value, int minVal, int maxVal, int step, unit valueUnit) {
-    string result;
-    char tempStr[16];
-    
-    if (p & premission_read) {
-        result += wrap("value")+":"+value;
-        result += ",";
-    }
-    
-    snprintf(tempStr, 16, "%d", minVal);
-    if (minVal != INT32_MIN)
-        result += wrap("minValue")+":"+tempStr+",";
-    
-    snprintf(tempStr, 16, "%d", maxVal);
-    if (maxVal != INT32_MAX)
-        result += wrap("maxValue")+":"+tempStr+",";
-    
-    snprintf(tempStr, 16, "%d", step);
-    if (step > 0)
-        result += wrap("minStep")+":"+tempStr+",";
-    
-    result += wrap("perms")+":";
-    result += "[";
-    if (p & premission_read) result += wrap("pr")+",";
-    if (p & premission_write) result += wrap("pw")+",";
-    if (p & premission_notify) result += wrap("ev")+",";
-    result = result.substr(0, result.size()-1);
-    result += "]";
-    result += ",";
-    
-    snprintf(tempStr, 16, "%X", type);
-    result += wrap("type")+":"+wrap(tempStr);
-    result += ",";
-    
-    snprintf(tempStr, 16, "%hd", acclaim);
-    result += wrap("iid")+":"+tempStr;
-    result += ",";
-    
-    switch (valueUnit) {
-        case unit_arcDegree:
-            result += wrap("unit")+":"+wrap("arcdegrees")+",";
-            break;
-        case unit_celsius:
-            result += wrap("unit")+":"+wrap("celsius")+",";
-            break;
-        case unit_percentage:
-            result += wrap("unit")+":"+wrap("percentage")+",";
-            break;
-    }
-    
-    result += "\"format\":\"int\"";
-    
-    return "{"+result+"}";
-}
-inline string attribute(unsigned int type, unsigned short acclaim, int p, string value, float minVal, float maxVal, float step, unit valueUnit) {
-    string result;
-    char tempStr[16];
-    
-    if (p & premission_read) {
-        result += wrap("value")+":"+value;
-        result += ",";
-    }
-    
-    snprintf(tempStr, 16, "%f", minVal);
-    if (minVal != INT32_MIN)
-        result += wrap("minValue")+":"+tempStr+",";
-    
-    snprintf(tempStr, 16, "%f", maxVal);
-    if (maxVal != INT32_MAX)
-        result += wrap("maxValue")+":"+tempStr+",";
-    
-    snprintf(tempStr, 16, "%f", step);
-    if (step > 0)
-        result += wrap("minStep")+":"+tempStr+",";
-    
-    result += wrap("perms")+":";
-    result += "[";
-    if (p & premission_read) result += wrap("pr")+",";
-    if (p & premission_write) result += wrap("pw")+",";
-    if (p & premission_notify) result += wrap("ev")+",";
-    result = result.substr(0, result.size()-1);
-    result += "]";
-    result += ",";
-    
-    snprintf(tempStr, 16, "%X", type);
-    result += wrap("type")+":"+wrap(tempStr);
-    result += ",";
-    
-    snprintf(tempStr, 16, "%hd", acclaim);
-    result += wrap("iid")+":"+tempStr;
-    result += ",";
-    
-    switch (valueUnit) {
-        case unit_arcDegree:
-            result += wrap("unit")+":"+wrap("arcdegrees")+",";
-            break;
-        case unit_celsius:
-            result += wrap("unit")+":"+wrap("celsius")+",";
-            break;
-        case unit_percentage:
-            result += wrap("unit")+":"+wrap("percentage")+",";
-            break;
-    }
-    
-    result += "\"format\":\"float\"";
-    
-    return "{"+result+"}";
-}
-//Raw value
 inline string attribute(unsigned int type, unsigned short acclaim, int p, bool value) {
     string result;
     if (p & premission_read) {
@@ -324,7 +184,7 @@ inline string attribute(unsigned int type, unsigned short acclaim, int p, string
     char tempStr[4];
     
     if (p & premission_read) {
-        result += wrap("value")+":"+value.c_str();
+        result += wrap("value")+":"+wrap(value.c_str());
         result += ",";
     }
     
@@ -394,23 +254,23 @@ void characteristics::notify() {
     pthread_create(&thread, NULL, announce, info);
 }
 
-string boolCharacteristics::describe(connectionInfo *sender) {
-    return attribute(type, iid, premission, value(sender));
+string boolCharacteristics::describe() {
+    return attribute(type, iid, premission, _value);
 }
 
-string floatCharacteristics::describe(connectionInfo *sender) {
-    return attribute(type, iid, premission, value(sender), _minVal, _maxVal, _step, _unit);
+string floatCharacteristics::describe() {
+    return attribute(type, iid, premission, _value, _minVal, _maxVal, _step, _unit);
 }
 
-string intCharacteristics::describe(connectionInfo *sender) {
-    return attribute(type, iid, premission, value(sender), _minVal, _maxVal, _step, _unit);
+string intCharacteristics::describe() {
+    return attribute(type, iid, premission, _value, _minVal, _maxVal, _step, _unit);
 }
 
-string stringCharacteristics::describe(connectionInfo *sender) {
-    return attribute(type, iid, premission, value(sender), maxLen);
+string stringCharacteristics::describe() {
+    return attribute(type, iid, premission, _value, maxLen);
 }
 
-string Service::describe(connectionInfo *sender) {
+string Service::describe() {
     string keys[3] = {"iid", "type", "characteristics"};
     string values[3];
     {
@@ -427,7 +287,7 @@ string Service::describe(connectionInfo *sender) {
         int no = numberOfCharacteristics();
         string *chars = new string[no];
         for (int i = 0; i < no; i++) {
-            chars[i] = _characteristics[i]->describe(sender);
+            chars[i] = _characteristics[i]->describe();
         }
         values[2] = arrayWrap(chars, no);
         delete [] chars;
@@ -435,7 +295,7 @@ string Service::describe(connectionInfo *sender) {
     return dictionaryWrap(keys, values, 3);
 }
 
-string Accessory::describe(connectionInfo *sender) {
+string Accessory::describe() {
     string keys[2];
     string values[2];
     
@@ -451,7 +311,7 @@ string Accessory::describe(connectionInfo *sender) {
         int noOfService = numberOfService();
         string *services = new string[noOfService];
         for (int i = 0; i < noOfService; i++) {
-            services[i] = _services[i]->describe(sender);
+            services[i] = _services[i]->describe();
         }
         keys[1] = "services";
         values[1] = arrayWrap(services, noOfService);
@@ -462,11 +322,11 @@ string Accessory::describe(connectionInfo *sender) {
     return result;
 }
 
-string AccessorySet::describe(connectionInfo *sender) {
+string AccessorySet::describe() {
     int numberOfAcc = numberOfAccessory();
     string *desc = new string[numberOfAcc];
     for (int i = 0; i < numberOfAcc; i++) {
-        desc[i] = _accessories[i]->describe(sender);
+        desc[i] = _accessories[i]->describe();
     }
     string result = arrayWrap(desc, numberOfAcc);
     delete [] desc;
@@ -534,7 +394,7 @@ void handleAccessory(const char *request, unsigned int requestLen, char **reply,
         printf("Ask for accessories info\n");
 #endif
         statusCode = 200;
-        string desc = AccessorySet::getInstance().describe(sender);
+        string desc = AccessorySet::getInstance().describe();
         replyDataLen = desc.length();
         replyData = new char[replyDataLen+1];
         bcopy(desc.c_str(), replyData, replyDataLen);

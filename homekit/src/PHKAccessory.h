@@ -225,7 +225,7 @@ public:
         setValue(str, NULL);
     }
     virtual void setValue(string str, connectionInfo *sender) = 0;
-    virtual string describe(connectionInfo *sender) = 0;
+    virtual string describe() = 0;
     string (*perUserQuery)(connectionInfo *sender) = 0;
     bool writable() { return premission&premission_write; }
     bool notifiable() { return premission&premission_notify; }
@@ -251,7 +251,7 @@ public:
             valueChangeFunctionCall(_value, newValue, sender);
         _value = newValue;
     }
-    virtual string describe(connectionInfo *sender);
+    virtual string describe();
 };
 
 class floatCharacteristics: public characteristics {
@@ -276,7 +276,7 @@ public:
             _value = temp;
         }
     }
-    virtual string describe(connectionInfo *sender);
+    virtual string describe();
 };
 
 class intCharacteristics: public characteristics {
@@ -303,7 +303,7 @@ public:
             _value = temp;
         }
     }
-    virtual string describe(connectionInfo *sender);
+    virtual string describe();
 };
 
 class stringCharacteristics: public characteristics {
@@ -314,7 +314,7 @@ public:
     stringCharacteristics(unsigned int _type, int _premission, unsigned short _maxLen): characteristics(_type, _premission), maxLen(_maxLen) {}
     virtual string value(connectionInfo *sender) {
         if (perUserQuery != 0)
-            return "\""+perUserQuery(sender)+"\"";
+            return perUserQuery(sender);
         return "\""+_value+"\"";
     }
     virtual void setValue(string str, connectionInfo *sender) {
@@ -322,7 +322,7 @@ public:
             valueChangeFunctionCall(_value, str, sender);
         _value = str;
     }
-    virtual string describe(connectionInfo *sender);
+    virtual string describe();
 };
 
 //Abstract Layer of object
@@ -333,7 +333,7 @@ public:
     Service(int _uuid): uuid(_uuid) {}
     virtual short numberOfCharacteristics() { return _characteristics.size(); }
     virtual characteristics *characteristicsAtIndex(int index) { return _characteristics[index]; }
-    string describe(connectionInfo *sender);
+    string describe();
 };
 
 class Accessory {
@@ -392,7 +392,7 @@ public:
         }
         return NULL;
     }
-    string describe(connectionInfo *sender);
+    string describe();
 };
 
 class AccessorySet {
@@ -439,7 +439,7 @@ public:
     ~AccessorySet() {
         pthread_mutex_destroy(&accessoryMutex);
     }
-    string describe(connectionInfo *sender);
+    string describe();
 };
 
 typedef void (*identifyFunction)(bool oldValue, bool newValue, connectionInfo *sender);

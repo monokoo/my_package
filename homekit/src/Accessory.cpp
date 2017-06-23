@@ -24,7 +24,6 @@ intCharacteristics *occupyState;
 #define userListAddr "./userList"
 
 void _newConnection(connectionInfo* info) {
-    printf("New connection %s\n", info->hostname.c_str());
     pthread_mutex_lock(&recordMutex);
     
     bool originalOutput = activeUsers.size() > 0;

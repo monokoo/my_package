@@ -343,6 +343,7 @@ void PHKNetworkIP::handleConnection() const {
             index = i;
             connection[index].subSocket = subSocket;
             connection[index].hostname = socketName;
+            printf("Connect to socket from %s\n", socketName.c_str( ));
             
             pthread_create(&connection[index].thread, NULL, connectionLoop, &connection[index]);
             
@@ -877,9 +878,6 @@ void connectionInfo::handlePairVerify() {
 
 void connectionInfo::handleAccessoryRequest() {
     
-    //New connection has finish verify, so announce
-    newConnection(this);
-    
     char *decryptData = new char[2048];
     
     int len;
@@ -895,6 +893,9 @@ void connectionInfo::handleAccessoryRequest() {
     
     pthread_mutex_init(&mutex, NULL);
     connected = true;
+    
+    
+    if (newConnection) newConnection(this);
     
     do {
         bzero(buffer, 4096);
