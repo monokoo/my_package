@@ -1,7 +1,7 @@
 LINK = -lssl -lcrypto -ldl -lpthread
-CFLAG = -Os -s -I/opt/local/include -L/opt/local/lib
-CC = gcc
-CPP = g++
+CFLAG = -Os -s
+CC = arm-openwrt-linux-muslgnueabi-gcc
+CPP = arm-openwrt-linux-muslgnueabi-g++
 PHK_LIBNAME=libphk
 ifeq ($(OS),Windows_NT)
     PHK_LIBFILE=$(PHK_LIBNAME).dll

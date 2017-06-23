@@ -72,7 +72,7 @@ endef
 # directory) to the install directory.
 define Package/homekit/install
 	$(INSTALL_DIR) $(1)/usr/sbin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/homekit $(1)/usr/sbin/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/PHK $(1)/usr/sbin/
 	$(INSTALL_DIR) $(1)/etc/config $(1)/etc/init.d
 	$(INSTALL_CONF) ./files/etc/config/* $(1)/etc/config/
 	$(INSTALL_BIN) ./files/etc/init.d/* $(1)/etc/init.d/
