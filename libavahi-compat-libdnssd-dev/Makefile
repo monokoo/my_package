@@ -19,7 +19,6 @@ PKG_BUILD_PARALLEL:=1
 include $(INCLUDE_DIR)/package.mk
 
 define Package/libavahi-compat-libdnssd-dev
-  $(call Package/avahi/Default)
   SECTION:=libs
   CATEGORY:=Libraries
   VARIANT:=dbus
