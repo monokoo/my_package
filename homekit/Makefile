@@ -35,22 +35,6 @@ define Package/$(PKG_NAME)
 	DEPENDS:=@!LINUX_2_4 +libavahi-compat-libdnssd +libopenssl +libstdcpp +libpthread +libc
 endef
 
-define Build/Prepare
-endef
-
-define Build/Configure
-endef
-
-define Build/Compile
-endef
-
-define Package/$(PKG_NAME)/conffiles
-/etc/config/homekit
-endef
-
-define Package/$(PKG_NAME)/preinst
-endef
-
 define Package/$(PKG_NAME)/postinst
 #!/bin/sh
 # check if we are on real system
