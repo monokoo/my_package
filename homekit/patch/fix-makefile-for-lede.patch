@@ -1,0 +1,14 @@
+--- a/makefile	2017-06-24 20:21:31.846418951 +0800
++++ b/makefile	2017-06-24 20:18:52.607489862 +0800
+@@ -1,7 +1,7 @@
+-LINK = -lssl -lcrypto -ldl -lpthread
+-CFLAG = -Os -s -I/opt/local/include -L/opt/local/lib
+-CC = gcc
+-CPP = g++
++LINK = $(LDFLAGS) -lssl -lcrypto -ldl -lpthread
++CFLAG = $(CFLAGS)
++CC = $(CC)
++CPP = $(CXX)
+ PHK_LIBNAME=libphk
+ ifeq ($(OS),Windows_NT)
+     PHK_LIBFILE=$(PHK_LIBNAME).dll

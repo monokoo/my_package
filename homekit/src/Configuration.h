@@ -8,11 +8,11 @@
 //
 
 #define HomeKitLog 1
-#define HomeKitReplyHeaderLog 0
+#define HomeKitReplyHeaderLog 1
 #define PowerOnTest 0
 
 //Device Setting
-#define deviceName "House Sensor"    //Name
+#define deviceName "House Sensor One"    //Name
 #define deviceIdentity "12:24:51:48:27:73"  //ID
 #define _manufactuerName "stones"   //Manufactuer
 #define devicePassword "624-10-526" //Password
