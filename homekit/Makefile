@@ -12,12 +12,13 @@ PKG_NAME:=homekit
 PKG_VERSION:=20170625
 PKG_RELEASE:=2
 
-
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/etwmc/WiFi-RadarHAP.git
-PKG_SOURCE_VERSION:=HEAD
+PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE)
+PKG_SOURCE_VERSION:=e5722552fc558d8cf063753a05edf6d53f56b142
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.xz
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
+
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
@@ -53,7 +54,7 @@ define Package/$(PKG_NAME)/postinst
 # check if we are on real system
 if [ -z "$${IPKG_INSTROOT}" ]; then
 	echo "Enabling rc.d symlink for homekit"
-	/etc/init.d/homekit enable
+	/etc/init.d/homekit enable 
 fi
 exit 0
 endef
