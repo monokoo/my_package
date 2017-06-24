@@ -25,7 +25,7 @@ PKG_USE_MIPS16:=0
 PKG_FIXUP:=autoreconf
 include $(INCLUDE_DIR)/package.mk
 
-define Package/homekit
+define Package/$(PKG_NAME)
 	SECTION:=utils
 	CATEGORY:=Utilities
 	TITLE:=This is a HomeKit support accessories.
@@ -41,14 +41,14 @@ endef
 define Build/Compile
 endef
 
-define Package/homekit/conffiles
+define Package/$(PKG_NAME)/conffiles
 /etc/config/homekit
 endef
 
-define Package/homekit/preinst
+define Package/$(PKG_NAME)/preinst
 endef
 
-define Package/homekit/postinst
+define Package/$(PKG_NAME)/postinst
 #!/bin/sh
 # check if we are on real system
 if [ -z "$${IPKG_INSTROOT}" ]; then
@@ -58,7 +58,7 @@ fi
 exit 0
 endef
 
-define Package/homekit/install
+define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/PHK $(1)/usr/sbin/
 	$(INSTALL_DIR) $(1)/etc/config $(1)/etc/init.d
@@ -66,4 +66,4 @@ define Package/homekit/install
 	$(INSTALL_BIN) ./files/etc/init.d/* $(1)/etc/init.d/
 endef
 
-$(eval $(call BuildPackage,homekit))
+$(eval $(call BuildPackage,$(PKG_NAME)))
