@@ -1,0 +1,27 @@
+--- a/Configuration.h
++++ b/Configuration.h
+@@ -7,17 +7,17 @@
+ //
+ //
+ 
+-#define HomeKitLog 0
++#define HomeKitLog 1
+ #define HomeKitReplyHeaderLog 0
+ #define PowerOnTest 0
+ 
+ //Device Setting
+-#define deviceName "House Sensor"    //Name
+-#define deviceIdentity "11:10:34:23:51:12"  //ID
+-#define _manufactuerName "ET Chan"   //Manufactuer
+-#define devicePassword "523-12-643" //Password
+-#define deviceUUID "62F47751-8F26-46BF-9552-8F4238E67D60"   //UUID, for pair verify
+-#define controllerRecordsAddress "./PHK_controller" //Where to store the client keys
++#define deviceName "House Sensor One"    //Name
++#define deviceIdentity "12:24:51:48:27:73"  //ID
++#define _manufactuerName "stones"   //Manufactuer
++#define devicePassword "624-10-526" //Password
++#define deviceUUID "33F48751-6F19-63CF-9552-8F4228F69D52"   //UUID, for pair verify
++#define controllerRecordsAddress "/etc/homekit" //Where to store the client keys
+ 
+ //Number of client
+ /*
