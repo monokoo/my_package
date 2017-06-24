@@ -3,7 +3,7 @@ function index()
 if not nixio.fs.access("/etc/config/homekit")then
 return
 end
-entry({"admin","services","homekit"},cbi("homekit/global"),_("homekit"),3).dependent=true
+entry({"admin","services","homekit"},cbi("homekit/global"),_("homekit"),7).dependent=true
 entry({"admin","services","homekit","status"},call("act_status")).leaf=true
 end
 function act_status()
