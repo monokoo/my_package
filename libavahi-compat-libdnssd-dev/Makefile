@@ -1,9 +1,3 @@
-#
-# Copyright (C) 2007-2016 OpenWrt.org
-#
-# This is free software, licensed under the GNU General Public License v2.
-# See /LICENSE for more information.
-#
 
 include $(TOPDIR)/rules.mk
 
@@ -12,14 +6,10 @@ PKG_VERSION:=0.6.32
 PKG_RELEASE:=2
 
 PKG_MAINTAINER:=Ted Hess <thess@kitschensync.net>
+
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
 include $(INCLUDE_DIR)/package.mk
-
-define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)/files
-	$(CP) ./files/* $(PKG_BUILD_DIR)/files/
-endef
 
 define Package/libavahi-compat-libdnssd-dev
   SECTION:=libs
@@ -32,6 +22,9 @@ define Package/libavahi-compat-libdnssd-dev/description
  This packages adds the libavahi-compat-libdnssd-dev library.
  It also automatically adds the required libavahi-client package.
  For more information please see the avahi documentation.
+endef
+
+define Build/Prepare
 endef
 
 define Package/libavahi-compat-libdnssd-dev/postinst
