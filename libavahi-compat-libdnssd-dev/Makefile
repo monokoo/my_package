@@ -12,16 +12,16 @@ PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 include $(INCLUDE_DIR)/package.mk
 
 define Package/libavahi-compat-libdnssd-dev
-  SECTION:=libs
-  CATEGORY:=Libraries
-  DEPENDS:=+libavahi-client
-  TITLE:= libavahi-compat-libdnssd-dev library
+	SECTION:=libs
+	CATEGORY:=Libraries
+	DEPENDS:=+libavahi-client
+	TITLE:= libavahi-compat-libdnssd-dev library
 endef
 
 define Package/libavahi-compat-libdnssd-dev/description
- This packages adds the libavahi-compat-libdnssd-dev library.
- It also automatically adds the required libavahi-client package.
- For more information please see the avahi documentation.
+	This packages adds the libavahi-compat-libdnssd-dev library.
+	It also automatically adds the required libavahi-client package.
+	For more information please see the avahi documentation.
 endef
 
 define Build/Prepare
