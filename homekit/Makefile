@@ -35,8 +35,17 @@ endef
 define Build/Prepare
 endef
 
-define Package/conffiles
-	/etc/config/homekit
+define Build/Configure
+endef
+
+define Build/Compile
+endef
+
+define Package/homekit/conffiles
+/etc/config/homekit
+endef
+
+define Package/homekit/preinst
 endef
 
 define Package/homekit/postinst
