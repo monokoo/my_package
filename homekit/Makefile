@@ -45,6 +45,10 @@ fi
 exit 0
 endef
 
+define Package/$(PKG_NAME)/conffiles
+/etc/config/homekit
+endef
+
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/PHK $(1)/usr/sbin/
