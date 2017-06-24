@@ -27,6 +27,13 @@ define Package/$(PKG_NAME)/preinst
 endef
 
 define Package/$(PKG_NAME)/postinst
+#!/bin/sh
+if [ -z "$${IPKG_INSTROOT}" ]; then
+	cd /usr/lib
+	ln -s libdns_sd.so.1.0.0 libdns_sd.so
+	ln -s libavahi-client.so.3.2.9 libavahi-client.so
+fi
+exit 0
 endef
 
 define Build/Prepare
