@@ -17,7 +17,7 @@
 #define _manufactuerName "stones"   //Manufactuer
 #define devicePassword "624-10-526" //Password
 #define deviceUUID "33F48751-6F19-63CF-9552-8F4228F69D52"   //UUID, for pair verify
-#define controllerRecordsAddress "./PHK_controller" //Where to store the client keys
+#define controllerRecordsAddress "/etc/homekit" //Where to store the client keys
 
 //Number of client
 /*

@@ -20,7 +20,7 @@ e.default=0
 e.rmempty=false
 t=a:section(TypedSection,"global",translate("Matching Information"))
 t.anonymous=true
-e=t:option(DummyValue,"mpasswd",translate("</label><div align=\"left\">Pairing Password:<strong><font color=\"#660099\">98756432</font></strong></div>"))
+e=t:option(DummyValue,"mpasswd",translate("</label><div align=\"left\">Pairing Password:<strong><font color=\"#660099\">624-10-526</font></strong></div>"))
 if nixio.fs.access("/etc/homekit")then
 e=t:option(DummyValue,"c2status",translate("<div align=\"left\">Reassign</div>"))
 e=t:option(Button,"Reassign")
