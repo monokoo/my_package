@@ -14,17 +14,19 @@ include $(INCLUDE_DIR)/package.mk
 define Package/libavahi-compat-libdnssd-dev
 	SECTION:=libs
 	CATEGORY:=Libraries
-	DEPENDS:=+libavahi-client
 	TITLE:= libavahi-compat-libdnssd-dev library
+	DEPENDS:=+libavahi-client
 endef
 
 define Package/libavahi-compat-libdnssd-dev/description
-	This packages adds the libavahi-compat-libdnssd-dev library.
-	It also automatically adds the required libavahi-client package.
-	For more information please see the avahi documentation.
+This packages adds the libavahi-compat-libdnssd-dev library.
+It also automatically adds the required libavahi-client package.
+For more information please see the avahi documentation.
 endef
 
 define Build/Prepare
+	mkdir -p $(PKG_BUILD_DIR)
+	$(CP) ./files/* $(PKG_BUILD_DIR)/
 endef
 
 define Package/libavahi-compat-libdnssd-dev/postinst
@@ -39,14 +41,14 @@ endef
 
 define Package/libavahi-compat-libdnssd-dev/install
 	$(INSTALL_DIR) $(1)/usr/include
-	$(INSTALL_DATA) ./files/dns_sd.h $(1)/usr/include/dns_sd.h
-	$(INSTALL_DATA) ./files/client.h $(1)/usr/include/client.h
-	$(INSTALL_DATA) ./files/lookup.h $(1)/usr/include/lookup.h
-	$(INSTALL_DATA) ./files/publish.h $(1)/usr/include/publish.h
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dns_sd.h $(1)/usr/include/dns_sd.h
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/client.h $(1)/usr/include/client.h
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/lookup.h $(1)/usr/include/lookup.h
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/publish.h $(1)/usr/include/publish.h
 	
 	$(INSTALL_DIR) $(1)/usr/lib/pkgconfig
-	$(INSTALL_DATA) ./files/avahi-client.pc $(1)/usr/lib/pkgconfig/avahi-client.pc
-	$(INSTALL_DATA) ./files/avahi-compat-libdns_sd.pc $(1)/usr/lib/pkgconfig/avahi-compat-libdns_sd.pc
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/avahi-client.pc $(1)/usr/lib/pkgconfig/avahi-client.pc
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/avahi-compat-libdns_sd.pc $(1)/usr/lib/pkgconfig/avahi-compat-libdns_sd.pc
 	
 endef
 
