@@ -19,4 +19,15 @@ function index()
 
 	entry({"admin", "services", "ngrokc"}, cbi("ngrokc/overview"), _("Ngrok Settings"),4).dependent = true
 	entry({"admin", "services", "ngrokc", "detail"}, cbi("ngrokc/detail"), nil ).leaf = true
+	entry({"admin","services","ngrokc","status"},call("status")).leaf=true
+end
+function status()
+local t=require"luci.sys"
+local e=require"luci.http"
+local a=require"luci.model.uci".cursor()
+local t={
+running=(t.call("pidof ngrokc > /dev/null")==0),
+}
+e.prepare_content("application/json")
+e.write_json(t)
 end

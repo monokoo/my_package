@@ -12,11 +12,13 @@ local DISP = require "luci.dispatcher"
 local CTRL = require "luci.controller.ngrokc"
 local HTTP = require "luci.http"
 local UCI  = (require "luci.model.uci").cursor()
-
+m:section(SimpleSection).template  = "ngrokc/ngrokc_status"
 main=m:section(NamedSection, "main", "ngrokc", translate("Main Settings"))
 main.addremove=false
 main.anonymous=true
 --check_periodcally=main:option(Flag, "check_periodcally", translate("Check periodically"))
+ngrok_enabled=main:option(Flag, "ngrok_enabled", translate("Enable"))
+ngrok_enabled.addremove = false
 check_interval=main:option(Value, "check_interval", translate("Check interval"), translate("Second(s). Set to 0 if you don't want to check"))
 check_interval.addremove = false
 --check_interval:depends("check_periodcally", "1")

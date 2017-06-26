@@ -47,19 +47,29 @@ get_servarg() {
 }
 
 start() {
+
+	config_load 'ngrokc'
+	config_get_bool ngrok_enabled main ngrok_enabled 0
+	[ "$ngrok_enabled" -eq 0 ] && exit 0
+
 	mkdir -p /tmp/ngrokc
 	touch /tmp/ngrokc/running
 	# [ -f /usr/lib/coreutils/libstdbuf.so ] && STDBUF="stdbuf -oL " || STDBUF=""
-	config_load 'ngrokc'
+
 	config_foreach list_servers 'servers'
 	config_foreach list_tunnels 'tunnel'
 	set_crontab
 }
 
 stop() {
-	kill -2 `pidof ngrokc|sed "s/$$//g"` 2>/dev/null
-	rm -f /tmp/ngrokc/*
-	sleep 2
+	[ -n "$(pidof ngrokc)" ] && {
+		for pid in `pidof ngrokc`
+		do
+			kill -9 $pid 2>/dev/null
+		done
+		rm -f /tmp/ngrokc/*
+		sleep 2
+	}
 }
 
 boot() {
