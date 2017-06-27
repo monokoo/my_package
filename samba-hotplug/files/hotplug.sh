@@ -30,13 +30,15 @@ set_samba_path(){
 }
 
 remove_samba(){
+	mountdir=$(uci get samba.${s_uuid}.path)
+	[ -n "$(echo "$mountdir" | grep "/tmp/mnt/sd*")" ] && rm -rf $mountdir
 	uci del samba.${s_uuid}
 	uci commit samba
 }
 
 case "$ACTION" in
 	add)
-		mounted_device=$(cat /proc/self/mounts | grep "/mnt/sd*" |awk -F ' ' '{print $2}')
+		mounted_device=$(cat /proc/self/mounts | grep "/tmp/mnt/sd*" |awk -F ' ' '{print $2}')
 		[ -z "$mounted_device" ] && logger -t Auto-Samba "No devices was mounted on this system! Please mount it manually!"
 		[ -n "$mounted_device" ] && {
 			for mountpoint in $mounted_device
@@ -60,7 +62,7 @@ case "$ACTION" in
 	;;
 	remove)
 		sleep 1
-		MOUNT=`mount | grep '/mnt/sd*'`
+		MOUNT=`mount | grep '/tmp/mnt/sd*'`
 		[ -z "$MOUNT" ] && {
 			samba_uuid=$(uci show samba |grep "=sambashare" | awk -F'.' '{print $2}'|awk -F'=' '{print $1}')
 			[ -n "$samba_uuid" ] && {

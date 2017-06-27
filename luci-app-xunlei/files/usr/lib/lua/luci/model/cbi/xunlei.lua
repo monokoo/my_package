@@ -48,13 +48,13 @@ enable = s:taboption("basic", Flag, "enable", translate("启用 迅雷远程下�
 enable.rmempty = false
 
 local devices = {}
-util.consume((fs.glob("/mnt/sd?*")), devices)
+util.consume((fs.glob("/tmp/mnt/sd?*")), devices)
 device = s:taboption("basic", Value, "device", translate("挂载点"), translate("迅雷程序下载目录所在的“挂载点”。"))
 for i, dev in ipairs(devices) do
         device:value(dev)
 end
 
-file = s:taboption("basic", Value, "file", translate("迅雷程序安装目录"), translate("迅雷程序将安装在：“挂载点”/xunlei。例如：“迅雷下载目录”为 /mnt/sda1，迅雷就会安装在 /mnt/sda1/xunlei 下。"))
+file = s:taboption("basic", Value, "file", translate("迅雷程序安装目录"), translate("迅雷程序将安装在：“挂载点”/xunlei。例如：“迅雷下载目录”为 /tmp/mnt/sda1，迅雷就会安装在 /tmp/mnt/sda1/xunlei 下。"))
 for i, dev in ipairs(devices) do
         file:value(dev)
 end
