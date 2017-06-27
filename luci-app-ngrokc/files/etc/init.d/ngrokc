@@ -62,8 +62,8 @@ start() {
 }
 
 stop() {
-	[ -n "$(pidof ngrokc)" ] && {
-		for pid in `pidof ngrokc`
+	[ -n "$(pgrep "/usr/bin/ngrokc")" ] && {
+		for pid in `pgrep "/usr/bin/ngrokc"`
 		do
 			kill -9 $pid 2>/dev/null
 		done

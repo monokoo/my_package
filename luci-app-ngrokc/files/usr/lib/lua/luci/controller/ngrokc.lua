@@ -26,7 +26,7 @@ local t=require"luci.sys"
 local e=require"luci.http"
 local a=require"luci.model.uci".cursor()
 local t={
-running=(t.call("pidof ngrokc > /dev/null")==0),
+running=(t.call("pgrep /usr/bin/ngrokc > /dev/null")==0),
 }
 e.prepare_content("application/json")
 e.write_json(t)
