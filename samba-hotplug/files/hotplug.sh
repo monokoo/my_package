@@ -43,7 +43,7 @@ case "$ACTION" in
 		[ -n "$mounted_device" ] && {
 			for mountpoint in $mounted_device
 			do
-				device=$(echo "$mountpoint" |awk -F'/' '{print $3}')
+				device=$(echo "$mountpoint" |awk -F'/' '{print $4}')
 				get_uuid=`block info | grep -w "$mountpoint" | awk -F "UUID=" '{print $2}'| awk -F "\"" '{print $2}'`
 				have_uuid=$(uci show samba | grep -c "$get_uuid")
 				[ "$have_uuid" = "0" ] && { 
