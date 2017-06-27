@@ -31,7 +31,7 @@ set_samba_path(){
 
 remove_samba(){
 	mountdir=$(uci get samba.${s_uuid}.path)
-	[ -n "$(echo "$mountdir" | grep "/tmp/mnt/sd*")" ] && rm -rf $mountdir
+	#[ -n "$(echo "$mountdir" | grep "/tmp/mnt/sd*")" ] && rm -rf $mountdir
 	uci del samba.${s_uuid}
 	uci commit samba
 }
