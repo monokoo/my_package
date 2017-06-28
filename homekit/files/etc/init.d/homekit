@@ -35,10 +35,15 @@ load_config() {
 
 start(){
   ! load_config && exit 0
+  /etc/init.d/dbus start 2>/dev/null && /etc/init.d/dbus enable
+  /etc/init.d/avahi-daemon start && /etc/init.d/avahi-daemon enable
+  sleep 1s
   /usr/sbin/PHK >> $LOGFILE &
 }
 
 stop(){
   killall -q -9 PHK
+  /etc/init.d/avahi-daemon stop && /etc/init.d/avahi-daemon disable
+  /etc/init.d/dbus stop 2>/dev/null && /etc/init.d/dbus disable
 }
 
