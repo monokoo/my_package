@@ -32,7 +32,7 @@ set_samba_path(){
 remove_samba(){
 	mountdir=$(uci get samba.${s_uuid}.path)
 	[ -z "`mount | grep '$mountdir'`" ] && {
-		[ -n "$(echo "$mountdir" | grep "/mnt/sd*")" ] && rm -rf $mountdir
+		[ -d "$mountdir" ] && [ -z "`ls $mountdir`" ] && rm -rf $mountdir
 		uci del samba.${s_uuid}
 		uci commit samba
 		logger -t Auto-Samba "The samba share uuid: $s_uuid has been removed."
