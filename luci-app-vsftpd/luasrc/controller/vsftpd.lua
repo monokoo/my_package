@@ -28,6 +28,14 @@ function index()
 	entry({"admin", "services", "vsftpd", "general"},
 		cbi("vsftpd/general"),
 		_("General Settings"), 10).leaf = true
+		
+	entry({"admin", "services", "vsftpd", "global"},
+		cbi("vsftpd/global"),
+		_("Global Settings"), 11).leaf = true
+
+	entry({"admin", "services", "vsftpd", "connection"},
+		cbi("vsftpd/connection"),
+		_("Connection Settings"), 12).leaf = true		
 
 	entry({"admin", "services", "vsftpd", "users"},
 		cbi("vsftpd/users"),

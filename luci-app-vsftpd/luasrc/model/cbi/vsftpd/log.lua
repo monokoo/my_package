@@ -11,6 +11,7 @@ You may obtain a copy of the License at
 
 $Id$
 ]]--
+local s=require"nixio.fs"
 
 m = Map("vsftpd", translate("FTP Server - Log Settings"))
 
@@ -23,7 +24,17 @@ o = sl:option(Flag, "xreflog", translate("Enable file log"))
 o.default = true
 
 o = sl:option(Value, "file", translate("Log file"))
-o.default = "/var/log/vsftpd.log"
+o.default="/var/log/vsftpd.log"
+o.readonly=true
 
+o = sl:option(TextValue,"log")
+o.rows=20
+o.wrap="off"
+o.readonly=true
+o.cfgvalue=function(s1,s1)
+return s.readfile("/var/log/vsftpd.log")or""
+end
+o.write=function(o,o,o)
+end
 
 return m
