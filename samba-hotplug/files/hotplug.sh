@@ -31,19 +31,22 @@ set_samba_path(){
 
 remove_samba(){
 	mountdir=$(uci get samba.${s_uuid}.path)
-	[ -n "$(echo "$mountdir" | grep "/tmp/mnt/sd*")" ] && rm -rf $mountdir
-	uci del samba.${s_uuid}
-	uci commit samba
+	[ -z "`mount | grep '$mountdir'`" ] && {
+		[ -n "$(echo "$mountdir" | grep "/mnt/sd*")" ] && rm -rf $mountdir
+		uci del samba.${s_uuid}
+		uci commit samba
+		logger -t Auto-Samba "The samba share uuid: $s_uuid has been removed."
+	}
 }
 
 case "$ACTION" in
 	add)
-		mounted_device=$(cat /proc/self/mounts | grep "/tmp/mnt/sd*" |awk -F ' ' '{print $2}')
+		mounted_device=$(cat /proc/self/mounts | grep "/dev/sd*" | awk -F ' ' '{print $2}')
 		[ -z "$mounted_device" ] && logger -t Auto-Samba "No devices was mounted on this system! Please mount it manually!"
 		[ -n "$mounted_device" ] && {
 			for mountpoint in $mounted_device
 			do
-				device=$(echo "$mountpoint" |awk -F'/' '{print $3}')
+				device=$(cat /proc/self/mounts | grep -w "$mountpoint" | awk -F' ' '{print $2}' | awk -F'/' '{print $NF}')
 				get_uuid=`block info | grep -w "$mountpoint" | awk -F "UUID=" '{print $2}'| awk -F "\"" '{print $2}'`
 				have_uuid=$(uci show samba | grep -c "$get_uuid")
 				[ "$have_uuid" = "0" ] && { 
@@ -62,17 +65,13 @@ case "$ACTION" in
 	;;
 	remove)
 		sleep 1
-		MOUNT=`mount | grep '/tmp/mnt/sd*'`
-		[ -z "$MOUNT" ] && {
-			samba_uuid=$(uci show samba |grep "=sambashare" | awk -F'.' '{print $2}'|awk -F'=' '{print $1}')
-			[ -n "$samba_uuid" ] && {
-				for s_uuid in $samba_uuid
-				do
-					remove_samba
-					logger -t Auto-Samba "The samba share uuid: $s_uuid has been removed."
-					/etc/init.d/samba restart
-				done
-			}
+		samba_uuid=$(uci show samba |grep "=sambashare" | awk -F'.' '{print $2}'|awk -F'=' '{print $1}')
+		[ -n "$samba_uuid" ] && {
+			for s_uuid in $samba_uuid
+			do
+				remove_samba
+				/etc/init.d/samba restart
+			done
 		}
 	;;
 esac
