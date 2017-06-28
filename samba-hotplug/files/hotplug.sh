@@ -40,12 +40,12 @@ remove_samba(){
 
 case "$ACTION" in
 	add)
-		mounted_device=$(cat /proc/self/mounts | grep "/dev/sd*" |awk -F ' ' '{print $2}')
+		mounted_device=$(cat /proc/self/mounts | grep "/dev/sd*" | awk -F ' ' '{print $2}')
 		[ -z "$mounted_device" ] && logger -t Auto-Samba "No devices was mounted on this system! Please mount it manually!"
 		[ -n "$mounted_device" ] && {
 			for mountpoint in $mounted_device
 			do
-				device=$(echo "$mountpoint" |awk -F'/' '{print $4}')
+				device=$(cat /proc/self/mounts | grep -w "$mountpoint" | awk -F' ' '{print $2}' | awk -F'/' '{print $NF}')
 				get_uuid=`block info | grep -w "$mountpoint" | awk -F "UUID=" '{print $2}'| awk -F "\"" '{print $2}'`
 				have_uuid=$(uci show samba | grep -c "$get_uuid")
 				[ "$have_uuid" = "0" ] && { 
