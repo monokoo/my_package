@@ -35,6 +35,7 @@ remove_samba(){
 		[ -n "$(echo "$mountdir" | grep "/mnt/sd*")" ] && rm -rf $mountdir
 		uci del samba.${s_uuid}
 		uci commit samba
+		logger -t Auto-Samba "The samba share uuid: $s_uuid has been removed."
 	}
 }
 
@@ -69,7 +70,6 @@ case "$ACTION" in
 			for s_uuid in $samba_uuid
 			do
 				remove_samba
-				logger -t Auto-Samba "The samba share uuid: $s_uuid has been removed."
 				/etc/init.d/samba restart
 			done
 		}
