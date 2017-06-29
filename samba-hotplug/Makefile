@@ -30,6 +30,7 @@ endef
 define Package/samba-hotplug/install
 	$(INSTALL_DIR) $(1)/etc/hotplug.d/block
 	$(INSTALL_BIN) ./files/hotplug.sh $(1)/etc/hotplug.d/block/20-samba-hotplug
+	$(INSTALL_BIN) ./files/11-automount-ntfs $(1)/etc/hotplug.d/block/5-automount-ntfs
 endef
 
 $(eval $(call BuildPackage,samba-hotplug))

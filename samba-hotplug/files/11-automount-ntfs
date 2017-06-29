@@ -1,0 +1,88 @@
+#!/bin/sh
+. /lib/functions.sh
+
+get_mountpath() {
+	my_fstype=$1
+	type=$2
+	index=$(uci show fstab | grep -w "$type='$my_fstype'" | awk -F'.' '{print $2}')
+	if [ "$(uci get fstab.$index.enabled)" -eq 1 ]; then
+		mountpath=$(uci get fstab.$index.target)
+	else
+		mountpath=/tmp/mnt/$device
+	fi
+}
+
+specified_mountpath() {
+
+	if [ -n "$my_fslable" ] && [ "$(uci show fstab | grep -c "label='$my_fslable'")" -eq 1 ]; then
+		get_mountpath $my_fslable label
+	elif [ -n "$my_fsuuid" ] && [ "$(uci show fstab | grep -c "uuid='$my_fsuuid'")" -eq 1 ]; then
+		get_mountpath $my_fsuuid uuid
+	else
+		mountpath=/tmp/mnt/$device
+	fi
+
+}
+
+auto_mount(){
+	[ ! -d "$mountpath" ] && mkdir -p $mountpath
+	[ -n "`ls $mountpath`" ] && {
+		[ ! -d "/tmp/mnt/share" ] && mkdir -p /tmp/mnt/share
+		mountpath=/tmp/mnt/share
+	}
+	if [ "$my_fstype" == "ntfs" ]; then
+		mount -t ntfs-3g -o rw,noatime,big_writes,nls=utf8,umask=0000,dmask=0000,fmask=0000 /dev/$device $mountpath
+	else
+		case "$my_fstype" in
+			ext*)
+				mount -t $my_fstype -o rw,noatime /dev/$device $mountpath
+			;;
+			exfat)
+				mount -o rw,noatime,iocharset=cp936,umask=0000,dmask=0000,fmask=0000 /dev/$device $mountpath
+			;;
+			vfat|msdos)
+				mount -t $my_fstype -o rw,noatime,umask=0000,dmask=0000,fmask=0000 /dev/$device $mountpath
+			;;
+			cifs)
+				mount -t $my_fstype -o nounix,noserverino,iocharset=utf8,umask=0000,dmask=0000,fmask=0000 /dev/$device $mountpath
+			;;
+			*)
+				logger -t Auto-Mount "New block.File system:${my_fstype}, LABEL:${my_fslable}, UUID:${my_fsuuid} is not supported, please mount it manually."
+			;;
+		esac
+	fi
+}
+sleep 2
+countdev=$(ls /dev/sd*|wc -l)
+if [ "$countdev" -gt 1 ]; then
+	devices=$(ls /dev/ |grep -w sd[a-z][1-9])
+else
+	devices=$(ls /dev/ |grep -w sd[a-z])
+fi
+case "$ACTION" in
+	add)
+		for device in $devices
+		do	
+			mountpoint=$(cat /proc/self/mounts | grep -w "/dev/$device" |awk -F' ' '{print $2}')
+			[ -n "$mountpoint" ] && continue
+			my_fsinfo=$(blkid -d "/dev/$device")
+			my_fstype=$(echo "$my_fsinfo" | awk -F'TYPE="' '{print $2}' | sed 's/\"//')
+			my_fsuuid=$(echo "$my_fsinfo" | awk -F' ' '{print $2}' | awk -F'"' '{print $2}')
+			my_fslable=$(echo "$my_fsinfo" | awk -F'LABEL="' '{print $2}'|awk -F'"' '{print $1}')
+			[ -z "$mountpoint" ] && {
+				[ -n "$my_fstype" ] && {
+					logger -t Auto-Mount "New block.File system:${my_fstype}, LABEL:${my_fslable}, UUID:${my_fsuuid}"
+					specified_mountpath
+					auto_mount
+				}
+			}
+			sleep 2
+			judge_ifmount=$(cat /proc/self/mounts | grep -w "/dev/$device" |awk -F' ' '{print $2}')
+			if [ -z "$judge_ifmount" ]; then
+				logger -t Auto-Mount "New block.File system:${my_fstype}, LABEL:${my_fslable}, UUID:${my_fsuuid} mounted failed."
+			else
+				logger -t Auto-Mount "New ${my_fstype} disk has been mounted to $mountpath ."
+			fi
+		done
+	;;
+esac		
