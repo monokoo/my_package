@@ -2,9 +2,9 @@
 . /lib/functions.sh
 
 get_mountpath() {
-	my_fstype=$1
+	my_fsparam=$1
 	type=$2
-	index=$(uci show fstab | grep -w "$type='$my_fstype'" | awk -F'.' '{print $2}')
+	index=$(uci show fstab | grep -w "$type='$my_fsparam'" | awk -F'.' '{print $2}')
 	if [ "$(uci get fstab.$index.enabled)" -eq 1 ]; then
 		mountpath=$(uci get fstab.$index.target)
 	else
@@ -66,8 +66,8 @@ case "$ACTION" in
 			mountpoint=$(cat /proc/self/mounts | grep -w "/dev/$device" |awk -F' ' '{print $2}')
 			[ -n "$mountpoint" ] && continue
 			my_fsinfo=$(blkid -d "/dev/$device")
-			my_fstype=$(echo "$my_fsinfo" | awk -F'TYPE="' '{print $2}' | sed 's/\"//')
-			my_fsuuid=$(echo "$my_fsinfo" | awk -F' ' '{print $2}' | awk -F'"' '{print $2}')
+			my_fstype=$(echo "$my_fsinfo" | awk -F'TYPE="' '{print $2}' | awk -F'"' '{print $1}')
+			my_fsuuid=$(echo "$my_fsinfo" | awk -F'UUID="' '{print $2}' | awk -F'"' '{print $1}')
 			my_fslable=$(echo "$my_fsinfo" | awk -F'LABEL="' '{print $2}'|awk -F'"' '{print $1}')
 			[ -z "$mountpoint" ] && {
 				[ -n "$my_fstype" ] && {
