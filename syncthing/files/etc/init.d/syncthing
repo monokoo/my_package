@@ -24,6 +24,7 @@ get_config()
 	config_get syncenabled $1 enable 0
 	config_get wan_enable $1 wan_enable 0
 	config_get syncthing_port $1 port
+	config_get sharepath $1 sharepath
 }
 
 download_binary(){
@@ -38,17 +39,21 @@ rm -rf /tmp/syncthing-linux-arm-v0.14.31*
 
 start() {
 	config_load $CONFIG
-	config_foreach get_config global
-	[ $syncenabled -ne 1 ] && exit 0
-	/usr/sbin/syncthingready $wan_enable $syncthing_port $CONPATH $LOGFILE
+	get_config global
+	[ "$syncenabled" -eq 0 ] && exit 0
 	[ ! -f "/usr/share/syncthing/syncthing" ] && download_binary
+	[ ! -f "/usr/share/syncthing/syncthing" ] && logger -t syncthing 'Download syncthing failed, please retry.' && exit 0
+	/usr/sbin/syncthingready $wan_enable $syncthing_port $CONPATH $LOGFILE $sharepath
 	service_start /usr/share/syncthing/syncthing -home $CONPATH -logfile $LOGFILE >/dev/null 2>&1 &
 	logger -t syncthing 'Start syncthing service'
 }
 
 stop() {
+	syncthing_port=$(uci get syncthing.global.port)
 	[ -f "/usr/share/syncthing/syncthing.old" ] && rm -f /usr/share/syncthing/syncthing.old
 	service_stop /usr/share/syncthing/syncthing >/dev/null 2>&1 &
+	iptables -D zone_wan_input -p tcp --dport $syncthing_port -j ACCEPT
+	iptables -D forwarding_rule -p tcp --dport $syncthing_port -j ACCEPT
 	logger -t syncthing 'Stop syncthing service'
 }
 

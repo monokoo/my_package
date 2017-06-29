@@ -1,12 +1,29 @@
 #!/bin/sh
-	
+
 wan_enable=$1
 syncthing_port=$2
 CONPATH=$3
 LOGFILE=$4
+sharepath=$5
 
-if [ $wan_enable == 1 ];then
-  iptables -I zone_wan_input 2 -p tcp --dport $syncthing_port -j ACCEPT
-  iptables -I zone_wan_forward 2 -p tcp --dport $syncthing_port zone_lan_dest_ACCEPT
-  iptables -A forwarding_rule -p tcp --dport $syncthing_port -j ACCEPT
+lanip=$(uci get network.lan.ipaddr)
+
+[ ! -f "$CONPATH/config.xml" ] && /usr/share/syncthing/syncthing -generate="$CONPATH" > $LOGFILE
+
+if [ "$wan_enable" == 1 ];then
+	iptables -I zone_wan_input 2 -p tcp --dport $syncthing_port -j ACCEPT
+	iptables -I zone_wan_forward 2 -p tcp --dport $syncthing_port zone_lan_dest_ACCEPT
+	iptables -A forwarding_rule -p tcp --dport $syncthing_port -j ACCEPT
+	[ -f "$CONPATH/config.xml" ] && {
+		sed -i "s/<address>[0-9].*<\/address>/<address>0.0.0.0:${syncthing_port}<\/address>/" $CONPATH/config.xml
+	}
+else
+	iptables -I zone_wan_forward 2 -p tcp --dport $syncthing_port zone_lan_dest_ACCEPT
+	[ -f "$CONPATH/config.xml" ] && {
+		sed -i "s/<address>[0-9].*<\/address>/<address>${lanip}:${syncthing_port}<\/address>/" $CONPATH/config.xml
+	}
 fi
+[ -f "$CONPATH/config.xml" ] && {
+	sed -i "s#path=".*/"#path=\"$sharepath/#" $CONPATH/config.xml
+	sed -i "s/<localAnnounceMCAddr>\[ff12::.*\]/<localAnnounceMCAddr>\[ff12::${syncthing_port}\]/" $CONPATH/config.xml
+}

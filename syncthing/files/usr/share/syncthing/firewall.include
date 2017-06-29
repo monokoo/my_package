@@ -1,8 +1,8 @@
 #!/bin/sh
 # syncthing integration for firewall3
 
-syncthing_port=$(uci get syncthing.base.port)
-syncthing_wan_enable=$(uci get syncthing.base.wan_enable)
+syncthing_port=$(uci get syncthing.global.port)
+syncthing_wan_enable=$(uci get syncthing.global.wan_enable)
 
 if [ $syncthing_wan_enable == 1 ];then
   iptables -I zone_wan_input 2 -p tcp --dport $syncthing_port -j ACCEPT

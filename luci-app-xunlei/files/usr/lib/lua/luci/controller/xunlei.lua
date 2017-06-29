@@ -6,7 +6,7 @@ function index()
 		return
 	end
 	local page
-	page = entry({"admin", "services", "xunlei"}, cbi("xunlei"), _("迅雷远程下载"),6)
+	page = entry({"admin", "services", "xunlei"}, cbi("xunlei"), _("迅雷远程下载"),8)
 	page.i18n = "xunlei"
 	page.dependent = true
 	entry({"admin","services","xunlei","status"},call("status")).leaf=true
