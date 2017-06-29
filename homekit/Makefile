@@ -38,7 +38,9 @@ define Package/$(PKG_NAME)/postinst
 # check if we are on real system
 if [ -z "$${IPKG_INSTROOT}" ]; then
 	echo "Enabling rc.d symlink for homekit"
-	/etc/init.d/homekit enable 
+	/etc/init.d/homekit enable
+	/etc/init.d/avahi-daemon disable
+	/etc/init.d/dbus disable
 fi
 exit 0
 endef
