@@ -1,0 +1,6 @@
+
+config global 'syncthing'
+	option port '8383'
+	option enable '1'
+	option wan_enable '1'
+

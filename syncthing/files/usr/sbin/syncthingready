@@ -1,0 +1,12 @@
+#!/bin/sh
+	
+wan_enable=$1
+syncthing_port=$2
+CONPATH=$3
+LOGFILE=$4
+
+if [ $wan_enable == 1 ];then
+  iptables -I zone_wan_input 2 -p tcp --dport $syncthing_port -j ACCEPT
+  iptables -I zone_wan_forward 2 -p tcp --dport $syncthing_port zone_lan_dest_ACCEPT
+  iptables -A forwarding_rule -p tcp --dport $syncthing_port -j ACCEPT
+fi

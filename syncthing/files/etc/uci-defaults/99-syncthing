@@ -1,0 +1,13 @@
+#!/bin/sh
+
+uci -q batch <<-EOT
+	delete firewall.syncthing
+	set firewall.syncthing=include
+	set firewall.syncthing.type=script
+	set firewall.syncthing.path=/usr/share/syncthing/firewall.include
+	set firewall.syncthing.family=any
+	set firewall.syncthing.reload=1
+	commit firewall
+EOT
+
+exit 0

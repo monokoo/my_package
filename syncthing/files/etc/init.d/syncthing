@@ -1,0 +1,54 @@
+#!/bin/sh /etc/rc.common
+#
+# Copyright (C) 2015 OpenWrt-dist
+# Copyright (C) 2016 fw867 <ffkykzs@gmail.com>
+#
+# This is free software, licensed under the GNU General Public License v3.
+# See /LICENSE for more information.
+#
+
+START=99
+STOP=13
+SERVICE_USE_PID=1
+SERVICE_WRITE_PID=1
+SERVICE_DAEMONIZE=1
+
+HOME=/root
+export HOME
+CONFIG=syncthing
+CONPATH=/usr/share/syncthing/config
+LOGFILE=/var/log/$CONFIG.log
+
+get_config()
+{
+	config_get syncenabled $1 enable 0
+	config_get wan_enable $1 wan_enable 0
+	config_get syncthing_port $1 port
+}
+
+download_binary(){
+
+wget -q --timeout=10 https://github.com/syncthing/syncthing/releases/download/v0.14.31/syncthing-linux-arm-v0.14.31.tar.gz -O /tmp/syncthing-linux-arm-v0.14.31.tar.gz
+[ -f "/tmp/syncthing-linux-arm-v0.14.31.tar.gz" ] && tar -xf /tmp/syncthing-linux-arm-v0.14.31.tar.gz -C /tmp && \
+	mv /tmp/syncthing-linux-arm-v0.14.31/syncthing /usr/share/syncthing/syncthing
+rm -rf /tmp/syncthing-linux-arm-v0.14.31*
+[ -f "/usr/share/syncthing/syncthing" ] && chmod +x /usr/share/syncthing/syncthing
+
+}
+
+start() {
+	config_load $CONFIG
+	config_foreach get_config global
+	[ $syncenabled -ne 1 ] && exit 0
+	/usr/sbin/syncthingready $wan_enable $syncthing_port $CONPATH $LOGFILE
+	[ ! -f "/usr/share/syncthing/syncthing" ] && download_binary
+	service_start /usr/share/syncthing/syncthing -home $CONPATH -logfile $LOGFILE >/dev/null 2>&1 &
+	logger -t syncthing 'Start syncthing service'
+}
+
+stop() {
+	[ -f "/usr/share/syncthing/syncthing.old" ] && rm -f /usr/share/syncthing/syncthing.old
+	service_stop /usr/share/syncthing/syncthing >/dev/null 2>&1 &
+	logger -t syncthing 'Stop syncthing service'
+}
+
