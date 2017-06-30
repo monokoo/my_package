@@ -52,6 +52,9 @@ define Package/$(PKG_NAME)/install
 
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/controller
 	$(INSTALL_DATA) ./files/usr/lib/lua/luci/controller/*.lua $(1)/usr/lib/lua/luci/controller/
+
+	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
+	$(INSTALL_DATA) ./files/usr/lib/lua/luci/i18n/*.lmo $(1)/usr/lib/lua/luci/i18n/
 	
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/view/syncthing
 	$(INSTALL_DATA) ./files/usr/lib/lua/luci/view/syncthing/* $(1)/usr/lib/lua/luci/view/syncthing/

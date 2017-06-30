@@ -3,7 +3,7 @@ function index()
 if not nixio.fs.access("/etc/config/syncthing")then
 return
 end
-entry({"admin","services","syncthing"},cbi("syncthing/global"),_("syncthing"),4).dependent=true
+entry({"admin","services","syncthing"},cbi("syncthing/global"),_("Syncthing"),4).dependent=true
 entry({"admin","services","syncthing","status"},call("act_status")).leaf=true
 end
 function act_status()
