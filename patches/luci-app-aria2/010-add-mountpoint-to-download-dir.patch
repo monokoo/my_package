@@ -1,0 +1,16 @@
+--- a/luasrc/model/cbi/aria2.lua
++++ b/luasrc/model/cbi/aria2.lua
+@@ -101,8 +101,13 @@ o:value("notice", translate("Notice"))
+ o:value("warn", translate("Warn"))
+ o:value("error", translate("Error"))
+ 
++local devices = {}
++nixio.util.consume((nixio.fs.glob("/tmp/mnt/sd?*")), devices)
+ o = s:taboption("file", Value, "dir", translate("Default download directory"))
+ o.rmempty = false
++for i, dev in ipairs(devices) do
++	o:value(dev.."/aria2")
++end
+ 
+ o = s:taboption("file", Value, "disk_cache", translate("Disk cache"), translate("in bytes, You can append K or M."))
+ o.rmempty = true

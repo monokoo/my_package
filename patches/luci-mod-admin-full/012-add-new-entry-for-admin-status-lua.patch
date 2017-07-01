@@ -1,0 +1,13 @@
+--- a/luasrc/controller/admin/status.lua
++++ b/luasrc/controller/admin/status.lua
+@@ -24,6 +24,10 @@ function index()
+ 	entry({"admin", "status", "realtime", "bandwidth"}, template("admin_status/bandwidth"), _("Traffic"), 2).leaf = true
+ 	entry({"admin", "status", "realtime", "bandwidth_status"}, call("action_bandwidth")).leaf = true
+ 
++	if nixio.fs.access("/usr/sbin/bandwidthd")then
++		entry({"admin","status","traffic"},template("admin_status/traffic"),_("Traffic Statistics"),13)
++	end
++
+ 	if nixio.fs.access("/etc/config/wireless") then
+ 		entry({"admin", "status", "realtime", "wireless"}, template("admin_status/wireless"), _("Wireless"), 3).leaf = true
+ 		entry({"admin", "status", "realtime", "wireless_status"}, call("action_wireless")).leaf = true

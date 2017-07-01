@@ -1,0 +1,13 @@
+--- a/luasrc/controller/openvpn.lua
++++ b/luasrc/controller/openvpn.lua
+@@ -5,7 +5,7 @@
+ module("luci.controller.openvpn", package.seeall)
+ 
+ function index()
+-	entry( {"admin", "services", "openvpn"}, cbi("openvpn"), _("OpenVPN") )
+-	entry( {"admin", "services", "openvpn", "basic"},    cbi("openvpn-basic"),    nil ).leaf = true
+-	entry( {"admin", "services", "openvpn", "advanced"}, cbi("openvpn-advanced"), nil ).leaf = true
++	entry( {"admin", "vpn", "openvpn"}, cbi("openvpn"), _("OpenVPN") )
++	entry( {"admin", "vpn", "openvpn", "basic"},    cbi("openvpn-basic"),    nil ).leaf = true
++	entry( {"admin", "vpn", "openvpn", "advanced"}, cbi("openvpn-advanced"), nil ).leaf = true
+ end

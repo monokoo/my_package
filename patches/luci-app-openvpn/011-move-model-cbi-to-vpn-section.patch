@@ -1,0 +1,20 @@
+--- a/luasrc/model/cbi/openvpn.lua
++++ b/luasrc/model/cbi/openvpn.lua
+@@ -14,7 +14,7 @@ s.template_addremove = "openvpn/cbi-sele
+ s.addremove = true
+ s.add_select_options = { }
+ s.extedit = luci.dispatcher.build_url(
+-	"admin", "services", "openvpn", "basic", "%s"
++	"admin", "vpn", "openvpn", "basic", "%s"
+ )
+ 
+ uci:load("openvpn_recipes")
+@@ -89,7 +89,7 @@ end
+ local updown = s:option( Button, "_updown", translate("Start/Stop") )
+ updown._state = false
+ updown.redirect = luci.dispatcher.build_url(
+-	"admin", "services", "openvpn"
++	"admin", "vpn", "openvpn"
+ )
+ function updown.cbid(self, section)
+ 	local pid = s.getPID(section)

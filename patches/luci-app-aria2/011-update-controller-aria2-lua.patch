@@ -1,0 +1,22 @@
+--- a/luasrc/controller/aria2.lua
++++ b/luasrc/controller/aria2.lua
+@@ -18,7 +18,7 @@ function index()
+ 		return
+ 	end
+ 
+-	local page = entry({"admin", "services", "aria2"}, cbi("aria2"), _("Aria2 Settings"))
++	local page = entry({"admin", "services", "aria2"}, cbi("aria2"), _("Aria2 Settings"),7)
+ 	page.dependent = true
+ 
+ 	entry({"admin", "services", "aria2", "status"}, call("status")).leaf = true
+@@ -34,7 +34,9 @@ function status()
+ 	local status = {
+ 		running = (sys.call("pidof aria2c > /dev/null") == 0),
+ 		yaaw = ipkg.installed("yaaw"),
+-		webui = ipkg.installed("webui-aria2")
++		webui = ipkg.installed("webui-aria2"),
++		ariang = ipkg.installed("luci-app-ariang"),
++		glutton = ipkg.installed("luci-app-glutton")
+ 	}
+ 
+ 	http.prepare_content("application/json")
