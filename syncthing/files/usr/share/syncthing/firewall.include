@@ -5,7 +5,7 @@ syncthing_port=$(uci get syncthing.global.port)
 syncthing_wan_enable=$(uci get syncthing.global.wan_enable)
 
 if [ $syncthing_wan_enable == 1 ];then
-  iptables -I zone_wan_input 2 -p tcp --dport $syncthing_port -j ACCEPT
-  iptables -I zone_wan_forward 2 -p tcp --dport $syncthing_port zone_lan_dest_ACCEPT
-  iptables -A forwarding_rule -p tcp --dport $syncthing_port -j ACCEPT
+  iptables -I zone_wan_input 2 -p tcp --dport $syncthing_port -m comment --comment "allow syncthing port access" -j ACCEPT
+  iptables -I zone_wan_forward 2 -p tcp --dport $syncthing_port -m comment --comment "allow syncthing port access" -j zone_lan_dest_ACCEPT
+  iptables -A forwarding_rule -p tcp --dport $syncthing_port -m comment --comment "allow syncthing port access" -j ACCEPT
 fi

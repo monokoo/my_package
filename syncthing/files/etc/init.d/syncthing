@@ -52,8 +52,6 @@ stop() {
 	syncthing_port=$(uci get syncthing.global.port)
 	[ -f "/usr/share/syncthing/syncthing.old" ] && rm -f /usr/share/syncthing/syncthing.old
 	service_stop /usr/share/syncthing/syncthing >/dev/null 2>&1 &
-	iptables -D zone_wan_input -p tcp --dport $syncthing_port -j ACCEPT
-	iptables -D forwarding_rule -p tcp --dport $syncthing_port -j ACCEPT
 	logger -t syncthing 'Stop syncthing service'
 }
 
