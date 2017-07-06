@@ -30,7 +30,7 @@ define Package/$(PKG_NAME)
 	SECTION:=utils
 	CATEGORY:=Utilities
 	TITLE:=This is a HomeKit support accessories.
-	DEPENDS:=@!LINUX_2_4 +libavahi-compat-libdnssd +libopenssl +libstdcpp +libpthread +libc
+	DEPENDS:=@!LINUX_2_4 +libavahi-compat-libdnssd-dev +libopenssl +libstdcpp +libpthread +libc
 endef
 
 define Package/$(PKG_NAME)/postinst
@@ -43,10 +43,6 @@ if [ -z "$${IPKG_INSTROOT}" ]; then
 	/etc/init.d/dbus disable
 fi
 exit 0
-endef
-
-define Package/$(PKG_NAME)/conffiles
-/etc/config/homekit
 endef
 
 define Package/$(PKG_NAME)/install
