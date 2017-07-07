@@ -13,6 +13,7 @@ config policy 'balanced'
 config member 'wan_m1_w1'
 	option interface 'wan'
 	option metric '1'
+	option weight '1'
 
 config interface 'wan'
 	option enabled '1'

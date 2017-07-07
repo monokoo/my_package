@@ -55,7 +55,7 @@ auto_mount(){
 		esac
 	fi
 }
-sleep 2
+sleep 1s
 countdev=$(ls /dev/sd*|wc -l)
 if [ "$countdev" -gt 1 ]; then
 	devices=$(ls /dev/ |grep -w sd[a-z][1-9])
@@ -79,7 +79,7 @@ case "$ACTION" in
 					auto_mount
 				}
 			}
-			sleep 2
+			sleep 2s
 			judge_ifmount=$(cat /proc/self/mounts | grep -w "/dev/$device" |awk -F' ' '{print $2}')
 			if [ -z "$judge_ifmount" ]; then
 				logger -t Auto-Mount "New block.File system:${my_fstype}, LABEL:${my_fslable}, UUID:${my_fsuuid} mounted failed."
