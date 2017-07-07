@@ -31,20 +31,23 @@ auto_mount(){
 		mountpath=/tmp/mnt/share
 	}
 	if [ "$my_fstype" == "ntfs" ]; then
-		mount -t ntfs-3g -o rw,noatime,big_writes,nls=utf8,umask=0000,dmask=0000,fmask=0000 /dev/$device $mountpath
+		mount -t ntfs-3g -o rw,noatime,big_writes,nls=utf8,umask=000 /dev/$device $mountpath
 	else
 		case "$my_fstype" in
 			ext*)
 				mount -t $my_fstype -o rw,noatime /dev/$device $mountpath
 			;;
 			exfat)
-				mount -o rw,noatime,iocharset=cp936,umask=0000,dmask=0000,fmask=0000 /dev/$device $mountpath
+				mount -t $my_fstype -o rw,noatime,iocharset=cp936,umask=000 /dev/$device $mountpath
 			;;
-			vfat|msdos)
-				mount -t $my_fstype -o rw,noatime,umask=0000,dmask=0000,fmask=0000 /dev/$device $mountpath
+			vfat)
+				mount -t $my_fstype -o rw,codepage=936,utf8=1,umask=000 /dev/$device $mountpath
+			;;
+			msdos)
+				mount -t $my_fstype -o rw,codepage=936,iocharset=utf8,umask=000 /dev/$device $mountpath
 			;;
 			cifs)
-				mount -t $my_fstype -o nounix,noserverino,iocharset=utf8,umask=0000,dmask=0000,fmask=0000 /dev/$device $mountpath
+				mount -t $my_fstype -o nounix,noserverino,iocharset=utf8,umask=000 /dev/$device $mountpath
 			;;
 			*)
 				logger -t Auto-Mount "New block.File system:${my_fstype}, LABEL:${my_fslable}, UUID:${my_fsuuid} is not supported, please mount it manually."
