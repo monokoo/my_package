@@ -7,8 +7,8 @@ msgstr "Ngrok设置"
 msgid "Ngrok"
 msgstr "Ngrok反向代理"
 
-msgid "Secure tunnels to localhost."
-msgstr "易用而安全的反向代理软件"
+msgid "Secure tunnels to localhost.<br />Settings Tutorial:</font><a style=\"color: #ff0000;\" onclick=\"window.open('http://koolshare.cn/thread-115550-1-2.html')\">Jump Link to Koolshare Forum Tutorial</a>"
+msgstr "易用而安全的反向代理软件<br />穿透教程:</font><a style=\"color: #ff0000;\" onclick=\"window.open('http://koolshare.cn/thread-115550-1-2.html')\">点击跳转到论坛教程</a>"
 
 msgid "Enable"
 msgstr "启用"

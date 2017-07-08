@@ -1,7 +1,7 @@
 -- Mantainer : maz-1 < ohmygod19993 at gmail dot com >
 
 
-m = Map("ngrokc", translate("Ngrok"),translate("Secure tunnels to localhost."))
+m = Map("ngrokc", translate("Ngrok"),translate("Secure tunnels to localhost.<br />Settings Tutorial:</font><a style=\"color: #ff0000;\" onclick=\"window.open('http://koolshare.cn/thread-115550-1-2.html')\">Jump Link to Koolshare Forum Tutorial</a>"))
 
 local apply = luci.http.formvalue("cbi.apply")               
 if apply then                                                
