@@ -47,14 +47,16 @@ start() {
 	
 	[ -n "$device" ] && mountpoint="`mount | grep -w "$device" | awk '{print $3}'`"
 	[ -z "$mountpoint" ] && {
-		echo "当前所选择的挂载点无效，请先挂载好硬盘，再启动！" > /etc/xware/version
+		echo "<b style="color:red">当前所选择的挂载点无效，请先挂载好硬盘，再启动！</b>" > /etc/xware/version
 		exit 0
 	}
 	[ -z "$file" ] && {
-		echo "请先选择迅雷安装目录，再启动迅雷！" > /etc/xware/version
+		echo "<b style="color:red">请先选择迅雷安装目录，再启动迅雷！</b>" > /etc/xware/version
 		exit 0
 	}	
 	installdir=$file
+	[ -f "/var/log/xunlei-main.log" ] && rm /var/log/xunlei-main.log
+	touch /var/log/xunlei-main.log
 	start_xlup
 	[ ! -f "$installdir/xunlei/portal" ] && rm -f /etc/xware/xlfile && start_xlup		
 	update_cfg
@@ -70,15 +72,15 @@ start() {
 		}
 		[ -f "$installdir/xunlei/lib/vod_httpserver" ] && mv "$installdir"/xunlei/lib/vod_httpserver "$installdir"/xunlei/lib/bak-vod_httpserver
 	}
-	"$installdir"/xunlei/portal	
+	"$installdir"/xunlei/portal >> /var/log/xunlei-main.log
 	sleep 1s
-	[ -z "$(pidof EmbedThunderManager)" ] && "$installdir"/xunlei/portal
+	[ -z "$(pidof EmbedThunderManager)" ] && "$installdir"/xunlei/portal >> /var/log/xunlei-main.log
 }
 
 stop() {
 	installdir=$(uci get xunlei.config.file)
 	[ -f "$installdir/xunlei/lib/bak-vod_httpserver" ] && mv "$installdir"/xunlei/lib/bak-vod_httpserver "$installdir"/xunlei/lib/vod_httpserver
-	"$installdir"/xunlei/portal -s
+	"$installdir"/xunlei/portal -s >> /var/log/xunlei-main.log
 	sleep 1s
 	[ -n "$(pidof EmbedThunderManager)" ] && kill_all ETMDaemon EmbedThunderManager
 }

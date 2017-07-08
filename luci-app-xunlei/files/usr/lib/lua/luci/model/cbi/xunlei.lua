@@ -164,4 +164,26 @@ function editconf_download.write(self, section, value3)
 		fs.remove("/tmp/download.cfg")
 	end
 end
+s:tab("main_log", translate("迅雷日志"))
+main_log=s:taboption("main_log",TextValue,"log")
+main_log.rows=26
+main_log.wrap="off"
+main_log.readonly=true
+main_log.cfgvalue=function(self,section)
+return fs.readfile("/var/log/xunlei-main.log")or""
+end
+main_log.write=function(self,section,self)
+end
+
+
+s:tab("watch_log", translate("迅雷守护日志"))
+watch_log=s:taboption("watch_log",TextValue,"log")
+watch_log.rows=26
+watch_log.wrap="off"
+watch_log.readonly=true
+watch_log.cfgvalue=function(self,section)
+return fs.readfile("/var/log/xunlei-watch.log")or""
+end
+watch_log.write=function(self,section,self)
+end
 return m
