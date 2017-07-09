@@ -68,7 +68,7 @@ case "$ACTION" in
 		do	
 			mountpoint=$(cat /proc/self/mounts | grep -w "/dev/$device" |awk -F' ' '{print $2}')
 			[ -n "$mountpoint" ] && continue
-			my_fsinfo=$(blkid -d "/dev/$device")
+			my_fsinfo=$(block info | grep -w "/dev/$device")
 			my_fstype=$(echo "$my_fsinfo" | awk -F' TYPE="' '{print $2}' | awk -F'"' '{print $1}')
 			my_fsuuid=$(echo "$my_fsinfo" | awk -F'UUID="' '{print $2}' | awk -F'"' '{print $1}')
 			my_fslable=$(echo "$my_fsinfo" | awk -F'LABEL="' '{print $2}'|awk -F'"' '{print $1}')

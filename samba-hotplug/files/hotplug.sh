@@ -21,21 +21,23 @@ set_samba(){
 	uci set samba.${section}.read_only="no"
 	uci set samba.${section}.guest_ok="yes"
 	uci commit samba
+	#chmod -R 777 $mountpoint
 }
 set_samba_path(){
 	section=$get_uuid
 
 	uci set samba.${section}.path="${mountpoint}"
 	uci commit samba
+	#chmod -R 777 $mountpoint
 }
 
 remove_samba(){
 	mountdir=$(uci get samba.${s_uuid}.path)
 	[ -z "`mount | grep '$mountdir'`" ] && {
 		[ -d "$mountdir" ] && [ -z "`ls $mountdir`" ] && rm -rf $mountdir
-		uci del samba.${s_uuid}
-		uci commit samba
-		logger -t Auto-Samba "The samba share uuid: $s_uuid has been removed."
+		#uci del samba.${s_uuid}
+		#uci commit samba
+		#logger -t Auto-Samba "The samba share uuid: $s_uuid has been removed."
 	}
 }
 
@@ -70,7 +72,7 @@ case "$ACTION" in
 		[ -n "$samba_uuid" ] && {
 			for s_uuid in $samba_uuid
 			do
-				#remove_samba
+				remove_samba
 				/etc/init.d/samba restart
 			done
 		}
