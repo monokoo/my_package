@@ -30,6 +30,7 @@ auto_mount(){
 		[ ! -d "/tmp/mnt/share" ] && mkdir -p /tmp/mnt/share
 		mountpath=/tmp/mnt/share
 	}
+	chmod -R 777 $mountpath
 	if [ "$my_fstype" == "ntfs" ]; then
 		mount -t ntfs-3g -o rw,noatime,big_writes,nls=utf8,umask=000 /dev/$device $mountpath
 	else
