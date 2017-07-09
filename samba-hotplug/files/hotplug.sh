@@ -21,14 +21,12 @@ set_samba(){
 	uci set samba.${section}.read_only="no"
 	uci set samba.${section}.guest_ok="yes"
 	uci commit samba
-	#chmod -R 777 $mountpoint
 }
 set_samba_path(){
 	section=$get_uuid
 
 	uci set samba.${section}.path="${mountpoint}"
 	uci commit samba
-	#chmod -R 777 $mountpoint
 }
 
 remove_samba(){
