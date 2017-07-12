@@ -75,9 +75,6 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/controller
 	$(INSTALL_DATA) ./files/luasrc/controller/*.lua $(1)/usr/lib/lua/luci/controller/
 	
-	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/view/webrecord
-	$(INSTALL_DATA) ./files/usr/lib/lua/luci/view/webrecord/* $(1)/usr/lib/lua/luci/view/webrecord/
-	
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/model/cbi
 	$(INSTALL_DATA) ./files/luasrc/model/cbi/*.lua $(1)/usr/lib/lua/luci/model/cbi/
 
