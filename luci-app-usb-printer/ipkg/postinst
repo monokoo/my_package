@@ -1,9 +1,0 @@
-#!/bin/sh
-[ -n "${IPKG_INSTROOT}" ] || {
-	( . /etc/uci-defaults/luci-usb-printer ) && rm -f /etc/uci-defaults/luci-usb-printer
-	[ -f "/usr/bin/usb_printer_hotplug" ] && chmod +x /usr/bin/usb_printer_hotplug
-	[ -f "/usr/bin/detectlp" ] && chmod +x /usr/bin/detectlp
-	[ -f "/etc/init.d/usb_printer" ] && chmod +x /etc/init.d/usb_printer
-	exit 0
-}
-
