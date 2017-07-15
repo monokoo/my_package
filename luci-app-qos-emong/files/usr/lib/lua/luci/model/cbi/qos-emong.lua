@@ -1,4 +1,4 @@
-local e=require"luci.sys"
+local e=require"luci.ip"
 m=Map("qos-emong",translate("Emong's QOS"),translate("Easy to use qos, <font color=\"red\">do not open with other qos at the same time.</font>"))
 s=m:section(TypedSection,"qos-emong",translate("QOS Goble Setting"))
 s.anonymous=true
@@ -24,7 +24,7 @@ o.rmempty=false
 o=s:option(Value,"ip",translate("IP Address"))
 o.width="20%"
 o.datatype="ip4addr"
-e.net.arptable(function(e)
+e.neighbors(function(e)
 o:value(e["IP address"])
 end)
 o=s:option(Value,"downc",translate("Maximum Download Speed"))
@@ -51,7 +51,7 @@ o.rmempty=false
 o=s:option(Value,"ip",translate("IP Address"))
 o.width="20%"
 o.datatype="ip4addr"
-e.net.arptable(function(e)
+e.neighbors(function(e)
 o:value(e["IP address"])
 end)
 o=s:option(Value,"tcp",translate("TCP Maximum Number Connections"))

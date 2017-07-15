@@ -1,5 +1,5 @@
 require("luci.tools.webadmin")
-local t=require"luci.sys"
+local t=require"luci.ip"
 m=Map("qosv4",translate("qosv4 title","QOSv4"),
 translate("qosv4 title desc","qosv4 title desc"))
 s=m:section(TypedSection,"qos_settings",translate("qos goble setting","qos goble setting"))
@@ -84,7 +84,7 @@ nolimit_mac=s:option(Value,"nolimit_mac",translate("white mac","white mac"))
 nolimit_mac.rmempty=true
 nolimit_ip=s:option(Value,"nolimit_ip",translate("white ip","white ip"))
 nolimit_ip.rmempty=true
-t.net.arptable(function(e)
+t.neighbors(function(e)
 nolimit_ip:value(e["IP address"])
 nolimit_mac:value(
 e["HW address"],
