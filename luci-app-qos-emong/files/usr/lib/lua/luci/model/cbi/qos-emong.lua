@@ -24,8 +24,8 @@ o.rmempty=false
 o=s:option(Value,"ip",translate("IP Address"))
 o.width="20%"
 o.datatype="ip4addr"
-e.neighbors(function(e)
-o:value(e["IP address"])
+luci.ip.neighbors({family = 4}, function(neighbor)
+o:value(neighbor.dest:string(), "%s" %{neighbor.dest:string()})
 end)
 o=s:option(Value,"downc",translate("Maximum Download Speed"))
 o.default=1500
@@ -51,8 +51,8 @@ o.rmempty=false
 o=s:option(Value,"ip",translate("IP Address"))
 o.width="20%"
 o.datatype="ip4addr"
-e.neighbors(function(e)
-o:value(e["IP address"])
+luci.ip.neighbors({family = 4}, function(neighbor)
+o:value(neighbor.dest:string(), "%s" %{neighbor.dest:string()})
 end)
 o=s:option(Value,"tcp",translate("TCP Maximum Number Connections"))
 o.default=100
