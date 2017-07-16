@@ -3,7 +3,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-kuainiao
 PKG_VERSION:=20170716
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -45,6 +45,11 @@ define Package/luci-app-kuainiao/install
 
 	$(INSTALL_DIR) $(1)/etc/hotplug.d/iface
 	$(INSTALL_BIN) ./files/etc/hotplug.d/iface/* $(1)/etc/hotplug.d/iface/
+	$(INSTALL_DIR) $(1)/www/luci-static/resources
+	$(INSTALL_DATA) ./files/js/* $(1)/www/luci-static/resources/
+	
+	$(INSTALL_DIR) $(1)/usr/share/kuainiao
+	$(INSTALL_BIN) ./files/js/kuainiao_down_state $(1)/usr/share/kuainiao/kuainiao_down_state
 
 endef
 

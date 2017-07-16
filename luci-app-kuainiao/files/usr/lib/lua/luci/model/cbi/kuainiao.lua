@@ -55,7 +55,7 @@ startup.optional = false
 startup.rmempty = true
 
 if fs.access("/usr/share/kuainiao/kuainiao_down_state") then
-kuainiao_down_state = sys.exec("cat /usr/share/kuainiao/kuainiao_down_state")
+kuainiao_down_state = sys.exec("touch /usr/share/kuainiao/kuainiao_down_state && cat /usr/share/kuainiao/kuainiao_down_state")
 end
 
 kuainiao_down_state = s:taboption("base",DummyValue, "kuainiao_down_state", translate("下行提速状态" ..kuainiao_down_state))
