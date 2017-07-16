@@ -11,7 +11,7 @@ SERVICE_DAEMONIZE=1
 start_service() 
 {
   procd_open_instance
-  procd_set_param command /usr/bin/fastdick
+  procd_set_param command /usr/bin/kuainiao
   # respawn automatically if something died, be careful if you have an alternative process supervisor
   # if process dies sooner than respawn_threshold, it is considered crashed and after 5 retries the service is stopped
   procd_set_param respawn ${respawn_threshold:-5} ${respawn_timeout:-300} ${respawn_retry:-24}
@@ -21,30 +21,12 @@ start_service()
 }
 
 stop_service()
-{
-	cd /proc
-	for pid in [0-9]*
-	do
-		if grep "Name:	fastdick" $pid/status &>/dev/null
-			then
-			if [ "$pid" -eq "$$" ]
-				then
-				continue
-			fi
-			echo "Stop service fastdick $pid"
-			kill "$pid"
-			for cpid in [0-9]*
-			do
-				if grep "PPid:	$pid" $cpid/status &>/dev/null
-				then
-				    echo "Stop child process $cpid"
-				    name=`cat $cpid/status | grep "Name:" | sed 's/Name://' | tr -d ' \n\t'`
-				    if [ "$name" = "sleep" ]
-				    then
-					    kill $cpid
-				    fi
-				fi
-			done	
-		fi
-	done	
+{	
+	pid_kuainiao=`ps | grep -v grep | grep -w "/usr/bin/kuainiao" |awk '{print $1}' 2>/dev/null`
+	[ -n "$pid_kuainiao" ] && {
+		for pid in $pid_kuainiao
+		do
+			kill -9 $pid 2>/dev/null
+		done
+	}
 }

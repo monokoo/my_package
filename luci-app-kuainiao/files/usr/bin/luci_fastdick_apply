@@ -1,25 +1,25 @@
-#!/bin/ash
+#!/bin/sh
 
 # Writen by zz090923610
 # Not for any kind of commercial use.
 
-enabled=`uci get fastdick.setting.enabled`
+enabled=`uci get kuainiao.base.enabled`
 
 if [ "$enabled" -ne 1 ]
 then
-	/etc/init.d/fastdick stop
-	/etc/init.d/fastdick disable
+	/etc/init.d/kuainiao stop
+	/etc/init.d/kuainiao disable
 	exit
 fi
 
-startup=`uci get fastdick.setting.startup`
+# startup=`uci get kuainiao.base.startup`
 
-if [ "$startup" -eq 1 ]
-then
-	/etc/init.d/fastdick enable
-elif [ "$startup" -eq 0 ]
-then
-	/etc/init.d/fastdick disable
-fi
+# if [ "$startup" -eq 1 ]
+# then
+	# /etc/init.d/kuainiao enable
+# elif [ "$startup" -eq 0 ]
+# then
+	# /etc/init.d/kuainiao disable
+# fi
 
-/etc/init.d/fastdick restart
+/etc/init.d/kuainiao restart

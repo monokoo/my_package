@@ -1,15 +1,14 @@
 #!/bin/sh
 
 [ "$ACTION" = ifup ] && {
-  logger -t Thunder fastdick reload due to Device: $DEVICE Action: $ACTION ;
+  logger -t Thunder kuainiao reload due to Device: $DEVICE Action: $ACTION ;
 
-  /etc/init.d/fastdick stop && sleep 2;
-  /etc/init.d/fastdick start;
+  /etc/init.d/kuainiao stop && sleep 2;
+  /etc/init.d/kuainiao start;
 }
 
 [ "$ACTION" = ifdown ] && {
-  logger -t Thunder fastdick stop due to Device: $DEVICE Action: $ACTION ;
+  logger -t Thunder kuainiao stop due to Device: $DEVICE Action: $ACTION ;
 
-  /etc/init.d/fastdick stop;
-
+  /etc/init.d/kuainiao stop;
 }
