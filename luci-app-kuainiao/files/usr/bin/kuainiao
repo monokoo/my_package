@@ -12,8 +12,9 @@ sdkVersion=17550
 
 #WAN接口IP判断
 get_bind_address(){
-	ifname=`uci -P /var/state get network.$kuainiao_config_wan.ifname 2>/dev/null`
+	ifname=$(uci -P /var/state get network.$kuainiao_config_wan.ifname 2>/dev/null)
 	[ $? -eq 1 ] && echo $(date): "获取网络 $kuainiao_config_wan 信息出错" >>$LOGFILE && echo >>$LOGFILE && return
+	echo $(date): ifname is $ifname >> $LOGFILE
 	##wan_selected 所选接口IP
 	wan_selected=$(ifconfig $ifname 2>/dev/null | grep 'inet addr' | awk '{print $2}' | cut -d: -f2 2>/dev/null)
 	[ -z "$wan_selected" ] && echo $(date): "获取网络 $kuainiao_config_wan 接口 $ifname 信息出错" >>$LOGFILE && echo >>$LOGFILE && return
@@ -62,6 +63,7 @@ generate_pwd_rsa_hex()
 #pwd='702CFAF5824E4306516F488DEAFC2D24F76C82FA53BA3396F5615FDD32E4430E45B254E136056ED5F3C5B404A08E2178B51330999A4EC3C2D2989D554D7863BDE8F058F44808E6B65F4D071B5D5C7210210DA9ED8D729312CECA39E0F4516143E33C089F616ABE93E14D3224BEB311D3D6EF65A6CE265D3E4ABA285523F14320'
 
 get_device_sign(){
+	ifname=$(uci get network.$kuainiao_config_wan.ifname 2>/dev/null)
 	wan_mac=$(ifconfig $ifname | grep 'HWaddr' | awk '{print $5}')
 	fake_device_id=$(echo -n "$wan_mac" | md5sum | cut -d ' ' -f1)
 	fake_device_id_tmp1=$(echo -n "$fake_device_id"com.xunlei.vip.swjsq68700d1872b772946a6940e4b51827e8af"" | openssl sha1 -hmac | awk '{print $2}')
@@ -75,6 +77,7 @@ get_device_sign(){
 #获取用户真实MAC地址
 get_mac_addr(){
 	if [ -n "$bind_address" ]; then
+		ifname=$(uci get network.$kuainiao_config_wan.ifname 2>/dev/null)
 		peerid=$(ifconfig $ifname | grep 'HWaddr' | awk '{print $5}' | awk 'gsub(/:/, "")')004V
 	fi
 	#peerid='000C29212478004V'
@@ -87,19 +90,28 @@ get_mac_addr(){
 #获取迅雷用户uid
 get_xunlei_uid(){
 	get_http_req
+	echo $(date): HTTP_REQ is $HTTP_REQ >> $LOGFILE
+	echo $(date): POST_ARG is $POST_ARG >> $LOGFILE
 	uname=$kuainiao_config_uname
-	get_mac_addr
+	#get_mac_addr
+	echo $(date): peerid is $peerid >> $LOGFILE
+	[ -z "$peerid" ] && exit 0
 	#pwd=$generate_pwd_rsa_hex
 	pwd=$kuainiao_config_pwd
 	get_device_sign
+	echo $(date): devicesign is $devicesign >> $LOGFILE
 	ret=`$HTTP_REQ --header "User-Agent:android-async-http/xl-acc-sdk/version-1.6.1.177600" https://login.mobile.reg2t.sandai.net:443/ $POST_ARG"{\"userName\":\""$uname"\",\"businessType\":68,\"clientVersion\":\"$app_version\",\"appName\":\"ANDROID-com.xunlei.vip.swjsq\",\"isCompressed\":0,\"sequenceNo\":1000001,\"sessionID\":\"\",\"loginType\":0,\"rsaKey\":{\"e\":\"010001\",\"n\":\"AC69F5CCC8BDE47CD3D371603748378C9CFAD2938A6B021E0E191013975AD683F5CBF9ADE8BD7D46B4D2EC2D78AF146F1DD2D50DC51446BB8880B8CE88D476694DFC60594393BEEFAA16F5DBCEBE22F89D640F5336E42F587DC4AFEDEFEAC36CF007009CCCE5C1ACB4FF06FBA69802A8085C2C54BADD0597FC83E6870F1E36FD\"},\"cmdID\":1,\"verifyCode\":\"$verifyCode\",\"peerID\":\""$peerid"\",\"protocolVersion\":$protocolVersion,\"platformVersion\":1,\"passWord\":\""$pwd"\",\"extensionList\":\"\",\"verifyKey\":\"$verifyKey\",\"sdkVersion\":$sdkVersion,\"devicesign\":\""$devicesign"\"}"`
 	#判断是否登陆成功
 	#echo $ret >>test.txt
+	echo $(date): "........................" >> $LOGFILE
+	echo $(date): ret is $ret >> $LOGFILE
+	echo $(date): "........................" >> $LOGFILE
 	session=`echo $ret|awk -F '"sessionID":' '{print $2}'|awk -F '[,}]' '{print $1}'|grep -oE "[A-F,0-9]{32}"`
+	echo $(date): session is $session >> $LOGFILE
 	#vcode=`echo $ret|awk -F '"errorDescUrl":' '{print $2}'|awk -F '}' '{print $1}'`
 	#vcode=`echo $vcode|sed 's/\\//g'`
 	errcode=`echo $ret|awk -F '"errorCode":' '{print $2}'|awk -F '[,}]' '{print $1}'`
-
+	echo $(date): errcode is $errcode >> $LOGFILE
 	if [ -z "$session" ]; then
 	  	  if [ $errcode == 6 ];then
 			#dbus set kuainiao_vcodeimg_url="$vcode"
@@ -140,6 +152,10 @@ get_kuainiao_api(){
 	portal_ip=`echo $portal|grep -oE '([0-9]{1,3}[\.]){3}[0-9]{1,3}'`
 	portal_port_temp=`echo $portal|grep -oE "port...[0-9]{1,5}"`
 	portal_port=`echo $portal_port_temp|grep -oE '[0-9]{1,5}'`
+	echo $(date): "portal is $portal" >> $LOGFILE
+	echo $(date): "portal_ip is $portal_ip" >> $LOGFILE
+	echo $(date): "portal_port_temp is $portal_port_temp" >> $LOGFILE
+	echo $(date): "portal_port is $portal_port" >> $LOGFILE
 	if [ -z "$portal_ip" ]; then
 			kuainiao_down_state="迅雷快鸟下行API获取失败，请检查网络环境，或稍后再试!"
 			echo $(date): "$kuainiao_down_state" >> $LOGFILE
@@ -169,7 +185,10 @@ get_kuainiao_upapi(){
 #检测快鸟加速信息
 get_bandwidth(){
 	echo $(date): api_url is $api_url >> $LOGFILE
+	echo $(date): peerid is $peerid >> $LOGFILE
 	if [ -n "$api_url" ]; then
+		echo $(date): HTTP_REQ is $HTTP_REQ >> $LOGFILE
+		echo $(date): POST_ARG is $POST_ARG >> $LOGFILE
 		band=$bandwidth
 		echo $(date): bandwidth is $band >> $LOGFILE
 		can_upgrade=`echo $band|awk -F '"can_upgrade":' '{print $2}'|awk -F '[,}]' '{print $1}'`
@@ -416,7 +435,14 @@ kuainiao_init(){
 		#sleep $kuainiao_time  启动延时
 		echo $(date): sleep time now启动延时 >> $LOGFILE
 		sleep 10s
+		
 		#登陆迅雷获取uid
+		echo $(date): get_bind_address start >> $LOGFILE
+		get_bind_address
+		echo $(date): bind_address is $bind_address >> $LOGFILE 
+		echo $(date): get_mac_addr start >> $LOGFILE
+		get_mac_addr
+		echo $(date): peerid is $peerid >> $LOGFILE
 		echo $(date): get_xunlei_uid start >> $LOGFILE
 		get_xunlei_uid
 		echo $(date): get_xunlei_uid is done >> $LOGFILE

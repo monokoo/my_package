@@ -41,7 +41,7 @@ kuainiao_config_pwd = s:taboption("base",Value, "kuainiao_config_pwd", translate
 kuainiao_config_pwd.password = true
 kuainiao_config_pwd.datatype = "minlength(1)"
 kuainiao_config_pwd.rmempty = true
-kuainiao_config_pwd.readonly=true
+--kuainiao_config_pwd.readonly=true
 
 local a
 speed_wan=s:taboption("base",ListValue,"speed_wan",translate("指定加速的接口"))
@@ -54,9 +54,8 @@ startup.default = true
 startup.optional = false
 startup.rmempty = true
 
-if fs.access("/usr/share/kuainiao/kuainiao_down_state") then
+
 kuainiao_down_state = sys.exec("touch /usr/share/kuainiao/kuainiao_down_state && cat /usr/share/kuainiao/kuainiao_down_state")
-end
 
 kuainiao_down_state = s:taboption("base",DummyValue, "kuainiao_down_state", translate("下行提速状态" ..kuainiao_down_state))
 --kuainiao_down_state.value=sys.exec("cat /usr/share/kuainiao/kuainiao_down_state")
