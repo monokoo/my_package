@@ -189,8 +189,10 @@ get_bandwidth(){
 	if [ -n "$api_url" ]; then
 		echo $(date): HTTP_REQ is $HTTP_REQ >> $LOGFILE
 		echo $(date): POST_ARG is $POST_ARG >> $LOGFILE
-		band=$bandwidth
-		echo $(date): bandwidth is $band >> $LOGFILE
+		bandwidth
+		echo $(date): width is $width >> $LOGFILE
+		band=$width
+		echo $(date): band is $band >> $LOGFILE
 		can_upgrade=`echo $band|awk -F '"can_upgrade":' '{print $2}'|awk -F '[,}]' '{print $1}'`
 		echo $(date): can_upgrade is $can_upgrade >> $LOGFILE
 		kuainiao_can_upgrade=$can_upgrade
@@ -317,9 +319,14 @@ keepalive_up(){
 
 #检测提速带宽
 bandwidth(){
+	echo $(date): "bandwidth start" >> $LOGFILE
+	echo $(date): "peerid is $peerid" >> $LOGFILE
+	echo $(date): "uid is $uid" >> $LOGFILE
+	echo $(date): "session is $session" >> $LOGFILE
 	_ts=`date +%s`000
+	echo $(date): "_ts is $_ts" >> $LOGFILE
 	width=`$HTTP_REQ "$api_url/bandwidth?peerid=$peerid&userid=$uid&user_type=1&sessionid=$session&dial_account=$dial_account&client_type=android-swjsq-$app_version&client_version=androidswjsq-$app_version&os=android-5.0.1.24SmallRice&time_and=$_ts"`
-	echo $width
+	#echo $width
 }
 ##{"bandwidth":{"downstream":51200,"upstream":0},"can_upgrade":1,"dial_account":"100001318645","errno":0,"max_bandwidth":{"downstream":102400,"upstream":0},"message":"","province":"bei_jing","province_name":"北京","richmessage":"","sequence":0,"sp":"cnc","sp_name":"联通","timestamp":1455936922}
 
