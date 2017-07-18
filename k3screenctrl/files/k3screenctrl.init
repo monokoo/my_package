@@ -1,0 +1,78 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+STOP=99
+
+SCRIPTS_BASE=/lib/k3screenctrl/
+TEMP_DIR=/tmp/k3screenctrl
+
+start() {
+	config_load k3screenctrl
+	config_get_bool usb3_setting general usb3_disable 0
+	config_get RMODE general route_mode none
+	config_get screen_time general screen_time 
+	config_get refresh_time general refresh_time
+
+	if [ "$usb3_setting" -eq 0 ]; then
+		enable_usb3
+	else
+		disable_usb3
+	fi
+
+	if [ "$RMODE" == "apmode" ]; then
+		uci set network.lan.proto='dhcp'
+		uci set network.lan.ifname="eth0.1 eth0.2"
+		uci set network.wan.proto=none
+		uci set dhcp.lan.dynamicdhcp='0'
+		uci set k3screenctrl.@general[0].route_mode='none'
+		uci commit
+	elif [ "$RMODE" == "dhcpmode" ]; then
+		uci set network.wan.proto='dhcp'
+		uci set network.lan.ifname="eth0.1"
+		uci set network.lan.proto='static'
+		uci set network.lan.ipaddr='192.168.1.1'
+		uci set network.lan.netmask='255.255.255.0'
+		uci del dhcp.lan.dynamicdhcp
+		uci set k3screenctrl.@general[0].route_mode='none'
+		uci commit
+	else
+		return
+	fi
+	
+	mkdir -p $TEMP_DIR
+	mkdir -p $TEMP_DIR/device_speed
+	[ -z "$(iptables --list | grep K3_SEREEN_U)" ] && iptables -N K3_SEREEN_U
+	[ -z "$(iptables --list | grep K3_SEREEN_D)" ] && iptables -N K3_SEREEN_D
+	$SCRIPTS_BASE"device_custom.sh"
+	$SCRIPTS_BASE"device_online.sh" &
+	m=$screen_time && [ $m -lt 10 ] && m=10
+	d=$refresh_time && [ $d -lt 2 ] && d=2
+	/usr/bin/k3screenctrl -m $m -d $d &
+}
+
+stop() {
+    killall k3screenctrl device_online.sh
+    kill -9 $(pidof device_online.sh) >/dev/null 2>&1
+    rm -rf $TEMP_DIR
+}
+
+disable_usb3() {
+	[ -f "/etc/modules-boot.d/54-usb3" ] && rm /etc/modules-boot.d/54-usb3
+	[ -f "/etc/modules.d/54-usb3" ] && rm /etc/modules.d/54-usb3
+}
+
+enable_usb3() {
+	[ ! -f "/etc/modules.d/54-usb3" ] && {
+		cat > /etc/modules.d/54-usb3 <<EOF
+xhci-hcd
+xhci-plat-hcd
+xhci-pci
+EOF
+	}
+	[ ! -f "/etc/modules-boot.d/54-usb3" ] && {
+		basepath=$(cd `dirname $0`; pwd)
+		echo basepath is $basepath
+		cd /etc/modules-boot.d/ && ln -s ../modules.d/54-usb3 54-usb3
+		cd $basepath
+	}
+}
