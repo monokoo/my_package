@@ -25,6 +25,7 @@ start() {
 		uci set dhcp.lan.dynamicdhcp='0'
 		uci set k3screenctrl.@general[0].route_mode='none'
 		uci commit
+		echo 1 >/etc/k3screenctrl-apmode
 	elif [ "$ROUTER_MODE" == "dhcpmode" ]; then
 		uci set network.wan.proto='dhcp'
 		uci set network.lan.ifname="eth0.1"
@@ -34,6 +35,7 @@ start() {
 		uci del dhcp.lan.dynamicdhcp
 		uci set k3screenctrl.@general[0].route_mode='none'
 		uci commit
+		echo 0 >/etc/k3screenctrl-apmode
 	fi
 	
 	mkdir -p $TEMP_DIR
