@@ -85,7 +85,9 @@ nolimit_mac.rmempty=true
 nolimit_ip=s:option(Value,"nolimit_ip",translate("white ip","white ip"))
 nolimit_ip.rmempty=true
 luci.ip.neighbors({family = 4}, function(neighbor)
+if neighbor.reachable then
 nolimit_ip:value(neighbor.dest:string(), "%s" %{neighbor.dest:string()})
 nolimit_mac:value(neighbor.mac, "%s (%s)" %{neighbor.mac, neighbor.dest:string()})
+end
 end)
 return m

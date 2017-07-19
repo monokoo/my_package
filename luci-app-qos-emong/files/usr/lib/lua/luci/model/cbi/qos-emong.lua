@@ -25,7 +25,9 @@ o=s:option(Value,"ip",translate("IP Address"))
 o.width="20%"
 o.datatype="ip4addr"
 luci.ip.neighbors({family = 4}, function(neighbor)
+if neighbor.reachable then
 o:value(neighbor.dest:string(), "%s" %{neighbor.dest:string()})
+end
 end)
 o=s:option(Value,"downc",translate("Maximum Download Speed"))
 o.default=1500
@@ -52,7 +54,9 @@ o=s:option(Value,"ip",translate("IP Address"))
 o.width="20%"
 o.datatype="ip4addr"
 luci.ip.neighbors({family = 4}, function(neighbor)
+if neighbor.reachable then
 o:value(neighbor.dest:string(), "%s" %{neighbor.dest:string()})
+end
 end)
 o=s:option(Value,"tcp",translate("TCP Maximum Number Connections"))
 o.default=100
