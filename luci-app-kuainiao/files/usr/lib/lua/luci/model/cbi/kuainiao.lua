@@ -28,6 +28,12 @@ enable_up.default=0
 enabled.rmempty = false
 enable_up:depends("enabled",1)
 
+local a
+speed_wan=s:taboption("base",ListValue,"speed_wan",translate("指定加速的接口"))
+for a,s in ipairs(o:get_networks())do
+if s:name()~="loopback" and s:name()~="lan" then speed_wan:value(s:name())end
+end
+
 username = s:taboption("base",Value, "kuainiao_name", translate("Thunder Username"))
 username.datatype = "minlength(1)"
 username.rmempty = false
@@ -43,11 +49,7 @@ kuainiao_config_pwd.datatype = "minlength(1)"
 kuainiao_config_pwd.rmempty = true
 --kuainiao_config_pwd.readonly=true
 
-local a
-speed_wan=s:taboption("base",ListValue,"speed_wan",translate("指定加速的接口"))
-for a,s in ipairs(o:get_networks())do
-if s:name()~="loopback" and s:name()~="lan" then speed_wan:value(s:name())end
-end
+
 
 startup = s:taboption("base",Flag, "startup", translate("Run when router startup"))
 startup.default = true

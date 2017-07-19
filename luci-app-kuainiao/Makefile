@@ -3,7 +3,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-kuainiao
 PKG_VERSION:=20170716
-PKG_RELEASE:=4
+PKG_RELEASE:=5
 
 include $(INCLUDE_DIR)/package.mk
 
