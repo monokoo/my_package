@@ -5,26 +5,32 @@ kill_all() {
   kill -9 $(pidof $@) >/dev/null 2>&1
 }
 
-installdir=$(uci get xunlei.config.file)
+installdir=$(uci get xunlei.config.file 2>/dev/null)
 DIR=$installdir/xunlei
 running=$(pidof EmbedThunderManager)
 [ -n "$running" ] && $installdir/xunlei/portal -s >> /var/log/xunlei-main.log
 [ -n "$running" ] && kill_all ETMDaemon EmbedThunderManager
 mkdir -p ${DIR}/cfg
 cd ${DIR}
-FILE=$(uci get xunlei.config.xware)
-URL=$(uci get xunlei.config.url)
+[ -n `ls $DIR | grep portal` ] && rm -f portal*
+[ -n `ls $DIR | grep ETMDaemon` ] && rm -f ETMDaemon*
+[ -n `ls $DIR | grep EmbedThunderManager` ] && rm -f EmbedThunderManager*
+[ -n `ls $DIR | grep vod_httpserver` ] && rm -f vod_httpserver*
+[ -n `ls $DIR | grep Xware` ] && rm -f Xware*
+rm -rf lib
+
+FILE=$(uci get xunlei.config.xware 2>/dev/null)
+URL=$(uci get xunlei.config.url 2>/dev/null)
 
 wget --no-check-certificate -q ${URL}/${FILE}
 
-rm -rf portal && rm -rf lib
 [ -f "$FILE" ] && unzip ${FILE} || exit 0
 [ -f "${DIR}/portal" ] && {
 	[ -f "/etc/xware/xlfile" ] && rm -f /etc/xware/xlfile
 	touch /etc/xware/xlfile
 }
 chmod +x *
-rm -rf ${FILE}
+[ -f "$FILE" ] && rm -rf ${FILE}
 rm -rf $installdir/xunlei/cfg/thunder_mounts.cfg>> /dev/null 2>&1
 
 sh /etc/xware/cfg
