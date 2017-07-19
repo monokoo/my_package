@@ -26,6 +26,7 @@ start() {
 		uci set k3screenctrl.@general[0].route_mode='none'
 		uci commit
 		echo 1 >/etc/k3screenctrl-apmode
+		/etc/init.d/network restart
 	elif [ "$ROUTER_MODE" == "dhcpmode" ]; then
 		uci set network.wan.proto='dhcp'
 		uci set network.lan.ifname="eth0.1"
@@ -36,6 +37,7 @@ start() {
 		uci set k3screenctrl.@general[0].route_mode='none'
 		uci commit
 		echo 0 >/etc/k3screenctrl-apmode
+		/etc/init.d/network restart
 	fi
 	
 	mkdir -p $TEMP_DIR
