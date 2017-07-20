@@ -48,11 +48,6 @@ kuainiao_config_pwd.datatype = "minlength(1)"
 kuainiao_config_pwd.rmempty = true
 --kuainiao_config_pwd.readonly=true
 
-startup = s:taboption("base",Flag, "startup", translate("Run when router startup"))
-startup.default = true
-startup.optional = false
-startup.rmempty = true
-
 log=s:taboption("log",TextValue,"log")
 log.rows=26
 log.wrap="off"
