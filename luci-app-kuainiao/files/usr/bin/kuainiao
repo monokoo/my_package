@@ -10,7 +10,7 @@ version="0.4"
 app_version="2.0.3.4"
 protocolVersion=108
 sdkVersion=17550
-logmore=1  #打印更详细日志排查
+logmore=0  #打印更详细日志排查
 
 log_up(){
 	kuainiao_up_state=$1
