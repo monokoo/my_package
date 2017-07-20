@@ -8,7 +8,7 @@ local sys = require "luci.sys"
 local m,t,e
 m = Map("kuainiao", translate("迅雷快鸟"),translate("迅雷快鸟是迅雷联合宽带运营商推出的一款致力于帮助用户解决宽带低、网速慢、上网体验差的专业级宽带加速软件。"))
 m:section(SimpleSection).template  = "kuainiao/kuainiao_status"
-s = m:section(NamedSection, "base", "kuainiao", translate("Please Set before apply."))
+s = m:section(NamedSection, "base", "kuainiao", translate("首次使用请填写完帐号密码保存提交一次，之后再启用。"))
 s.addremove = false
 s:tab("base",translate("Basic Settings"))
 s:tab("log",translate("快鸟日志"))

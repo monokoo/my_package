@@ -4,21 +4,21 @@
 
 <% include("cbi/map") %>
 <script type="text/javascript">//<![CDATA[
-	XHR.poll(8, '<%=luci.dispatcher.build_url("admin", "services", "kuainiao", "status")%>', null,
+	XHR.poll(5, '<%=luci.dispatcher.build_url("admin", "services", "kuainiao", "status")%>', null,
 		function(x, result)
 		{
 			var status = document.getElementById('kuainiao_status');
 			status.innerHTML = result.running?'<font color=green><%=translate("RUNNING")%></font>':'<font color=red><%=translate("NOT RUNNING")%></font>';
 		}
 	);
-	XHR.poll(4, '<%=luci.dispatcher.build_url("admin", "services", "kuainiao", "dwonstatus")%>', null,
+	XHR.poll(5, '<%=luci.dispatcher.build_url("admin", "services", "kuainiao", "dwonstatus")%>', null,
 		function(x, result)
 		{
 			var dwonstatus = document.getElementById('dwon_status');
 			dwonstatus.innerHTML = (result.dwonstatus?result.dwonstatus:"--");
 		}
 	);
-	XHR.poll(4, '<%=luci.dispatcher.build_url("admin", "services", "kuainiao", "upstatus")%>', null,
+	XHR.poll(5, '<%=luci.dispatcher.build_url("admin", "services", "kuainiao", "upstatus")%>', null,
 		function(x, result)
 		{
 			var upstatus = document.getElementById('up_status');

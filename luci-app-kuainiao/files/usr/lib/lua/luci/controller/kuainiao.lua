@@ -15,7 +15,7 @@ end
 
 function kuainiao_status()
 local e={}
-e.running=luci.sys.call("pgrep /usr/bin/kuainiao > /dev/null")==0
+e.running=luci.sys.exec("ps |grep -v grep |grep -w '/usr/bin/kuainiao' ")
 luci.http.prepare_content("application/json")
 luci.http.write_json(e)
 end
