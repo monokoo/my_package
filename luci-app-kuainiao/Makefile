@@ -2,8 +2,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-kuainiao
-PKG_VERSION:=20170716
-PKG_RELEASE:=5
+PKG_VERSION:=20170720
+PKG_RELEASE:=1
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -13,7 +13,7 @@ define Package/luci-app-kuainiao
 	SUBMENU:=3. Applications
 	PKGARCH:=all
    DEPENDS:=+openssl-util +wget
-   TITLE:=Xunlei Kuainiao Client for lede
+   TITLE:=Xunlei Kuainiao for lede
 endef
 
 define Package/luci-app-kuainiao/description
@@ -21,6 +21,16 @@ endef
 
 define Package/luci-app-kuainiao/conffiles
 /etc/config/kuainiao
+endef
+
+define Package/luci-app-kuainiao/postinst
+#!/bin/sh
+if [ -z "$${IPKG_INSTROOT}" ]; then
+	if [ -f /etc/uci-defaults/luci-kuainiao ]; then
+		( . /etc/uci-defaults/luci-kuainiao ) && rm -f /etc/uci-defaults/luci-kuainiao
+	fi
+	rm -rf /tmp/luci-indexcache
+fi
 endef
 
 define Build/Compile
@@ -39,9 +49,9 @@ define Package/luci-app-kuainiao/install
 	$(INSTALL_DATA) ./files/usr/lib/lua/luci/model/cbi/*.lua $(1)/usr/lib/lua/luci/model/cbi/
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/view/kuainiao
 	$(INSTALL_DATA) ./files/usr/lib/lua/luci/view/kuainiao/* $(1)/usr/lib/lua/luci/view/kuainiao/
-
-	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
-	$(INSTALL_DATA) ./files/usr/lib/lua/luci/i18n/kuainiao.zh-cn.lmo $(1)/usr/lib/lua/luci/i18n/
+	
+	$(INSTALL_DIR) $(1)/etc/uci-defaults
+	$(INSTALL_BIN) ./files/etc/uci-defaults/luci-kuainiao $(1)/etc/uci-defaults/luci-kuainiao
 
 	$(INSTALL_DIR) $(1)/etc/hotplug.d/iface
 	$(INSTALL_BIN) ./files/etc/hotplug.d/iface/* $(1)/etc/hotplug.d/iface/
@@ -49,7 +59,8 @@ define Package/luci-app-kuainiao/install
 	$(INSTALL_DATA) ./files/js/* $(1)/www/luci-static/resources/
 	
 	$(INSTALL_DIR) $(1)/usr/share/kuainiao
-	$(INSTALL_BIN) ./files/js/kuainiao_down_state $(1)/usr/share/kuainiao/kuainiao_down_state
+	$(INSTALL_DATA) ./files/js/kuainiao_down_state $(1)/usr/share/kuainiao/kuainiao_down_state
+	$(INSTALL_DATA) ./files/js/kuainiao_up_state $(1)/usr/share/kuainiao/kuainiao_up_state
 
 endef
 

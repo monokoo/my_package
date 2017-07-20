@@ -4,10 +4,32 @@
 . /lib/functions.sh
 
 LOGFILE=/var/log/kuainiao.log
+down_state_file=/usr/share/kuainiao/kuainiao_down_state
+up_state_file=/usr/share/kuainiao/kuainiao_up_state
 version="0.4"
 app_version="2.0.3.4"
 protocolVersion=108
 sdkVersion=17550
+
+log_up(){
+	kuainiao_up_state=$1
+	status=$2
+	if [ "$status" -eq 1 ]; then
+		echo "<font color=green>$kuainiao_up_state</font>" > $up_state_file
+	else
+		echo "<font color=red>$kuainiao_up_state</font>" > $up_state_file
+	fi
+}
+
+log_down(){
+	kuainiao_down_state=$1
+	status=$2
+	if [ "$status" -eq 1 ]; then
+		echo "<font color=green>$kuainiao_down_state</font>" > $down_state_file
+	else
+		echo "<font color=red>$kuainiao_down_state</font>" > $down_state_file
+	fi	
+}
 
 #WAN接口IP判断
 get_bind_address(){
@@ -138,7 +160,6 @@ get_xunlei_uid(){
 		  kuainiao_config_session=$session
 		  kuainiao_last_act="<font color=green>迅雷快鸟已登陆成功!</font>"
 	fi
-	echo "$kuainiao_last_act" > /usr/share/kuainiao/kuainiao_down_state
 	echo $(date): "$kuainiao_last_act" >> $LOGFILE
 }
 
@@ -155,6 +176,7 @@ get_kuainiao_api(){
 	if [ -z "$portal_ip" ]; then
 			kuainiao_down_state="迅雷快鸟下行API获取失败，请检查网络环境，或稍后再试!"
 			echo $(date): "$kuainiao_down_state" >> $LOGFILE
+			log_down kuainiao_down_state 0
 		else
 			api_url="http://$portal_ip:$portal_port/v2"
 			kuainiao_config_api=$api_url
@@ -177,6 +199,7 @@ get_kuainiao_upapi(){
 			kuainiao_up_state="迅雷快鸟上行API获取失败，请检查网络环境，或稍后再试!"
 			#echo "迅雷快鸟服务API获取失败，请检查网络环境，或稍后再试!"
 			echo $(date): "$kuainiao_up_state" >> $LOGFILE
+			log_up kuainiao_up_state 0
 		else
 			upapi_url="http://$upportal_ip:$upportal_port/v2"
 			kuainiao_config_upapi=$upapi_url
@@ -222,9 +245,10 @@ get_bandwidth(){
 		else
 			down_state="下行不满足加速条件"
 			#echo "T_T 不能加速啊，不满足加速条件哦~~"
+			log_down down_state 0
 		fi
 		echo $(date): "$down_state" >> $LOGFILE
-		kuainiao_down_state=$down_state
+		# kuainiao_down_state=$down_state
 		
 	fi
 }
@@ -267,6 +291,7 @@ get_upbandwidth(){
 			}
 		else
 			up_state="上行不满足加速条件"
+			log_up up_state 0
 		fi
 		echo "$(date): $up_state" >> $LOGFILE
 		kuainiao_up_state=$up_state
@@ -294,11 +319,13 @@ get_upgrade_down(){
 	errcode=`echo $ret|awk -F '"errno":' '{print $2}'|awk -F '[,}"]' '{print $1}'`
 	if [ "$errcode" == "0" ]; then
 		down_state="$down_state （您的下行带宽已从$kuainiao_old_downstream M提升到$kuainiao_max_downstream M）"
+		log_down down_state 1
 	else
 		down_state="$down_state 下行带宽提升失败，请检查宽带账号是否绑定正确"
+		log_down down_state 0
 	fi
 	echo $(date): "$down_state" >> $LOGFILE
-	kuainiao_down_state=$down_state
+	# kuainiao_down_state=$down_state
 }
 
 get_upgrade_up(){
@@ -307,11 +334,14 @@ get_upgrade_up(){
 	errcode=`echo $up_ret|awk -F '"errno":' '{print $2}'|awk -F '[,}"]' '{print $1}'`
 	if [ "$errcode" == "0" ] || [ "$errcode" == "812" ];then
 		up_state="$up_state （您的上行带宽已从$kuainiao_old_upstream M提升到$kuainiao_max_upstream M）"
+		log_up up_state 1
 	else
 		up_state="$up_state 上行带宽提升失败，请检查宽带账号是否绑定正确"
+		log_up up_state 0
 	fi
 	echo $(date): "$up_state" >> $LOGFILE
-	kuainiao_up_state=$up_state
+	# kuainiao_up_state=$up_state
+	# echo "$kuainiao_up_state" > $up_state_file
 }
 
 #迅雷快鸟上行加速心跳包
@@ -323,10 +353,12 @@ keepalive_up(){
 		#kuainiao_run_upid=0
 		kuainiao_up_state="迅雷上行提速失效！$(date '+%Y-%m-%d %H:%M:%S')"
 		kuainiao_run_upstatus=0
+		log_up kuainiao_up_state 0
 	else
 		#kuainiao_run_upid=$(expr $kuainiao_run_upid + 1)
 		kuainiao_up_state="您的上行带宽已从${kuainiao_old_upstream}M提升到${kuainiao_max_upstream}M  $(date '+%Y-%m-%d %H:%M:%S')"
 		kuainiao_run_upstatus=1
+		log_up kuainiao_up_state 1
 	fi
 }
 
@@ -360,13 +392,16 @@ keepalive_down(){
 	if [ "$errcode" != "0" ];then
 		#kuainiao_run_upid=0
 		kuainiao_down_state="迅雷下行提速失效！"$(date "+%Y-%m-%d %H:%M:%S")
+		log_down kuainiao_down_state 0
 		kuainiao_run_status=0
 	else
 		#kuainiao_run_upid=$(expr $kuainiao_run_upid + 1)
 		kuainiao_down_state="您的下行带宽已从${kuainiao_old_downstream}M提升到${kuainiao_max_downstream}M $(date '+%Y-%m-%d %H:%M:%S')"
+		log_down kuainiao_down_state 1
 		kuainiao_run_status=1
-		echo $(date): "$kuainiao_down_state" >> $LOGFILE
+
 	fi
+	echo $(date): "$kuainiao_down_state" >> $LOGFILE
 }
 
 #快鸟加速注销
@@ -411,6 +446,7 @@ config_get kuainiao_config_wan base speed_wan
 config_get kuainiao_config_uname base kuainiao_name
 config_get kuainiao_config_pwd base kuainiao_config_pwd
 
+[ "$enabled" -eq 0 ] && exit 0
 [ "$logmore" -eq 1 ] && {
 	echo $(date): enabled is $enabled >> $LOGFILE
 	echo $(date): kuainiao_downenable is $kuainiao_downenable >> $LOGFILE
