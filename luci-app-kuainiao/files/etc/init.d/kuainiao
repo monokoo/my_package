@@ -7,6 +7,7 @@ START=99
 STOP=10
 SERVICE_WRITE_PID=1
 SERVICE_DAEMONIZE=1
+LOGFILE=/var/log/kuainiao.log
 
 start_service() 
 {
@@ -22,6 +23,7 @@ start_service()
 
 stop_service()
 {	
+	clean_log
 	pid_kuainiao=`ps | grep -v grep | grep -w "/usr/bin/kuainiao" |awk '{print $1}' 2>/dev/null`
 	[ -n "$pid_kuainiao" ] && {
 		for pid in $pid_kuainiao
@@ -30,3 +32,10 @@ stop_service()
 		done
 	}
 }
+
+clean_log() {
+logsnum=$(cat $LOG_FILE|grep -c .)
+if [ $logsnum -gt 300 ];then
+  rm -f $LOG_FILE >/dev/null 2>&1 &
+   echo "$(date): 日志文件过长，清空处理！" >> $LOG_FILE
+fi

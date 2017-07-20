@@ -11,7 +11,7 @@ m:section(SimpleSection).template  = "kuainiao/kuainiao_status"
 s = m:section(NamedSection, "base", "kuainiao", translate("Please Set before apply."))
 s.addremove = false
 s:tab("base",translate("Basic Settings"))
-s:tab("log",translate("Client Log"))
+s:tab("log",translate("快鸟日志"))
 
 enabled = s:taboption("base",Flag, "enabled", translate("Enable"))
 enabled.default=0
