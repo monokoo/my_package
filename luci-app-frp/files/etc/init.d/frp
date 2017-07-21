@@ -104,6 +104,14 @@ if [ ! -f "/etc/crontabs/root" ] || [ -n "$(cat /etc/crontabs/root | grep frp)" 
 fi
 }
 
+download_binary(){
+	wget -q --no-check-certificate --timeout=10 --tries=2 https://github.com/fatedier/frp/releases/download/v0.13.0/frp_0.13.0_linux_arm.tar.gz -O /tmp/frp_0.13.0_linux_arm.tar.gz
+	[ -f "/tmp/frp_0.13.0_linux_arm.tar.gz" ] && tar -xf /tmp/frp_0.13.0_linux_arm.tar.gz -C /tmp && \
+		mv /tmp/frp_0.13.0_linux_arm/frpc /usr/bin/frpc
+	rm -rf /tmp/frp_0.13.0_linux_arm*
+	[ -f "/usr/bin/frpc" ] && chmod +x /usr/bin/frpc
+}
+
 boot() {
 	return
 }
@@ -128,6 +136,9 @@ start() {
 	config_get http_proxy common http_proxy
 	config_get protocol common protocol
 	config_get time common time
+	
+	[ ! -f "/usr/bin/frpc" ] && download_binary
+	[ ! -f "/usr/bin/frpc" ] && logger -t Frp 'Download frpc failed, please retry.' && exit 0
 	
 	local tmpconf="/var/etc/frp/frpc.conf"
 	args="-f $tmpconf"

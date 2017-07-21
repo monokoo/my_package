@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-frp
 PKG_VERSION:=1.0.0
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_MAINTAINER:=monokoo <realstones2012@gmail.com>
 
@@ -63,9 +63,6 @@ define Package/$(PKG_NAME)/install
 	
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
 	$(INSTALL_BIN) ./files/etc/uci-defaults/luci-frp $(1)/etc/uci-defaults/luci-frp
-
-	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) ./files/usr/bin/frpc $(1)/usr/bin/frpc
 	
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/controller
 	$(INSTALL_DATA) ./files/usr/lib/lua/luci/controller/*.lua $(1)/usr/lib/lua/luci/controller/
