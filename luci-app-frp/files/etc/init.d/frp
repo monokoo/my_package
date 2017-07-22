@@ -113,7 +113,8 @@ download_binary(){
 }
 
 boot() {
-	return
+	sleep 7s
+	start
 }
 
 start() {
