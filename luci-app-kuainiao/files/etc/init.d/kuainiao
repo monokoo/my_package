@@ -35,9 +35,11 @@ stop_service(){
 }
 
 clean_log() {
-logsnum=$(cat $LOGFILE|grep -c .)
-if [ $logsnum -gt 300 ];then
-	rm -f $LOGFILE >/dev/null 2>&1 &
-	echo "$(date): 日志文件过长，清空处理！" >> $LOGFILE
-fi
+	[ -f "$LOGFILE" ] && {
+		logsnum=$(cat $LOGFILE | grep -c .)
+		if [ $logsnum -gt 300 ];then
+			rm -f $LOGFILE >/dev/null 2>&1 &
+			echo "$(date): 日志文件过长，清空处理！" >> $LOGFILE
+		fi
+	}
 }
