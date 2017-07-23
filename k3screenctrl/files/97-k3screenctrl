@@ -1,0 +1,35 @@
+#!/bin/sh
+. /lib/functions.sh
+
+# We only handle 'ifup' and 'ifdown' events
+[ "$ACTION" = ifup -o "$ACTION" = ifdown ] || exit 1
+# Exit if we don't have logger, this should not happen
+[ -x /usr/bin/logger ] || exit 2
+
+case "$ACTION" in
+	ifup)
+		# Restart, the default delay is 5 secs
+		# This hotplug script should be the last to execute
+		# due to high load on router
+		logger -p daemon.info -t "k3screenctrl" \
+				"Restart request sent due to '$ACTION' of '$INTERFACE'"
+		sleep 2s
+		if [ -z "$(pidof k3screenctrl)" -a -z "$(pidof device_online.sh)" ]; then
+			/etc/init.d/k3screenctrl start
+		else
+			/etc/init.d/k3screenctrl restart
+		fi
+	;;
+	ifdown)
+		# Shutdown
+		logger -p daemon.info -t "k3screenctrl" \
+				"Shutdown request sent due to '$ACTION' of '$INTERFACE'"
+		if [ -z "$(pidof k3screenctrl)" -a -z "$(pidof device_online.sh)" ]; then
+			/etc/init.d/k3screenctrl start
+		else
+			/etc/init.d/k3screenctrl restart
+		fi
+	;;
+esac
+
+exit 0

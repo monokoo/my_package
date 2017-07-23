@@ -2,11 +2,11 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=k3screenctrl
 PKG_VERSION:=0.15
-PKG_RELEASE:=2
+PKG_RELEASE:=3
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/monokoo/k3screenctrl.git
-PKG_SOURCE_VERSION:=3eb0fca61b2f5cd6982ebd4bb5b47e175f3b2e9b
+PKG_SOURCE_VERSION:=e16e7fbbad829b58f265287aaee92860a072270a
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_SOURCE_VERSION)
 PKG_SOURCE:=$(PKG_SOURCE_SUBDIR).tar.xz
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_SOURCE_SUBDIR)
@@ -35,8 +35,10 @@ define Package/k3screenctrl/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_DIR) $(1)/lib/k3screenctrl
 	$(INSTALL_DIR) $(1)/etc/init.d
+	$(INSTALL_DIR) $(1)/etc/hotplug.d/iface
 	$(INSTALL_DIR) $(1)/etc/oui
-
+	
+	
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/k3screenctrl $(1)/usr/bin/
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/k3screenctrl/wan.sh $(1)/lib/k3screenctrl/
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/k3screenctrl/wifi.sh $(1)/lib/k3screenctrl/
@@ -47,6 +49,7 @@ define Package/k3screenctrl/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/k3screenctrl/device_online.sh $(1)/lib/k3screenctrl/
 
 	$(INSTALL_BIN) ./files/k3screenctrl.init $(1)/etc/init.d/k3screenctrl
+	$(INSTALL_BIN) ./files/97-k3screenctrl $(1)/etc/hotplug.d/iface/97-k3screenctrl
 	$(INSTALL_DATA) ./files/oui.txt $(1)/etc/oui/oui.txt
 endef
 
