@@ -1,0 +1,22 @@
+--- a/luasrc/controller/admin/system.lua
++++ b/luasrc/controller/admin/system.lua
+@@ -35,6 +35,7 @@ function index()
+ 	--	entry({"admin", "system", "leds"}, cbi("admin_system/leds"), _("<abbr title=\"Light Emitting Diode\">LED</abbr> Configuration"), 60)
+ 	--end
+ 
++	entry({"admin", "system", "Free_Memory"},call("Free_Memory"),_("Free Memory"),65)
+ 	entry({"admin", "system", "flashops"}, call("action_flashops"), _("Backup / Flash Firmware"), 70)
+ 	entry({"admin", "system", "flashops", "reset"}, post("action_reset"))
+ 	entry({"admin", "system", "flashops", "backup"}, post("action_backup"))
+@@ -48,6 +49,11 @@ function index()
+ 	entry({"admin", "system", "reboot", "call"}, post("action_reboot"))
+ end
+ 
++function Free_Memory()
++	luci.util.exec("echo 3 > /proc/sys/vm/drop_caches")
++	luci.http.redirect(luci.dispatcher.build_url("admin","status","overview"))
++end
++
+ function action_clock_status()
+ 	local set = tonumber(luci.http.formvalue("set"))
+ 	if set ~= nil and set > 0 then
