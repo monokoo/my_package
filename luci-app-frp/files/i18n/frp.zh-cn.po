@@ -111,6 +111,18 @@ msgstr "域名/子域名"
 msgid "Remote Port"
 msgstr "远程主机端口"
 
+msgid "STCP Role"
+msgstr "STCP 服务类型"
+
+msgid "STCP Screct Key"
+msgstr "STCP 密钥"
+
+msgid "STCP Server Name"
+msgstr "STCP 代理名称"
+
+msgid "STCP Server Name is Service Remark Name of STCP Server"
+msgstr "STCP 代理名称就是 STCP 服务端的服务备注名"
+
 msgid "Local Host Address"
 msgstr "内网主机地址"
 
