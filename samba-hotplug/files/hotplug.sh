@@ -48,6 +48,7 @@ case "$ACTION" in
 			do
 				device=$(cat /proc/self/mounts | grep -w "$mountpoint" | awk -F' ' '{print $2}' | awk -F'/' '{print $NF}')
 				get_uuid=`block info | grep -w "$mountpoint" | awk -F "UUID=" '{print $2}' | awk -F "\"" '{print $2}' | sed 's/-//g'`
+				[ -z "$get_uuid" ] && get_uuid=`blkid  /dev/$device | awk -F "UUID=" '{print $2}' | awk -F "\"" '{print $2}' | sed 's/-//g'`
 				[ -z "$get_uuid" ] && logger -t Auto-Samba "The new device /dev/${device} has no uuid!" && continue
 				have_uuid=$(uci show samba | grep -c "${get_uuid}=sambashare")
 				[ "$have_uuid" = "0" ] && { 

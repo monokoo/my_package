@@ -73,6 +73,9 @@ case "$ACTION" in
 			my_fstype=$(echo "$my_fsinfo" | awk -F' TYPE="' '{print $2}' | awk -F'"' '{print $1}')
 			my_fsuuid=$(echo "$my_fsinfo" | awk -F'UUID="' '{print $2}' | awk -F'"' '{print $1}')
 			my_fslable=$(echo "$my_fsinfo" | awk -F'LABEL="' '{print $2}'|awk -F'"' '{print $1}')
+			[ -z "$my_fstype" ] && my_fstype=$(blkid /dev/$device | awk -F' TYPE="' '{print $2}' | awk -F'"' '{print $1}')
+			[ -z "$my_fsuuid" ] && my_fsuuid=$(blkid /dev/$device | awk -F'UUID="' '{print $2}' | awk -F'"' '{print $1}')
+			[ -z "$my_fslable" ] && my_fslable=$(blkid /dev/$device | awk -F'LABEL="' '{print $2}'|awk -F'"' '{print $1}')
 			[ -z "$mountpoint" ] && {
 				[ -n "$my_fstype" ] && {
 					logger -t Auto-Mount "New block.File system:${my_fstype}, LABEL:${my_fslable}, UUID:${my_fsuuid}"
