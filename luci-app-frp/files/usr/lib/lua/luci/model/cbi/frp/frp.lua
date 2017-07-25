@@ -59,7 +59,7 @@ e.default = "1"
 e:depends("enable_cpool",1)
 e.optional=false
 e=t:taboption("base",Value,"time",translate("Service registration interval"),translate("0 means disable this feature, unit: min"))
-e.datatype="uinteger"
+e.datatype="range(0,59)"
 e.default=30
 e.rmempty=false
 e=t:taboption("other",ListValue, "log_level", translate("Log Level"))
