@@ -56,7 +56,7 @@ define Package/luci-app-kuainiao/install
 	$(INSTALL_DIR) $(1)/etc/hotplug.d/iface
 	$(INSTALL_BIN) ./files/etc/hotplug.d/iface/* $(1)/etc/hotplug.d/iface/
 	$(INSTALL_DIR) $(1)/www/luci-static/resources
-	$(INSTALL_DATA) ./files/js/* $(1)/www/luci-static/resources/
+	$(INSTALL_DATA) ./files/js/*.js $(1)/www/luci-static/resources/
 	
 	$(INSTALL_DIR) $(1)/usr/share/kuainiao
 	$(INSTALL_DATA) ./files/js/kuainiao_down_state $(1)/usr/share/kuainiao/kuainiao_down_state
