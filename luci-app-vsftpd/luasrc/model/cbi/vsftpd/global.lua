@@ -26,6 +26,7 @@ o = sg:option(Flag, "dirlist", translate("Enable directory list"), translate("Wh
 o.default = true
 
 o = sg:option(Flag, "lsrecurse", translate("Allow directory recursely list"))
+o.default = 0
 
 o = sg:option(Flag, "dotfile", translate("Show dot files"), translate(". and .. are excluded."));
 o.default = true
@@ -36,6 +37,7 @@ o.default = "022"
 o = sg:option(Value, "banner", translate("FTP Banner"))
 
 o = sg:option(Flag, "dirmessage", translate("Enable directory message"), translate("A message will be displayed when entering a directory."))
+o.default = 0
 
 o = sg:option(Value, "dirmsgfile", translate("Directory message filename"))
 o.default = ".message"

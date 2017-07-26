@@ -29,6 +29,8 @@ config connection 'connection'
 	option maxperip '0'
 	option maxrate '0'
 	option maxretry '3'
+	option pasv_min_port '5000'
+	option pasv_max_port '5003'
 
 config anonymous 'anonymous'
 	option enabled '0'

@@ -135,12 +135,12 @@ output_field listen port "listen_port" 21
 output_field listen dataport "ftp_data_port" 20
 
 # global
-output_bool global 'write' "write_enable" 1
+output_bool global write "write_enable" 1
 output_bool global download "download_enable" 1
 output_bool global dirlist "dirlist_enable" 1
 output_bool global lsrecurse "ls_recurse_enable"
 output_bool global dotfile "force_dot_files"
-output_field global 'umask' "local_umask" 022
+output_field global umask "local_umask" 022
 
 ftpd_banner=`get_value global ftpd_banner`
 if ! [ -z $ftpd_banner ]; then
@@ -173,6 +173,8 @@ output_const "ascii_upload_enable" $ascii_upload_enable
 output_field connection idletimeout "idle_session_timeout" 1800
 output_field connection conntimeout "connect_timeout" 120
 output_field connection dataconntimeout "data_connection_timeout" 120
+output_field connection pasv_min_port "pasv_min_port" 5000
+output_field connection pasv_max_port "pasv_max_port" 5003
 output_field connection maxclient "max_clients" 0
 output_field connection maxperip "max_per_ip" 0
 output_field connection maxrate "local_max_rate" 0
@@ -199,7 +201,7 @@ if [ x$anon_enable = x1 ]; then
 	output_const "anonymous_enable" YES
 	output_const "no_anon_password" YES
 	output_const "anon_root" $anon_root
-	output_field anonymous 'umask' "anon_umask" 022
+	output_field anonymous umask "anon_umask" 022
 	output_field anonymous maxrate "anon_max_rate" 0
 	output_bool anonymous writemkdir "anon_mkdir_write_enable" 0
 	output_bool anonymous upload "anon_upload_enable" 0
@@ -214,7 +216,7 @@ fi
 # log
 output_bool log syslog "syslog_enable" 0
 output_bool log xreflog "xferlog_enable" 0
-output_field log 'file' "vsftpd_log_file" 0
+output_field log file "vsftpd_log_file" 0
 
 # users
 vuser_enabled=0

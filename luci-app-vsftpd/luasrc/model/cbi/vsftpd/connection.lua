@@ -17,7 +17,17 @@ m = Map("vsftpd", translate("FTP Server - General Settings"))
 sc = m:section(NamedSection, "connection", "connection", translate("Connection Settings"))
 
 o = sc:option(Flag, "portmode", translate("Enable PORT mode"))
+o.default = 1
 o = sc:option(Flag, "pasvmode", translate("Enable PASV mode"))
+o.default = 1
+
+o = sc:option(Value, "pasv_min_port", translate("Min PASV Port"))
+o.datatype="range(1025,65535)"
+o.default = "5000"
+
+o = sc:option(Value, "pasv_max_port", translate("Max PASV Port"))
+o.datatype="range(1026,65535)"
+o.default = "5003"
 
 o = sc:option(ListValue, "ascii", translate("ASCII mode"))
 o:value("disabled", translate("Disabled"))
