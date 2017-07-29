@@ -79,7 +79,7 @@ msgid "Min PASV Port"
 msgstr "PASV模式最小端口"
 
 msgid "Max PASV Port"
-msgstr "ASV模式最大端口"
+msgstr "PASV模式最大端口"
 
 msgid "Enable directory list"
 msgstr "允许列目录"
