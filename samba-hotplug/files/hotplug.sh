@@ -29,13 +29,25 @@ set_samba_path(){
 	uci commit samba
 }
 
-remove_samba(){
-	mountdir=$(uci get samba.${s_uuid}.path)
+del_sambadir(){
+	mountdir=$(uci -q get samba.${s_uuid}.path)
 	[ -z "`mount | grep '$mountdir'`" ] && {
 		[ -d "$mountdir" ] && [ -z "`ls $mountdir`" ] && rm -rf $mountdir
-		#uci del samba.${s_uuid}
-		#uci commit samba
-		#logger -t Auto-Samba "The samba share uuid: $s_uuid has been removed."
+		uci del samba.${s_uuid}
+		uci commit samba
+		logger -t Auto-Samba "The unused samba share uuid: $s_uuid has been removed."
+	}
+}
+
+remove_samba(){
+	samba_uuid=$(uci show samba |grep "=sambashare" | awk -F'.' '{print $2}'|awk -F'=' '{print $1}')
+	[ -n "$samba_uuid" ] && {
+		for s_uuid in $samba_uuid
+		do
+			[ -n `cat /proc/self/mounts | grep -w "$(uci -q get samba.${s_uuid}.path)"` ] && continue
+			del_sambadir
+			/etc/init.d/samba restart
+		done
 	}
 }
 
@@ -51,12 +63,13 @@ case "$ACTION" in
 				[ -z "$get_uuid" ] && get_uuid=`blkid  /dev/$device | awk -F "UUID=" '{print $2}' | awk -F "\"" '{print $2}' | sed 's/-//g'`
 				[ -z "$get_uuid" ] && logger -t Auto-Samba "The new device /dev/${device} has no uuid!" && continue
 				have_uuid=$(uci show samba | grep -c "${get_uuid}=sambashare")
-				[ "$have_uuid" = "0" ] && { 
+				[ "$have_uuid" = "0" ] && {
+					remove_samba
 					set_samba
 					logger -t Auto-Samba "The new device /dev/${device} has been shared in $mountpoint ."
 				}
 				[ "$have_uuid" -eq 1 ] && {
-					[ "$(uci get samba.${get_uuid}.path)" != "$mountpoint" ] && {
+					[ "$(uci -q get samba.${get_uuid}.path)" != "$mountpoint" ] && {
 						set_samba_path
 						logger -t Auto-Samba "The new device /dev/${device} has been shared in $mountpoint ."
 					}
@@ -66,14 +79,7 @@ case "$ACTION" in
 		}
 	;;
 	remove)
-		sleep 1
-		samba_uuid=$(uci show samba |grep "=sambashare" | awk -F'.' '{print $2}'|awk -F'=' '{print $1}')
-		[ -n "$samba_uuid" ] && {
-			for s_uuid in $samba_uuid
-			do
-				remove_samba
-				/etc/init.d/samba restart
-			done
-		}
+		# sleep 1s
+		# remove_samba
 	;;
 esac

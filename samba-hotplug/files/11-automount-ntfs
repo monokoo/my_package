@@ -1,12 +1,14 @@
 #!/bin/sh
 . /lib/functions.sh
 
+LOCK_FILE=/var/lock/automount.lock
+
 get_mountpath() {
 	my_fsparam=$1
 	type=$2
 	index=$(uci show fstab | grep -w "$type='$my_fsparam'" | awk -F'.' '{print $2}')
-	if [ "$(uci get fstab.$index.enabled)" -eq 1 ]; then
-		mountpath=$(uci get fstab.$index.target)
+	if [ "$(uci -q get fstab.$index.enabled)" -eq 1 ]; then
+		mountpath=$(uci -q get fstab.$index.target)
 	else
 		mountpath=/tmp/mnt/$device
 	fi
@@ -14,10 +16,10 @@ get_mountpath() {
 
 specified_mountpath() {
 
-	if [ -n "$my_fslable" ] && [ "$(uci show fstab | grep -c "label='$my_fslable'")" -eq 1 ]; then
-		get_mountpath $my_fslable label
+	if [ -n "$my_fslabel" ] && [ "$(uci show fstab | grep -c "label='$my_fslabel'")" -eq 1 ]; then
+		get_mountpath "$my_fslabel" label
 	elif [ -n "$my_fsuuid" ] && [ "$(uci show fstab | grep -c "uuid='$my_fsuuid'")" -eq 1 ]; then
-		get_mountpath $my_fsuuid uuid
+		get_mountpath "$my_fsuuid" uuid
 	else
 		mountpath=/tmp/mnt/$device
 	fi
@@ -51,7 +53,7 @@ auto_mount(){
 				mount -t $my_fstype -o nounix,noserverino,iocharset=utf8,umask=000 /dev/$device $mountpath
 			;;
 			*)
-				logger -t Auto-Mount "New block.File system:${my_fstype}, LABEL:${my_fslable}, UUID:${my_fsuuid} is not supported, please mount it manually."
+				logger -t Auto-Mount "New block.File system:${my_fstype}, LABEL:${my_fslabel}, UUID:${my_fsuuid} is not supported, please mount it manually."
 			;;
 		esac
 	fi
@@ -69,16 +71,21 @@ case "$ACTION" in
 		do	
 			mountpoint=$(cat /proc/self/mounts | grep -w "/dev/$device" |awk -F' ' '{print $2}')
 			[ -n "$mountpoint" ] && continue
+			#防止并发挂载导致指定挂载目录混乱
+			while [ -f "$LOCK_FILE" ]; do
+				sleep 1s
+			done
+			touch "$LOCK_FILE"
 			my_fsinfo=$(block info | grep -w "/dev/$device")
 			my_fstype=$(echo "$my_fsinfo" | awk -F' TYPE="' '{print $2}' | awk -F'"' '{print $1}')
 			my_fsuuid=$(echo "$my_fsinfo" | awk -F'UUID="' '{print $2}' | awk -F'"' '{print $1}')
-			my_fslable=$(echo "$my_fsinfo" | awk -F'LABEL="' '{print $2}'|awk -F'"' '{print $1}')
+			my_fslabel=$(echo "$my_fsinfo" | awk -F'LABEL="' '{print $2}'|awk -F'"' '{print $1}')
 			[ -z "$my_fstype" ] && my_fstype=$(blkid /dev/$device | awk -F' TYPE="' '{print $2}' | awk -F'"' '{print $1}')
 			[ -z "$my_fsuuid" ] && my_fsuuid=$(blkid /dev/$device | awk -F'UUID="' '{print $2}' | awk -F'"' '{print $1}')
-			[ -z "$my_fslable" ] && my_fslable=$(blkid /dev/$device | awk -F'LABEL="' '{print $2}'|awk -F'"' '{print $1}')
+			[ -z "$my_fslabel" ] && my_fslabel=$(blkid /dev/$device | awk -F'LABEL="' '{print $2}'|awk -F'"' '{print $1}')
 			[ -z "$mountpoint" ] && {
 				[ -n "$my_fstype" ] && {
-					logger -t Auto-Mount "New block.File system:${my_fstype}, LABEL:${my_fslable}, UUID:${my_fsuuid}"
+					logger -t Auto-Mount "Found new block.File system:${my_fstype}, LABEL:${my_fslabel}, UUID:${my_fsuuid}"
 					specified_mountpath
 					auto_mount
 				}
@@ -86,10 +93,11 @@ case "$ACTION" in
 			sleep 2s
 			judge_ifmount=$(cat /proc/self/mounts | grep -w "/dev/$device" |awk -F' ' '{print $2}')
 			if [ -z "$judge_ifmount" ]; then
-				logger -t Auto-Mount "New block.File system:${my_fstype}, LABEL:${my_fslable}, UUID:${my_fsuuid} mounted failed."
+				logger -t Auto-Mount "New block.File system:${my_fstype}, LABEL:${my_fslabel}, UUID:${my_fsuuid} mounted failed."
 			else
-				logger -t Auto-Mount "New ${my_fstype} disk has been mounted to $mountpath ."
+				logger -t Auto-Mount "New ${my_fstype} disk, LABEL:${my_fslabel}, UUID:${my_fsuuid} has been mounted to $mountpath ."
 			fi
+			rm -f "$LOCK_FILE"
 		done
 	;;
 esac		
