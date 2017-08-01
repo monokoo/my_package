@@ -58,50 +58,49 @@ auto_mount(){
 }
 auto_umount(){
 	logger -t Auto-Mount "The device $device has been mounted to $mountpoint, now remove it first!"
-	umount -l $mountpoint && sleep 4s
+	umount $mountpoint && sleep 4s
 	mountpoint=$(cat /proc/self/mounts | grep -w "/dev/$device" | awk '{print $2}')
 }
 
-[ "$DEVTYPE" = "partition" ] || exit 1
+countdev=$(ls /dev/sd* |grep -c $DEVNAME)
+alldev=$(ls /dev/sd* | wc -l)
 
-blkdev=`dirname $DEVPATH`
-if [ `basename $blkdev` != "block" ]; then
-	[ "$(echo "$DEVNAME" | grep -c sd)" != "0" ] && {
-		device=$DEVNAME
-		case "$ACTION" in
-			add)
-				logger -t Auto-Mount "Found new device $device, waiting to be mounted"
-				mountpoint=$(cat /proc/self/mounts | grep -w "/dev/$device" |awk '{print $2}')
-				while [ -n "$mountpoint" ]; do
-					auto_umount
-				done
-				my_fsinfo=$(block info | grep -w "/dev/$device")
-				my_fstype=$(echo "$my_fsinfo" | awk -F' TYPE="' '{print $2}' | awk -F'"' '{print $1}')
-				my_fsuuid=$(echo "$my_fsinfo" | awk -F'UUID="' '{print $2}' | awk -F'"' '{print $1}')
-				my_fslabel=$(echo "$my_fsinfo" | awk -F'LABEL="' '{print $2}'| awk -F'"' '{print $1}')
-				[ -z "$my_fstype" ] && my_fstype=$(blkid /dev/$device | awk -F' TYPE="' '{print $2}' | awk -F'"' '{print $1}')
-				[ -z "$my_fsuuid" ] && my_fsuuid=$(blkid /dev/$device | awk -F'UUID="' '{print $2}' | awk -F'"' '{print $1}')
-				[ -z "$my_fslabel" ] && my_fslabel=$(blkid /dev/$device | awk -F'LABEL="' '{print $2}' | awk -F'"' '{print $1}')
-				[ -z "$mountpoint" ] && {
-					[ -n "$my_fstype" ] && {
-						logger -t Auto-Mount "The new block.File system INFO: ${my_fstype}, LABEL:${my_fslabel}, UUID:${my_fsuuid}"
-						specified_mountpath
-						auto_mount
-					}
-				}
-				sleep 2s
-				judge_ifmount=$(cat /proc/self/mounts | grep -w "/dev/$device" |awk '{print $2}')
-				if [ -z "$judge_ifmount" ]; then
-					logger -t Auto-Mount "New block.File system:${my_fstype}, LABEL:${my_fslabel}, UUID:${my_fsuuid} mounted failed."
-				else
-					logger -t Auto-Mount "New ${my_fstype} disk, LABEL:${my_fslabel}, UUID:${my_fsuuid} has been mounted to $mountpath ."
-				fi
-			;;
-			remove)
-				mountpoint=$(cat /proc/self/mounts | grep -w "/dev/$device" | awk '{print $2}')
-				[ -n "$mountpoint" ] && umount -l $mountpoint
-				logger -t Auto-Mount "umount device $device now..."
-			;;
-		esac
-	}
-fi
+[ "$countdev" -gt 0 ] && ([ "$alldev" == "1" ] || ([ "$alldev" -gt 1 ] && [ "$countdev" -lt "$alldev" ])) || exit 1
+
+device=$DEVNAME
+case "$ACTION" in
+	add)
+		logger -t Auto-Mount "Found new device $device, waiting to be mounted"
+		mountpoint=$(cat /proc/self/mounts | grep -w "/dev/$device" |awk '{print $2}')
+		while [ -n "$mountpoint" ]; do
+			auto_umount
+		done
+		my_fsinfo=$(block info | grep -w "/dev/$device")
+		my_fstype=$(echo "$my_fsinfo" | awk -F' TYPE="' '{print $2}' | awk -F'"' '{print $1}')
+		my_fsuuid=$(echo "$my_fsinfo" | awk -F'UUID="' '{print $2}' | awk -F'"' '{print $1}')
+		my_fslabel=$(echo "$my_fsinfo" | awk -F'LABEL="' '{print $2}'| awk -F'"' '{print $1}')
+		[ -z "$my_fstype" ] && my_fstype=$(blkid /dev/$device | awk -F' TYPE="' '{print $2}' | awk -F'"' '{print $1}')
+		[ -z "$my_fsuuid" ] && my_fsuuid=$(blkid /dev/$device | awk -F'UUID="' '{print $2}' | awk -F'"' '{print $1}')
+		[ -z "$my_fslabel" ] && my_fslabel=$(blkid /dev/$device | awk -F'LABEL="' '{print $2}' | awk -F'"' '{print $1}')
+		[ -z "$mountpoint" ] && {
+			[ -n "$my_fstype" ] && {
+				logger -t Auto-Mount "The new block.File system INFO: ${my_fstype}, LABEL:${my_fslabel}, UUID:${my_fsuuid}"
+				specified_mountpath
+				auto_mount
+			}
+		}
+		sleep 2s
+		judge_ifmount=$(cat /proc/self/mounts | grep -w "/dev/$device" |awk '{print $2}')
+		if [ -z "$judge_ifmount" ]; then
+			logger -t Auto-Mount "New block.File system:${my_fstype}, LABEL:${my_fslabel}, UUID:${my_fsuuid} mounted failed."
+		else
+			logger -t Auto-Mount "New ${my_fstype} disk, LABEL:${my_fslabel}, UUID:${my_fsuuid} has been mounted to $mountpath ."
+		fi
+	;;
+	remove)
+		mountpoint=$(cat /proc/self/mounts | grep -w "/dev/$device" | awk '{print $2}')
+		[ -n "$mountpoint" ] && umount $mountpoint
+		logger -t Auto-Mount "umount device $device now..."
+	;;
+esac
+
