@@ -10,4 +10,5 @@ config bandwidthd
 	option graph 'true'
 	option meta_refresh '60'
 	option dev 'br-lan'
+	option enabled '0'
 
