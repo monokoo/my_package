@@ -1,0 +1,10 @@
+#!/bin/sh
+. /lib/functions.sh
+
+enabled=`uci -q get bandwidthd.@bandwidthd[0].enabled`
+[ "$enabled" = "1" ] || exit 0
+[ "$INTERFACE" = "lan" ] || exit 0
+[ "$ACTION" = ifup ] && {
+	logger -t Bandwidthd has reloaded due to Device: $DEVICE Action: $ACTION ;
+	/etc/init.d/bandwidthd restart;
+}

@@ -1,0 +1,11 @@
+#!/bin/sh
+
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@bandwidthd[-1]
+	add ucitrack bandwidthd
+	set ucitrack.@bandwidthd[-1].init=bandwidthd
+	commit ucitrack
+EOF
+
+rm -f /tmp/luci-indexcache
+exit 0

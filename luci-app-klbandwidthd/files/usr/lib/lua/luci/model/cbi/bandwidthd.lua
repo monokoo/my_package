@@ -4,7 +4,7 @@
 local state_msg = "" 
 
 
-local bandwidthd_on = (luci.sys.call("pidof bandwidthd > /dev/null") == 0)
+local bandwidthd_on = (luci.sys.call("pgrep /usr/sbin/bandwidthd > /dev/null") == 0)
 local router_ip = luci.sys.exec("uci get network.lan.ipaddr")
 
 if bandwidthd_on then	
@@ -31,10 +31,5 @@ s.anonymous=true
 	view_graph = s:option(Value,"graph",translate("graph"))
 	view_meta_refresh = s:option(Value,"meta_refresh",translate("meta_refresh"))
 	view_meta_refresh.datatype="uinteger"
--- ---------------------------------------------------
-local apply = luci.http.formvalue("cbi.apply")
-if apply then
-	os.execute("/etc/init_bandwidthd.sh restart >/dev/null 2>&1 &")
-end
 
 return m

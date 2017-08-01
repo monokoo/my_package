@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=klbandwidthd
 PKG_VERSION:=2.0.1-35
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/monokoo/bandwidthd.git
@@ -156,8 +156,6 @@ define Package/klbandwidthd/install
 	$(INSTALL_DATA) ./files/etc/glranslation.zh-cn.lmo $(1)/usr/lib/lua/luci/i18n/
 	$(INSTALL_DIR) $(1)/etc/bandwidthd
 	$(CP) -R ./files/etc/bandwidthd/* $(1)/etc/bandwidthd/
-	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/view/admin_status
-	$(INSTALL_DATA) ./files/usr/lib/lua/luci/view/admin_status/*.htm $(1)/usr/lib/lua/luci/view/admin_status/
 endef
 
 define Package/klbandwidthd-pgsql/install

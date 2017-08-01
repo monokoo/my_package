@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-klbandwidthd
-PKG_VERSION=1
+PKG_VERSION=20170801
 PKG_RELEASE:=1
 PKG_MAINTAINER:=Alex Zhuo <1886090@gmail.com>
 
@@ -23,8 +23,12 @@ endef
 
 define Package/$(PKG_NAME)/postinst
 #!/bin/sh
-rm -rf /tmp/luci*
-
+if [ -z "$${IPKG_INSTROOT}" ]; then
+	if [ -f /etc/uci-defaults/luci-bandwidthd ]; then
+		( . /etc/uci-defaults/luci-bandwidthd ) && rm -f /etc/uci-defaults/luci-bandwidthd
+	fi
+	rm -rf /tmp/luci-indexcache
+fi
 endef
 
 define Build/Prepare
@@ -41,7 +45,18 @@ endef
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/*.*.lmo $(1)/usr/lib/lua/luci/i18n/
-	$(CP) ./files/* $(1)/
+	
+	$(INSTALL_DIR) $(1)/etc/uci-defaults
+	$(INSTALL_BIN) ./files/etc/uci-defaults/luci-bandwidthd $(1)/etc/uci-defaults/luci-bandwidthd
+	
+	$(INSTALL_DIR) $(1)/etc/hotplug.d/iface
+	$(INSTALL_BIN) ./files/etc/hotplug.d/iface/99-bandwidthd $(1)/etc/hotplug.d/iface/99-bandwidthd
+	
+	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/controller
+	$(INSTALL_DATA) ./files/usr/lib/lua/luci/controller/*.lua $(1)/usr/lib/lua/luci/controller/
+	
+	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/model/cbi
+	$(INSTALL_DATA) ./files/usr/lib/lua/luci/model/cbi/*.lua $(1)/usr/lib/lua/luci/model/cbi/
 
 endef
 

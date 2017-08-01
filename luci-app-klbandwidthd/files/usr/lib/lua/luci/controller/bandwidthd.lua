@@ -3,5 +3,5 @@ function index()
         if not nixio.fs.access("/etc/config/bandwidthd") then
                 return
         end
-        entry({"admin", "network", "bandwidthd"}, cbi("bandwidthd"), _("Bandwidthd")).dependent = true
+        entry({"admin", "status", "traffic"}, cbi("bandwidthd"), _("Traffic Statistics"),13).dependent = true
 end
