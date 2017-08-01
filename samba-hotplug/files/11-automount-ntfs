@@ -1,13 +1,11 @@
 #!/bin/sh
 . /lib/functions.sh
 
-LOCK_FILE=/var/lock/automount.lock
-
 get_mountpath() {
 	my_fsparam=$1
 	type=$2
 	index=$(uci show fstab | grep -w "$type='$my_fsparam'" | awk -F'.' '{print $2}')
-	if [ "$(uci -q get fstab.$index.enabled)" -eq 1 ]; then
+	if [ "$(uci -q get fstab.$index.enabled)" == "1" ]; then
 		mountpath=$(uci -q get fstab.$index.target)
 	else
 		mountpath=/tmp/mnt/$device
@@ -16,9 +14,9 @@ get_mountpath() {
 
 specified_mountpath() {
 
-	if [ -n "$my_fslabel" ] && [ "$(uci show fstab | grep -c "label='$my_fslabel'")" -eq 1 ]; then
+	if [ -n "$my_fslabel" ] && [ "$(uci show fstab | grep -c "label='$my_fslabel'")" == "1" ]; then
 		get_mountpath "$my_fslabel" label
-	elif [ -n "$my_fsuuid" ] && [ "$(uci show fstab | grep -c "uuid='$my_fsuuid'")" -eq 1 ]; then
+	elif [ -n "$my_fsuuid" ] && [ "$(uci show fstab | grep -c "uuid='$my_fsuuid'")" == "1" ]; then
 		get_mountpath "$my_fsuuid" uuid
 	else
 		mountpath=/tmp/mnt/$device
@@ -58,46 +56,52 @@ auto_mount(){
 		esac
 	fi
 }
-sleep 1s
-countdev=$(ls /dev/sd*|wc -l)
-if [ "$countdev" -gt 1 ]; then
-	devices=$(ls /dev/ |grep -w sd[a-z][1-9])
-else
-	devices=$(ls /dev/ |grep -w sd[a-z])
-fi
-case "$ACTION" in
-	add)
-		for device in $devices
-		do	
-			mountpoint=$(cat /proc/self/mounts | grep -w "/dev/$device" |awk -F' ' '{print $2}')
-			[ -n "$mountpoint" ] && continue
-			#防止并发挂载导致指定挂载目录混乱
-			while [ -f "$LOCK_FILE" ]; do
-				sleep 1s
-			done
-			touch "$LOCK_FILE"
-			my_fsinfo=$(block info | grep -w "/dev/$device")
-			my_fstype=$(echo "$my_fsinfo" | awk -F' TYPE="' '{print $2}' | awk -F'"' '{print $1}')
-			my_fsuuid=$(echo "$my_fsinfo" | awk -F'UUID="' '{print $2}' | awk -F'"' '{print $1}')
-			my_fslabel=$(echo "$my_fsinfo" | awk -F'LABEL="' '{print $2}'|awk -F'"' '{print $1}')
-			[ -z "$my_fstype" ] && my_fstype=$(blkid /dev/$device | awk -F' TYPE="' '{print $2}' | awk -F'"' '{print $1}')
-			[ -z "$my_fsuuid" ] && my_fsuuid=$(blkid /dev/$device | awk -F'UUID="' '{print $2}' | awk -F'"' '{print $1}')
-			[ -z "$my_fslabel" ] && my_fslabel=$(blkid /dev/$device | awk -F'LABEL="' '{print $2}'|awk -F'"' '{print $1}')
-			[ -z "$mountpoint" ] && {
-				[ -n "$my_fstype" ] && {
-					logger -t Auto-Mount "Found new block.File system:${my_fstype}, LABEL:${my_fslabel}, UUID:${my_fsuuid}"
-					specified_mountpath
-					auto_mount
+auto_umount(){
+	logger -t Auto-Mount "The device $device has been mounted to $mountpoint, now remove it first!"
+	umount -l $mountpoint && sleep 4s
+	mountpoint=$(cat /proc/self/mounts | grep -w "/dev/$device" | awk '{print $2}')
+}
+
+[ "$DEVTYPE" = "partition" ] || exit 1
+
+blkdev=`dirname $DEVPATH`
+if [ `basename $blkdev` != "block" ]; then
+	[ "$(echo "$DEVNAME" | grep -c sd)" != "0" ] && {
+		device=$DEVNAME
+		case "$ACTION" in
+			add)
+				logger -t Auto-Mount "Found new device $device, waiting to be mounted"
+				mountpoint=$(cat /proc/self/mounts | grep -w "/dev/$device" |awk '{print $2}')
+				while [ -n "$mountpoint" ]; do
+					auto_umount
+				done
+				my_fsinfo=$(block info | grep -w "/dev/$device")
+				my_fstype=$(echo "$my_fsinfo" | awk -F' TYPE="' '{print $2}' | awk -F'"' '{print $1}')
+				my_fsuuid=$(echo "$my_fsinfo" | awk -F'UUID="' '{print $2}' | awk -F'"' '{print $1}')
+				my_fslabel=$(echo "$my_fsinfo" | awk -F'LABEL="' '{print $2}'| awk -F'"' '{print $1}')
+				[ -z "$my_fstype" ] && my_fstype=$(blkid /dev/$device | awk -F' TYPE="' '{print $2}' | awk -F'"' '{print $1}')
+				[ -z "$my_fsuuid" ] && my_fsuuid=$(blkid /dev/$device | awk -F'UUID="' '{print $2}' | awk -F'"' '{print $1}')
+				[ -z "$my_fslabel" ] && my_fslabel=$(blkid /dev/$device | awk -F'LABEL="' '{print $2}' | awk -F'"' '{print $1}')
+				[ -z "$mountpoint" ] && {
+					[ -n "$my_fstype" ] && {
+						logger -t Auto-Mount "The new block.File system INFO: ${my_fstype}, LABEL:${my_fslabel}, UUID:${my_fsuuid}"
+						specified_mountpath
+						auto_mount
+					}
 				}
-			}
-			sleep 2s
-			judge_ifmount=$(cat /proc/self/mounts | grep -w "/dev/$device" |awk -F' ' '{print $2}')
-			if [ -z "$judge_ifmount" ]; then
-				logger -t Auto-Mount "New block.File system:${my_fstype}, LABEL:${my_fslabel}, UUID:${my_fsuuid} mounted failed."
-			else
-				logger -t Auto-Mount "New ${my_fstype} disk, LABEL:${my_fslabel}, UUID:${my_fsuuid} has been mounted to $mountpath ."
-			fi
-			rm -f "$LOCK_FILE"
-		done
-	;;
-esac		
+				sleep 2s
+				judge_ifmount=$(cat /proc/self/mounts | grep -w "/dev/$device" |awk '{print $2}')
+				if [ -z "$judge_ifmount" ]; then
+					logger -t Auto-Mount "New block.File system:${my_fstype}, LABEL:${my_fslabel}, UUID:${my_fsuuid} mounted failed."
+				else
+					logger -t Auto-Mount "New ${my_fstype} disk, LABEL:${my_fslabel}, UUID:${my_fsuuid} has been mounted to $mountpath ."
+				fi
+			;;
+			remove)
+				mountpoint=$(cat /proc/self/mounts | grep -w "/dev/$device" | awk '{print $2}')
+				[ -n "$mountpoint" ] && umount -l $mountpoint
+				logger -t Auto-Mount "umount device $device now..."
+			;;
+		esac
+	}
+fi

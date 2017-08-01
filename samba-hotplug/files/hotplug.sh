@@ -51,35 +51,39 @@ remove_samba(){
 	}
 }
 
-case "$ACTION" in
-	add)
-		mounted_device=$(cat /proc/self/mounts | grep "/dev/sd*" | awk -F ' ' '{print $2}')
-		[ -z "$mounted_device" ] && logger -t Auto-Samba "No devices was mounted on this system! Please mount it manually!"
-		[ -n "$mounted_device" ] && {
-			for mountpoint in $mounted_device
-			do
-				device=$(cat /proc/self/mounts | grep -w "$mountpoint" | awk -F' ' '{print $2}' | awk -F'/' '{print $NF}')
-				get_uuid=`block info | grep -w "$mountpoint" | awk -F "UUID=" '{print $2}' | awk -F "\"" '{print $2}' | sed 's/-//g'`
-				[ -z "$get_uuid" ] && get_uuid=`blkid  /dev/$device | awk -F "UUID=" '{print $2}' | awk -F "\"" '{print $2}' | sed 's/-//g'`
-				[ -z "$get_uuid" ] && logger -t Auto-Samba "The new device /dev/${device} has no uuid!" && continue
-				have_uuid=$(uci show samba | grep -c "${get_uuid}=sambashare")
-				[ "$have_uuid" = "0" ] && {
-					remove_samba
-					set_samba
-					logger -t Auto-Samba "The new device /dev/${device} has been shared in $mountpoint ."
-				}
-				[ "$have_uuid" -eq 1 ] && {
-					[ "$(uci -q get samba.${get_uuid}.path)" != "$mountpoint" ] && {
-						set_samba_path
+[ "$DEVTYPE" = "partition" ] || exit 1
+
+blkdev=`dirname $DEVPATH`
+if [ `basename $blkdev` != "block" ]; then
+	[ "$(echo "$DEVNAME" | grep -c sd)" != "0" ] && {
+		device=$DEVNAME
+		case "$ACTION" in
+			add)
+				mountpoint=$(cat /proc/self/mounts | grep -w "/dev/$device" |awk -F' ' '{print $2}')
+				[ -z "$mountpoint" ] && logger -t Auto-Samba "No devices was mounted on this system! Please mount it manually!"
+				[ -n "$mountpoint" ] && {
+					get_uuid=`block info | grep -w "/dev/$device" | awk -F "UUID=" '{print $2}' | awk -F "\"" '{print $2}' | sed 's/-//g'`
+					[ -z "$get_uuid" ] && get_uuid=`blkid  /dev/$device | awk -F "UUID=" '{print $2}' | awk -F "\"" '{print $2}' | sed 's/-//g'`
+					[ -z "$get_uuid" ] && logger -t Auto-Samba "The new device /dev/${device} has no uuid!" && exit 1
+					have_uuid=$(uci show samba | grep -c "${get_uuid}=sambashare")
+					[ "$have_uuid" = "0" ] && {
+						#remove_samba
+						set_samba
 						logger -t Auto-Samba "The new device /dev/${device} has been shared in $mountpoint ."
 					}
+					[ "$have_uuid" = "1" ] && {
+						[ "$(uci -q get samba.${get_uuid}.path)" != "$mountpoint" ] && {
+							set_samba_path
+							logger -t Auto-Samba "The new device /dev/${device} has been shared in $mountpoint ."
+						}
+					}
+					/etc/init.d/samba restart
 				}
-				/etc/init.d/samba restart
-			done
-		}
-	;;
-	remove)
-		# sleep 1s
-		# remove_samba
-	;;
-esac
+			;;
+			remove)
+				# sleep 1s
+				# remove_samba
+			;;
+		esac
+	}
+fi
