@@ -38,7 +38,6 @@ endef
 
 define Package/koolproxy/conffiles
 /etc/config/koolproxy
-/usr/share/koolproxy/data/rules/user.txt
 endef
 
 
@@ -59,11 +58,13 @@ define Package/koolproxy/install
 	$(INSTALL_DATA) ./files/usr/share/koolproxy/data/certs/* $(1)/usr/share/koolproxy/data/certs
 	$(INSTALL_BIN) ./files/usr/share/koolproxy/data/gen_ca.sh $(1)/usr/share/koolproxy/data/
 	$(INSTALL_DATA) ./files/usr/share/koolproxy/data/openssl.cnf $(1)/usr/share/koolproxy/data/
-	$(INSTALL_DATA) ./files/usr/share/koolproxy/data/rules/1.dat $(1)/usr/share/koolproxy/data/rules/1.dat
-	$(INSTALL_DATA) ./files/usr/share/koolproxy/data/rules/koolproxy.txt $(1)/usr/share/koolproxy/data/rules/koolproxy.txt
-	$(INSTALL_CONF) ./files/usr/share/koolproxy/data/rules/user.txt $(1)/usr/share/koolproxy/data/rules/user.txt
+	$(INSTALL_DATA) ./files/usr/share/koolproxy/data/rules/* $(1)/usr/share/koolproxy/data/rules/
 	$(INSTALL_BIN) ./files/usr/share/koolproxy/camanagement $(1)/usr/share/koolproxy/camanagement
 	$(INSTALL_BIN) ./files/usr/share/koolproxy/firewall.include $(1)/usr/share/koolproxy/firewall.include
+	
+	$(INSTALL_DIR) $(1)/lib/upgrade/keep.d
+	$(INSTALL_DATA) ./files/lib/upgrade/keep.d/* $(1)/lib/upgrade/keep.d/
+
 ifeq ($(ARCH),mipsel)
 	$(INSTALL_BIN) ./files/bin/mipsel $(1)/usr/share/koolproxy/koolproxy
 endif
