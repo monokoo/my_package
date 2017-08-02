@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=koolproxy
 PKG_VERSION:=3.5.7
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_MAINTAINER:=fw867 <ffkykzs@gmail.com>
 PKG_LICENSE:=GPLv3
@@ -36,6 +36,12 @@ fi
 exit 0
 endef
 
+define Package/koolproxy/conffiles
+/etc/config/koolproxy
+/usr/share/koolproxy/data/rules/user.txt
+endef
+
+
 define Package/koolproxy/install
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
 	$(INSTALL_DIR) $(1)/etc/config
@@ -48,12 +54,14 @@ define Package/koolproxy/install
 
 	$(INSTALL_BIN) ./files/etc/uci-defaults/95-koolproxy $(1)/etc/uci-defaults/95-koolproxy
 	$(INSTALL_BIN) ./files/etc/init.d/* $(1)/etc/init.d/
-	$(INSTALL_DATA) ./files/etc/config/* $(1)/etc/config/
+	$(INSTALL_CONF) ./files/etc/config/* $(1)/etc/config/
 	$(INSTALL_BIN) ./files/usr/sbin/* $(1)/usr/sbin/
 	$(INSTALL_DATA) ./files/usr/share/koolproxy/data/certs/* $(1)/usr/share/koolproxy/data/certs
 	$(INSTALL_BIN) ./files/usr/share/koolproxy/data/gen_ca.sh $(1)/usr/share/koolproxy/data/
 	$(INSTALL_DATA) ./files/usr/share/koolproxy/data/openssl.cnf $(1)/usr/share/koolproxy/data/
-	$(INSTALL_DATA) ./files/usr/share/koolproxy/data/rules/* $(1)/usr/share/koolproxy/data/rules/
+	$(INSTALL_DATA) ./files/usr/share/koolproxy/data/rules/1.dat $(1)/usr/share/koolproxy/data/rules/1.dat
+	$(INSTALL_DATA) ./files/usr/share/koolproxy/data/rules/koolproxy.txt $(1)/usr/share/koolproxy/data/rules/koolproxy.txt
+	$(INSTALL_CONF) ./files/usr/share/koolproxy/data/rules/user.txt $(1)/usr/share/koolproxy/data/rules/user.txt
 	$(INSTALL_BIN) ./files/usr/share/koolproxy/camanagement $(1)/usr/share/koolproxy/camanagement
 	$(INSTALL_BIN) ./files/usr/share/koolproxy/firewall.include $(1)/usr/share/koolproxy/firewall.include
 ifeq ($(ARCH),mipsel)
