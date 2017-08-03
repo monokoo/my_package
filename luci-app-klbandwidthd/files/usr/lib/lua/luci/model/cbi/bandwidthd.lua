@@ -8,12 +8,12 @@ local bandwidthd_on = (luci.sys.call("pgrep /usr/sbin/bandwidthd > /dev/null") =
 local router_ip = luci.sys.exec("uci -q get network.lan.ipaddr")
 
 if bandwidthd_on then	
-	state_msg = "<b><font color=\"green\">" .. translate("Running") .. "</font></b>"
+	state_msg = "<b><font color=\"green\">" .. translate("Running") .. "</font></b><br><br>web观察页面：<a href='http://" .. router_ip .. "/bandwidthd'><font color=\"green\">点击跳转</font></a>"
 else
 	state_msg = "<b><font color=\"red\">" .. translate("Not running") .. "</font></b>"
 end
 
-m=Map("bandwidthd",translate("Bandwidthd"),translate("通过Bandwidthd可以通过图形界面观察某一网段所有IP的流量状况，并且可以绘制图形<br>状态 - ") .. state_msg .. "<br><br>web观察页面：<a href='http://" .. router_ip .. "/bandwidthd'>http://" .. router_ip .. "/bandwidthd <font color=\"green\">点击跳转</font></a>")
+m=Map("bandwidthd",translate("Bandwidthd"),translate("通过Bandwidthd可以通过图形界面观察某一网段所有IP的流量状况，并且可以绘制图形<br>状态 - ") .. state_msg)
 s=m:section(TypedSection,"bandwidthd","")
 s.addremove=false
 s.anonymous=true
