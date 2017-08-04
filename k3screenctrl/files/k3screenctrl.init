@@ -76,4 +76,9 @@ EOF
 		cd /etc/modules-boot.d/ && ln -s ../modules.d/54-usb3 54-usb3
 		cd $basepath
 	}
+	[ -z `lsmod|grep xhci_hcd` ] && {
+		insmod xhci-hcd
+		insmod xhci-plat-hcd
+		insmod xhci-pci
+	}	
 }
