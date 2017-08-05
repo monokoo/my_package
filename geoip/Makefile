@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=geoip
-PKG_VERSION:=20170723
+PKG_VERSION:=20170803
 PKG_RELEASE:=1
 
 PKG_MAINTAINER:=monokoo <realstones2012@gmail.com>
