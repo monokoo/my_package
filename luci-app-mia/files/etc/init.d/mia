@@ -62,8 +62,9 @@ do
 	fi
 	if [ "$enable" == "1" ]; then
 		iptables -t filter -I MIA  -m mac --mac-source $macaddr -m time --kerneltz --timestart $timeon --timestop $timeoff --weekdays $Z1$Z2$Z3$Z4$Z5$Z6$Z7 -j DROP
-		[ "$ss_enabled" -eq 1 ] && iptables -t nat -I SHADOWSOCKS $((i+1)) -m mac --mac-source $macaddr -j RETURN
-		[ "$kp_enabled" -eq 1 ] && [ -z `iptables -t nat -L KOOLPROXY | grep -w RETURN | grep -w "$macaddr"` ] && iptables -t nat -I KOOLPROXY $((i+1)) -m mac --mac-source $macaddr -j RETURN
+		[ "$ss_enabled" -eq 1 ] && iptables -t nat -I SHADOWSOCKS $((i+1)) -m mac --mac-source $macaddr -m time --kerneltz --timestart $timeon --timestop $timeoff --weekdays $Z1$Z2$Z3$Z4$Z5$Z6$Z7 -j RETURN
+		[ "$kp_enabled" -eq 1 ] && [ -z `iptables -t nat -L KOOLPROXY | grep -w RETURN | grep -w "$macaddr"` ] && \
+			iptables -t nat -I KOOLPROXY $((i+1)) -m mac --mac-source $macaddr -m time --kerneltz --timestart $timeon --timestop $timeoff --weekdays $Z1$Z2$Z3$Z4$Z5$Z6$Z7 -j RETURN
 	fi
 	for n in $(seq 1 7)
 	do
@@ -96,16 +97,16 @@ del_rule(){
 
 start(){
 	! load_config && exit 0
-  iptables -L FORWARD|grep -c MIA 2>/dev/null && [ $? -eq 0 ] && exit 0;
-  iptables -t filter -N MIA
-  iptables -t filter -I FORWARD -m comment --comment "Rule For Control" -j MIA
-  add_rule
+	iptables -L FORWARD|grep -c MIA 2>/dev/null && [ $? -eq 0 ] && exit 0;
+	iptables -t filter -N MIA
+	iptables -t filter -I FORWARD -m comment --comment "Rule For Control" -j MIA
+	add_rule
 }
 stop(){
-  iptables -t filter -D FORWARD -m comment --comment "Rule For Control" -j MIA
-  iptables -t filter -F MIA
-  iptables -t filter -X MIA
-  [ `iptables -t nat -L SHADOWSOCKS 2>/dev/null |wc -l` -gt 0 ] && del_rule SHADOWSOCKS
-  [ `iptables -t nat -L KOOLPROXY 2>/dev/null |wc -l` -gt 0 ] && del_rule KOOLPROXY
+	iptables -t filter -D FORWARD -m comment --comment "Rule For Control" -j MIA
+	iptables -t filter -F MIA
+	iptables -t filter -X MIA
+	[ `iptables -t nat -L SHADOWSOCKS 2>/dev/null |wc -l` -gt 0 ] && del_rule SHADOWSOCKS
+	[ `iptables -t nat -L KOOLPROXY 2>/dev/null |wc -l` -gt 0 ] && del_rule KOOLPROXY
 }
 
