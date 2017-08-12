@@ -2,8 +2,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=syncthing
-PKG_VERSION:=0.14.31
-PKG_RELEASE:=20170629
+PKG_VERSION:=0.14.36
+PKG_RELEASE:=20170812
 
 include $(INCLUDE_DIR)/package.mk
 
