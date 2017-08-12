@@ -124,7 +124,7 @@ fi
 }
 
 download_binary(){
-	wget -q --no-check-certificate --timeout=10 --tries=2 https://github.com/fatedier/frp/releases/download/v0.13.0/frp_0.13.0_linux_arm.tar.gz -O /tmp/frp_0.13.0_linux_arm.tar.gz
+	wget -q --no-check-certificate --timeout=20 --tries=2 https://github.com/fatedier/frp/releases/download/v0.13.0/frp_0.13.0_linux_arm.tar.gz -O /tmp/frp_0.13.0_linux_arm.tar.gz
 	[ -f "/tmp/frp_0.13.0_linux_arm.tar.gz" ] && tar -xf /tmp/frp_0.13.0_linux_arm.tar.gz -C /tmp && \
 		mv /tmp/frp_0.13.0_linux_arm/frpc /usr/bin/frpc
 	rm -rf /tmp/frp_0.13.0_linux_arm*
