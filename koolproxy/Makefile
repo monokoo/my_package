@@ -48,14 +48,12 @@ define Package/koolproxy/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_DIR) $(1)/usr/share/koolproxy
 	$(INSTALL_DIR) $(1)/usr/share/koolproxy/data
-	$(INSTALL_DIR) $(1)/usr/share/koolproxy/data/certs/
 	$(INSTALL_DIR) $(1)/usr/share/koolproxy/data/rules/
 
 	$(INSTALL_BIN) ./files/etc/uci-defaults/95-koolproxy $(1)/etc/uci-defaults/95-koolproxy
 	$(INSTALL_BIN) ./files/etc/init.d/* $(1)/etc/init.d/
 	$(INSTALL_CONF) ./files/etc/config/* $(1)/etc/config/
 	$(INSTALL_BIN) ./files/usr/sbin/* $(1)/usr/sbin/
-	$(INSTALL_DATA) ./files/usr/share/koolproxy/data/certs/* $(1)/usr/share/koolproxy/data/certs
 	$(INSTALL_BIN) ./files/usr/share/koolproxy/data/gen_ca.sh $(1)/usr/share/koolproxy/data/
 	$(INSTALL_DATA) ./files/usr/share/koolproxy/data/openssl.cnf $(1)/usr/share/koolproxy/data/
 	$(INSTALL_DATA) ./files/usr/share/koolproxy/data/rules/* $(1)/usr/share/koolproxy/data/rules/
