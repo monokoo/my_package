@@ -15,6 +15,7 @@ define Package/$(PKG_NAME)
 	SUBMENU:=3. Applications
 	PKGARCH:=all
 	TITLE:=luci for ddnsto
+	DEPENDS:=+libc
 endef
 
 define Package/$(PKG_NAME)/description
