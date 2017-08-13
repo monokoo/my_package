@@ -12,7 +12,7 @@ define Package/ddnsto
 	CATEGORY:=Network
 	TITLE:=Ddnsto
 	URL:=https://www.ddns.to
-	DEPENDS:=+ddnsto
+	DEPENDS:=+libc
 endef
 
 define Build/Prepare
