@@ -258,6 +258,7 @@ start() {
 
 	/usr/share/koolproxy/koolproxy $arg --mark -d
 	add_rule
+	dns_takeover
 	add_koolproxy_cru
 	rm -f "$LOCK_FILE"
 	return 0
