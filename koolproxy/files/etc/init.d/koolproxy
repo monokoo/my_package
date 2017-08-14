@@ -107,7 +107,7 @@ gen_ca() {
 if [ ! -f "/usr/share/koolproxy/data/certs/ca.crt" ]||[ ! -f "/usr/share/koolproxy/data/private/ca.key.pem" ];then
     rm -rf /usr/share/koolproxy/data/private
     rm -rf /usr/share/koolproxy/data/certs/ca.crt
-    /usr/share/koolproxy/data/gen_ca.sh >/dev/null 2>&1
+    sh /usr/share/koolproxy/data/gen_ca.sh >/dev/null 2>&1
 fi
 }
 
@@ -170,13 +170,7 @@ add_rule() {
 	iptables -t nat -N KOOLPROXY_ADB 2>/dev/null
 	iptables -t nat -N KOOLPROXY_HTTPS_GLO 2>/dev/null
 	iptables -t nat -N KOOLPROXY_HTTPS_ADB 2>/dev/null
-	#获取SHADOWSOCKS规则行号
-	SS_INDEX=`iptables -t nat -L PREROUTING|tail -n +3|sed -n -e '/^SHADOWSOCKS/='`
-	if [ -n "SS_INDEX" ]; then
-		let SS_INDEX+=2
-	fi
-	#确保添加到SHADOWSOCKS规则之后
-	iptables -t nat -I PREROUTING $SS_INDEX -p tcp -j KOOLPROXY
+	
 	#创建所需的ipset
 	IPSET_ADB="adblock"
 	ipset -! create $IPSET_ADB nethash && ipset -! add $IPSET_ADB 110.110.110.110 2>/dev/null
@@ -201,15 +195,54 @@ add_rule() {
 	config_foreach load_acl acl_rule
 	#加载默认代理模式
 	iptables -t nat -A KOOLPROXY -p tcp -j $(get_action_chain $GLOBAL_MODE)
+	
+	# 重定所有流量到 KOOLPROXY
+	PR_NU=`iptables -nvL PREROUTING -t nat |sed 1,2d | sed -n '/prerouting_rule/='`
+	if [ "$PR_NU" == "" ]; then
+		PR_NU=1
+	else
+		let PR_NU+=1
+	fi	
+	#确保添加到prerouting_rule规则之后
+	# 全局模式和视频模式
+	[ "$GLOBAL_MODE" == "global" ] || [ "$GLOBAL_MODE" == "video" ] && iptables -t nat -I PREROUTING $PR_NU -p tcp -j KOOLPROXY
+	# ipset 黑名单模式
+	[ "$GLOBAL_MODE" == "adblock" ] && iptables -t nat -I PREROUTING $PR_NU -p tcp -m set --match-set $IPSET_ADB dst -j KOOLPROXY
+	
 }
 
 del_rule() {
 	iptables -t nat -D PREROUTING -p tcp -j KOOLPROXY 2>/dev/null
+	iptables -t nat -D PREROUTING -p tcp -m set --match-set adblock dst -j KOOLPROXY
 	iptables -t nat -F KOOLPROXY 2>/dev/null && iptables -t nat -X KOOLPROXY 2>/dev/null
 	iptables -t nat -F KOOLPROXY_GLO 2>/dev/null && iptables -t nat -X KOOLPROXY_GLO 2>/dev/null
 	iptables -t nat -F KOOLPROXY_ADB 2>/dev/null && iptables -t nat -X KOOLPROXY_ADB 2>/dev/null
 	iptables -t nat -F KOOLPROXY_HTTPS_ADB 2>/dev/null && iptables -t nat -X KOOLPROXY_HTTPS_ADB 2>/dev/null
 	iptables -t nat -F KOOLPROXY_HTTPS_GLO 2>/dev/null && iptables -t nat -X KOOLPROXY_HTTPS_GLO 2>/dev/null
+}
+
+dns_takeover(){
+	ss_chromecast=`uci -q get shadowsocks.@global[0].dns_53`
+	[ -z "$ss_chromecast" ] && ss_chromecast=0
+	lan_ipaddr=`uci get network.lan.ipaddr`
+	chromecast_nu=`iptables -t nat -L PREROUTING -v -n --line-numbers|grep "dpt:53"|awk '{print $1}'`
+	if [ "$GLOBAL_MODE" == "adblock" ]; then
+		if [ -z "$chromecast_nu" ]; then
+			echo_date 黑名单模式开启DNS劫持 >>$LOGFILE
+			iptables -t nat -A PREROUTING -p udp --dport 53 -j DNAT --to $lan_ipaddr >/dev/null 2>&1
+		else
+			echo_date DNS劫持规则已经添加，跳过~ >>$LOGFILE
+		fi
+	else
+		if [ "$ss_chromecast" != "1" ]; then
+			if [ ! -z "$chromecast_nu" ]; then
+				echo_date 全局过滤模式下删除DNS劫持 >>$LOGFILE
+				iptables -t nat -D PREROUTING $chromecast_nu >/dev/null 2>&1
+				echo_date done >>$LOGFILE
+				echo_date >>$LOGFILE
+			fi
+		fi
+	fi
 }
 
 start() {
@@ -221,11 +254,9 @@ start() {
 	[ -f "$LOCK_FILE" ] && return 3
 	touch "$LOCK_FILE"
 	
-	viedoswitch=$(config_t_get global viedoswitch 1)
-	local arg=
-	[ $viedoswitch -eq 1 ] && arg="--video"
-	
-	/usr/share/koolproxy/koolproxy -d $arg >/dev/null 2>&1 &
+	[ "$GLOBAL_MODE" == "vedio" ] && arg="-e" || arg=""
+
+	/usr/share/koolproxy/koolproxy $arg --mark -d
 	add_rule
 	add_koolproxy_cru
 	rm -f "$LOCK_FILE"
