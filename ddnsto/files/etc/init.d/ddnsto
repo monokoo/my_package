@@ -26,7 +26,8 @@ get_config()
 start() {
 	config_load $CONFIG
 	config_foreach get_config global
-	[ $enable -ne 1 ] && exit 0
+	[ "$enable" -ne 1 ] && exit 0
+	[ -z "$token" ] && exit 0
 	service_start /usr/bin/ddnsto -u $token -d >/dev/null 2>&1 &
 	logger -t ddnsto 'Start ddnsto service'
 }
