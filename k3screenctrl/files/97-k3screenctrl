@@ -1,10 +1,21 @@
 #!/bin/sh
 . /lib/functions.sh
+LOCK_FILE=/var/lock/k3screenctrl.lock
 
 # We only handle 'ifup' and 'ifdown' events
 [ "$ACTION" = ifup -o "$ACTION" = ifdown ] || exit 1
+if [ "$(cat /etc/k3screenctrl-apmode)" -eq 0 ]; then
+	[ "$INTERFACE" = lan ] && exit 1
+else
+	[ "$INTERFACE" != lan ] && exit 1
+fi
+
 # Exit if we don't have logger, this should not happen
 [ -x /usr/bin/logger ] || exit 2
+
+[ -f "$LOCK_FILE" ] && exit 1
+touch "$LOCK_FILE"
+sleep 120s
 
 case "$ACTION" in
 	ifup)
@@ -13,12 +24,12 @@ case "$ACTION" in
 		# due to high load on router
 		logger -p daemon.info -t "k3screenctrl" \
 				"Restart request sent due to '$ACTION' of '$INTERFACE'"
-		sleep 2s
 		if [ -z "$(pidof k3screenctrl)" -a -z "$(pidof device_online.sh)" ]; then
 			/etc/init.d/k3screenctrl start
 		else
 			/etc/init.d/k3screenctrl restart
 		fi
+		rm -f "$LOCK_FILE"
 	;;
 	ifdown)
 		# Shutdown
@@ -29,6 +40,7 @@ case "$ACTION" in
 		else
 			/etc/init.d/k3screenctrl restart
 		fi
+		rm -f "$LOCK_FILE"
 	;;
 esac
 
