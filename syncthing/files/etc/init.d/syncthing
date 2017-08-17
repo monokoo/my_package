@@ -29,7 +29,7 @@ get_config()
 
 download_binary(){
 	wget --no-check-certificate --timeout=10 --tries=1 https://github.com/syncthing/syncthing/releases/download/v0.14.36/syncthing-linux-arm-v0.14.36.tar.gz -O /tmp/syncthing-linux-arm-v0.14.36.tar.gz
-	[ ! -f "/tmp/syncthing-linux-arm-v0.14.36.tar.gz" ] && wget -q --no-check-certificate --timeout=10 --tries=1 https://any.mokoo.xyz/app/syncthing-linux-arm-v0.14.36.tar.gz -O /tmp/syncthing-linux-arm-v0.14.36.tar.gz
+	[ ! -s "/tmp/syncthing-linux-arm-v0.14.36.tar.gz" ] && wget -q --no-check-certificate --timeout=10 --tries=1 https://any.mokoo.xyz/app/syncthing-linux-arm-v0.14.36.tar.gz -O /tmp/syncthing-linux-arm-v0.14.36.tar.gz
 	[ -f "/tmp/syncthing-linux-arm-v0.14.36.tar.gz" ] && tar -xf /tmp/syncthing-linux-arm-v0.14.36.tar.gz -C /tmp && \
 		mv /tmp/syncthing-linux-arm-v0.14.36/syncthing /usr/share/syncthing/syncthing
 	rm -rf /tmp/syncthing-linux-arm-v0.14.36*
