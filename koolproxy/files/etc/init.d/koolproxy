@@ -213,7 +213,7 @@ add_rule() {
 
 del_rule() {
 	iptables -t nat -D PREROUTING -p tcp -j KOOLPROXY 2>/dev/null
-	iptables -t nat -D PREROUTING -p tcp -m set --match-set adblock dst -j KOOLPROXY
+	iptables -t nat -D PREROUTING -p tcp -m set --match-set adblock dst -j KOOLPROXY 2>/dev/null
 	iptables -t nat -F KOOLPROXY 2>/dev/null && iptables -t nat -X KOOLPROXY 2>/dev/null
 	iptables -t nat -F KOOLPROXY_GLO 2>/dev/null && iptables -t nat -X KOOLPROXY_GLO 2>/dev/null
 	iptables -t nat -F KOOLPROXY_ADB 2>/dev/null && iptables -t nat -X KOOLPROXY_ADB 2>/dev/null
@@ -223,6 +223,7 @@ del_rule() {
 
 dns_takeover(){
 	ss_chromecast=`uci -q get shadowsocks.@global[0].dns_53`
+	ss_enable=`iptables -t nat -L PREROUTING |grep SHADOWSOCKS |wc -l`
 	[ -z "$ss_chromecast" ] && ss_chromecast=0
 	lan_ipaddr=`uci get network.lan.ipaddr`
 	chromecast_nu=`iptables -t nat -L PREROUTING -v -n --line-numbers|grep "dpt:53"|awk '{print $1}'`
@@ -234,8 +235,8 @@ dns_takeover(){
 			echo_date DNS劫持规则已经添加，跳过~ >>$LOGFILE
 		fi
 	else
-		if [ "$ss_chromecast" != "1" ]; then
-			if [ ! -z "$chromecast_nu" ]; then
+		if [ "$ss_chromecast" -eq 0 ] || [ "$ss_enable" -eq 0 ]; then
+			if [ -n "$chromecast_nu" ]; then
 				echo_date 全局过滤模式下删除DNS劫持 >>$LOGFILE
 				iptables -t nat -D PREROUTING $chromecast_nu >/dev/null 2>&1
 				echo_date done >>$LOGFILE
@@ -245,6 +246,16 @@ dns_takeover(){
 	fi
 }
 
+del_dns_takeover(){
+	ss_chromecast=`uci -q get shadowsocks.@global[0].dns_53`
+	ss_enable=`iptables -t nat -L PREROUTING |grep SHADOWSOCKS |wc -l`
+	[ -z "$ss_chromecast" ] && ss_chromecast=0
+	if [ "$ss_chromecast" -eq 0 ] || [ "$ss_enable" -eq 0 ]; then
+		chromecast_nu=`iptables -t nat -L PREROUTING -v -n --line-numbers|grep "dpt:53"|awk '{print $1}'`
+		[ -n "$chromecast_nu" ] && iptables -t nat -D PREROUTING $chromecast_nu >/dev/null 2>&1
+	fi
+}
+	
 start() {
 	! load_config && return 1
 	iptables -t nat -C PREROUTING -p tcp -j KOOLPROXY 2>/dev/null && [ $? -eq 0 ] && exit 0;
@@ -254,9 +265,9 @@ start() {
 	[ -f "$LOCK_FILE" ] && return 3
 	touch "$LOCK_FILE"
 	
-	[ "$GLOBAL_MODE" == "vedio" ] && arg="-e" || arg=""
+	[ "$GLOBAL_MODE" == "video" ] && arg="-e" || arg=""
 
-	/usr/share/koolproxy/koolproxy $arg --mark -d
+	/usr/share/koolproxy/koolproxy $arg --mark --ttl 160 -d
 	add_rule
 	dns_takeover
 	add_koolproxy_cru
@@ -269,6 +280,7 @@ stop() {
 		sleep 1s
 	done
 	del_rule
+	del_dns_takeover
 	ipset -F adblock
 	ipset -X adblock
 	rm -f /tmp/dnsmasq.d/dnsmasq.adblock

@@ -36,8 +36,8 @@ add_rule(){
 	local ss_enabled=0
 	local kp_enabled=0
 	action=$1
-	[ `iptables -t nat -L SHADOWSOCKS 2>/dev/null |wc -l` -gt 0 ] && ss_enabled=1
-	[ `iptables -t nat -L KOOLPROXY 2>/dev/null |wc -l` -gt 0 ] && kp_enabled=1
+	[ `iptables -t nat -L PREROUTING |grep SHADOWSOCKS 2>/dev/null |wc -l` -gt 0 ] && ss_enabled=1
+	[ `iptables -t nat -L PREROUTING |grep KOOLPROXY 2>/dev/null |wc -l` -gt 0 ] && kp_enabled=1
 	for i in $(seq 0 100)
 	do
 		enable=$(uci_get_by_type macbind enable '' $i)
@@ -119,7 +119,7 @@ stop(){
 		iptables -t filter -D FORWARD -m comment --comment "Rule For Control" -j WEB_RESTRICTION
 		iptables -t filter -F WEB_RESTRICTION
 		iptables -t filter -X WEB_RESTRICTION
-		[ `iptables -t nat -L SHADOWSOCKS 2>/dev/null |wc -l` -gt 0 ] && del_rule SHADOWSOCKS
-		[ `iptables -t nat -L KOOLPROXY 2>/dev/null |wc -l` -gt 0 ] && del_rule KOOLPROXY
+		[ `iptables -t nat -L PREROUTING |grep SHADOWSOCKS 2>/dev/null |wc -l` -gt 0 ] && del_rule SHADOWSOCKS
+		[ `iptables -t nat -L PREROUTING |grep KOOLPROXY 2>/dev/null |wc -l` -gt 0 ] && del_rule KOOLPROXY
 	}
 }

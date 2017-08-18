@@ -35,8 +35,8 @@ load_config() {
 add_rule(){
 local kp_enabled=0
 local ss_enabled=0
-[ `iptables -t nat -L SHADOWSOCKS 2>/dev/null |wc -l` -gt 0 ] && ss_enabled=1
-[ `iptables -t nat -L KOOLPROXY 2>/dev/null |wc -l` -gt 0 ] && kp_enabled=1
+[ `iptables -t nat -L PREROUTING |grep SHADOWSOCKS 2>/dev/null |wc -l` -gt 0 ] && ss_enabled=1
+[ `iptables -t nat -L PREROUTING |grep KOOLPROXY 2>/dev/null |wc -l` -gt 0 ] && kp_enabled=1
 for i in $(seq 0 100)
 do
 	local enable=$(uci_get_by_type macbind enable '' $i)
@@ -106,7 +106,7 @@ stop(){
 	iptables -t filter -D FORWARD -m comment --comment "Rule For Control" -j MIA
 	iptables -t filter -F MIA
 	iptables -t filter -X MIA
-	[ `iptables -t nat -L SHADOWSOCKS 2>/dev/null |wc -l` -gt 0 ] && del_rule SHADOWSOCKS
-	[ `iptables -t nat -L KOOLPROXY 2>/dev/null |wc -l` -gt 0 ] && del_rule KOOLPROXY
+	[ `iptables -t nat -L PREROUTING |grep SHADOWSOCKS 2>/dev/null |wc -l` -gt 0 ] && del_rule SHADOWSOCKS
+	[ `iptables -t nat -L PREROUTING |grep KOOLPROXY 2>/dev/null |wc -l` -gt 0 ] && del_rule KOOLPROXY
 }
 
