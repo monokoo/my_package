@@ -227,12 +227,19 @@ dns_takeover(){
 	[ -z "$ss_chromecast" ] && ss_chromecast=0
 	lan_ipaddr=`uci get network.lan.ipaddr`
 	chromecast_nu=`iptables -t nat -L PREROUTING -v -n --line-numbers|grep "dpt:53"|awk '{print $1}'`
+	is_right_lanip=`iptables -t nat -L PREROUTING -v -n --line-numbers|grep "dpt:53" |grep "$lan_ipaddr"`
 	if [ "$GLOBAL_MODE" == "adblock" ]; then
 		if [ -z "$chromecast_nu" ]; then
 			echo_date 黑名单模式开启DNS劫持 >>$LOGFILE
 			iptables -t nat -A PREROUTING -p udp --dport 53 -j DNAT --to $lan_ipaddr >/dev/null 2>&1
 		else
-			echo_date DNS劫持规则已经添加，跳过~ >>$LOGFILE
+			if [ -z "$is_right_lanip" ]; then
+				echo_date 黑名单模式开启DNS劫持 >>$LOGFILE
+				iptables -t nat -D PREROUTING $chromecast_nu >/dev/null 2>&1
+				iptables -t nat -A PREROUTING -p udp --dport 53 -j DNAT --to $lan_ipaddr >/dev/null 2>&1
+			else
+				echo "$(date):  DNS劫持规则已经添加，跳过~" >>$LOGFILE
+			fi
 		fi
 	else
 		if [ "$ss_chromecast" -eq 0 ] || [ "$ss_enable" -eq 0 ]; then
