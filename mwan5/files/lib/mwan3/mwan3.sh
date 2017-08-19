@@ -150,6 +150,8 @@ mwan3_set_general_rules()
 mwan3_set_general_iptables()
 {
 	local IPT
+	lanip=$(uci get network.lan.ipaddr)
+	ip_prefix_hex=$(echo $lanip | awk -F "." '{printf ("0x%02x", $1)} {printf ("%02x", $2)} {printf ("%02x", $3)} {printf ("00/0xffffff00")}')
 
 	for IPT in "$IPT4" "$IPT6"; do
 
@@ -173,6 +175,7 @@ mwan3_set_general_iptables()
 
 		if ! $IPT -S mwan3_hook &> /dev/null; then
 			$IPT -N mwan3_hook
+			$IPT -I mwan3_hook 1 -m mark --mark $ip_prefix_hex -j RETURN
 			$IPT -A mwan3_hook -j CONNMARK --restore-mark --nfmask $MMX_MASK --ctmask $MMX_MASK
 			$IPT -A mwan3_hook -m mark --mark 0x0/$MMX_MASK -j mwan3_ifaces_in
 			$IPT -A mwan3_hook -m mark --mark 0x0/$MMX_MASK -j mwan3_connected
