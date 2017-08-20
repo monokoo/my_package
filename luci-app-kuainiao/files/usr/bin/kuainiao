@@ -528,11 +528,11 @@ do
 	sleep 295s
 	if [ "$kuainiao_downenable" -eq 1 ] && [ "$kuainiao_can_upgrade" -eq 1 ];then
 		keepalive_down
-		[ "$kuainiao_run_status" -eq 0 ] && restart_kuainiao
+		[ "$kuainiao_run_status" -eq 0 ] && kuainiao_recover && restart_kuainiao
 	fi
 	if [ "$kuainiao_upenable" -eq 1 ] && [ "$kuainiao_can_upupgrade" -eq 1 ];then
 		keepalive_up
-		[ "$kuainiao_run_upstatus" -eq 0 ] && restart_kuainiao
+		[ "$kuainiao_run_upstatus" -eq 0 ] && kuainiao_uprecover && restart_kuainiao
 	fi
 done
 
