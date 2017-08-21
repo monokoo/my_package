@@ -198,11 +198,11 @@ add_rule() {
 	
 	# 重定所有流量到 KOOLPROXY
 	PR_NU=`iptables -nvL PREROUTING -t nat |sed 1,2d | sed -n '/prerouting_rule/='`
-	if [ "$PR_NU" == "" ]; then
+	if [ -z "$PR_NU" ]; then
 		PR_NU=1
 	else
 		let PR_NU+=1
-	fi	
+	fi
 	#确保添加到prerouting_rule规则之后
 	# 全局模式和视频模式
 	[ "$GLOBAL_MODE" == "global" ] || [ "$GLOBAL_MODE" == "video" ] && iptables -t nat -I PREROUTING $PR_NU -p tcp -j KOOLPROXY
