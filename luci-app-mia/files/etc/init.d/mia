@@ -101,6 +101,7 @@ start(){
 	iptables -t filter -N MIA
 	iptables -t filter -I FORWARD -m comment --comment "Rule For Control" -j MIA
 	add_rule
+	[ "$(uci show ucitrack.@shadowsocks[0].affects |grep -c mia)" -eq 0 ] && uci add_list ucitrack.@shadowsocks[0].affects=mia && uci commit ucitrack
 }
 stop(){
 	iptables -t filter -D FORWARD -m comment --comment "Rule For Control" -j MIA

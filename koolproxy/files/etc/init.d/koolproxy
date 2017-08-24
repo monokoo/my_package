@@ -114,7 +114,7 @@ fi
 stop_dnsmasq() {
 	adenable=$(config_t_get global enabled)
 if [ "$adenable" == "0" ];then
-  sed -i '/koolproxy update/d' /etc/crontabs/root >/dev/null 2>&1
+	sed -i '/koolproxy update/d' /etc/crontabs/root >/dev/null 2>&1
 	rm /tmp/dnsmasq.d/adblock.conf
 	/etc/init.d/dnsmasq restart
 fi
@@ -204,10 +204,13 @@ add_rule() {
 		let PR_NU+=1
 	fi
 	#确保添加到prerouting_rule规则之后
-	# 全局模式和视频模式
-	[ "$GLOBAL_MODE" == "global" ] || [ "$GLOBAL_MODE" == "video" ] && iptables -t nat -I PREROUTING $PR_NU -p tcp -j KOOLPROXY
-	# ipset 黑名单模式
-	[ "$GLOBAL_MODE" == "adblock" ] && iptables -t nat -I PREROUTING $PR_NU -p tcp -m set --match-set $IPSET_ADB dst -j KOOLPROXY
+	if [ "$GLOBAL_MODE" == "adblock" ]; then
+		# ipset 黑名单模式
+		iptables -t nat -I PREROUTING $PR_NU -p tcp -m set --match-set $IPSET_ADB dst -j KOOLPROXY
+	else
+		#其他模式
+		iptables -t nat -I PREROUTING $PR_NU -p tcp -j KOOLPROXY
+	fi
 	
 }
 
@@ -277,7 +280,7 @@ start() {
 	/usr/share/koolproxy/koolproxy $arg --mark --ttl 160 -d
 	add_rule
 	dns_takeover
-	add_koolproxy_cru
+	[ "$GLOBAL_MODE" == "adblock" ] && add_koolproxy_cru
 	rm -f "$LOCK_FILE"
 	return 0
 }
