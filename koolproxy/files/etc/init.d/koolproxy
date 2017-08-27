@@ -46,7 +46,7 @@ load_acl(){
 	config_get ip $1 ipaddr
 	config_get mode $1 filter_mode
 	if [ -n "$mode" ] && [ -n "$ip" ] || [ -n "$mac" ]; then
-		iptables -t nat -A KOOLPROXY $(factor $ip "-s") $(factor $mac "-m mac --mac-source") -$(get_jump_mode $mode) $(get_action_chain $mode)
+		iptables -t nat -A KOOLPROXY $(factor $ip "-s") $(factor $mac "-m mac --mac-source") -p tcp -$(get_jump_mode $mode) $(get_action_chain $mode)
 	fi
 }
 
@@ -125,7 +125,7 @@ get_action_chain() {
 		disable)
 			echo "RETURN"
 		;;
-		global)
+		global|video)
 			echo "KOOLPROXY_GLO"
 		;;
 		adblock)
