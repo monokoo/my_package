@@ -3,7 +3,7 @@ config global
 	option time_update '4'
 	option https '0'
 	option filter_mode 'adblock'
-	option adblock '0'
+	option adblock '1'
 	option enabled '0'
 
 config source
