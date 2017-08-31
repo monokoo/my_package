@@ -179,6 +179,7 @@ add_rule() {
 	#  忽略特殊IP段
 	iptables_ext A KOOLPROXY "-d 0.0.0.0/8 -j RETURN"
 	iptables_ext A KOOLPROXY "-d 10.0.0.0/8 -j RETURN"
+	iptables_ext A KOOLPROXY "-d 100.64.0.0/10 -j RETURN"
 	iptables_ext A KOOLPROXY "-d 127.0.0.0/8 -j RETURN"
 	iptables_ext A KOOLPROXY "-d 169.254.0.0/16 -j RETURN"
 	iptables_ext A KOOLPROXY "-d 172.16.0.0/12 -j RETURN"
