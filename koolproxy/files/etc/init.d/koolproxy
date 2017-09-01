@@ -113,7 +113,8 @@ fi
 
 stop_dnsmasq() {
 	adenable=$(config_t_get global adblock 0)
-	if [ "$adenable" == "0" ];then
+	ENABLED=$(config_t_get global enabled 0)
+	if [ "$adenable" -eq 0 -o "$ENABLED" -eq 0 ];then
 		sed -i '/koolproxy update/d' /etc/crontabs/root >/dev/null 2>&1
 		rm /tmp/dnsmasq.d/adblock.conf
 		/etc/init.d/dnsmasq restart
