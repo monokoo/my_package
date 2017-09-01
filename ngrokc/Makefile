@@ -1,9 +1,9 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ngrokc
-PKG_VERSION:=20170418
+PKG_VERSION:=20170725
 PKG_RELEASE:=1
-PKG_REV:=7b645b1fda99c11388c27e77a4fc8334eff068a7
+PKG_REV:=355aa8ba062e92cfe54966084ca79e9bd5ff8555
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
@@ -19,12 +19,15 @@ define Package/ngrokc
 	SUBMENU:=Web Servers/Proxies
 	TITLE:=Secure tunnels to localhost(C++ port)
 	URL:=https://github.com/dosgo/ngrok-c
-	DEPENDS:=+libc +libpthread +libopenssl +libstdcpp
+	DEPENDS:=+NGROKC_POLARSSL:libpolarssl +NGROKC_OPENSSL:libopenssl +libpthread +libstdcpp
 endef
 
-define Build/Prepare
-	$(call Build/Prepare/Default,)
-	$(CP) $(PKG_BUILD_DIR)/Makefile.openssl $(PKG_BUILD_DIR)/Makefile
+define Package/ngrokc/config
+	source "$(SOURCE)/Config.in"
+endef
+
+define Build/Compile
+	$(call Build/Compile/Default,-f $(if $(CONFIG_NGROKC_POLARSSL),Makefile.polarssl,Makefile.openssl))
 endef
 
 define Package/ngrokc/install
