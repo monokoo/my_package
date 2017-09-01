@@ -25,17 +25,13 @@
  end
  
  
-@@ -521,6 +537,21 @@ if hwtype == "mac80211" then
+@@ -521,6 +537,17 @@ if hwtype == "mac80211" then
  	
  	ifname = s:taboption("advanced", Value, "ifname", translate("Interface name"), translate("Override default interface name"))
  	ifname.optional = true
 +
 +	short_preamble = s:taboption("general", Flag, "short_preamble", translate("Short Preamble"))
 +	short_preamble.default = short_preamble.enabled
-+
-+	isolate = s:taboption("general", Flag, "isolate", translate("Wireless Client Isolation"))
-+	isolate.optional = true
-+	isolate:depends({mode="ap"})
 +
 +	dtim_period = s:taboption("general", Value, "dtim_period", translate("DTIM Interval"),translate("Delivery Traffic Indication Message Interval"))
 +	dtim_period.optional = true
