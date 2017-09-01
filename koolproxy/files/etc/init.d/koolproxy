@@ -112,12 +112,12 @@ fi
 }
 
 stop_dnsmasq() {
-	adenable=$(config_t_get global enabled)
-if [ "$adenable" == "0" ];then
-	sed -i '/koolproxy update/d' /etc/crontabs/root >/dev/null 2>&1
-	rm /tmp/dnsmasq.d/adblock.conf
-	/etc/init.d/dnsmasq restart
-fi
+	adenable=$(config_t_get global adblock 0)
+	if [ "$adenable" == "0" ];then
+		sed -i '/koolproxy update/d' /etc/crontabs/root >/dev/null 2>&1
+		rm /tmp/dnsmasq.d/adblock.conf
+		/etc/init.d/dnsmasq restart
+	fi
 }
 
 get_action_chain() {
@@ -278,7 +278,7 @@ start() {
 	
 	[ "$GLOBAL_MODE" == "video" ] && arg="-e" || arg=""
 
-	/usr/share/koolproxy/koolproxy $arg --mark --ttl 160 -d
+	/usr/share/koolproxy/koolproxy $arg --mark -d
 	add_rule
 	dns_takeover
 	[ "$GLOBAL_MODE" == "adblock" ] && add_koolproxy_cru
