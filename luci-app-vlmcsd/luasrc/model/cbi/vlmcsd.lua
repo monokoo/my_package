@@ -32,6 +32,10 @@ o.default = 1688
 o.placeholder = 1688
 o:depends("use_conf_file",0)
 
+o = s:taboption("basic", Flag, "enable_web")
+o.title = translate("开启外网访问")
+o.default = 0
+o.rmempty = false
 
 --配置
 s:tab("config", translate("配置"))
