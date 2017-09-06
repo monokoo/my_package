@@ -7,7 +7,7 @@
 include $(TOPDIR)/rules.mk
 
 LUCI_TITLE:=LuCI Support for amule
-LUCI_DEPENDS:=amule
+LUCI_DEPENDS:=+libc +amule
 
 include $(TOPDIR)/feeds/luci/luci.mk
 

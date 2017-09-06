@@ -7,7 +7,7 @@
 include $(TOPDIR)/rules.mk
 
 LUCI_TITLE:=LuCI Support for gmediarender
-LUCI_DEPENDS:=gmediarender
+LUCI_DEPENDS:=+libc +gmediarender
 
 include $(TOPDIR)/feeds/luci/luci.mk
 

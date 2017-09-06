@@ -7,7 +7,7 @@
 include $(TOPDIR)/rules.mk
 
 LUCI_TITLE:=LuCI Support for n2n
-LUCI_DEPENDS:=n2n
+LUCI_DEPENDS:=+libc +n2n
 
 include $(TOPDIR)/feeds/luci/luci.mk
 
