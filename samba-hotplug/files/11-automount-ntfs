@@ -39,7 +39,7 @@ auto_mount(){
 				mount -t $my_fstype -o rw,noatime /dev/$device $mountpath
 			;;
 			exfat)
-				mount -t $my_fstype -o rw,noatime,iocharset=cp936,umask=000 /dev/$device $mountpath
+				mount -t $my_fstype -o rw,noatime,iocharset=cp936,iocharset=utf8,umask=000 /dev/$device $mountpath
 			;;
 			vfat)
 				mount -t $my_fstype -o rw,codepage=936,utf8=1,umask=000 /dev/$device $mountpath
@@ -51,7 +51,8 @@ auto_mount(){
 				mount -t $my_fstype -o nounix,noserverino,iocharset=utf8,umask=000 /dev/$device $mountpath
 			;;
 			*)
-				logger -t Auto-Mount "New block.File system:${my_fstype}, LABEL:${my_fslabel}, UUID:${my_fsuuid} is not supported, please mount it manually."
+				mount /dev/$device $mountpath
+				[ $? -eq 0 ] && logger -t Auto-Mount "New block.File system:${my_fstype}, LABEL:${my_fslabel}, UUID:${my_fsuuid} is not supported, please mount it manually."
 			;;
 		esac
 	fi
