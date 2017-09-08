@@ -1,6 +1,6 @@
 --- a/luasrc/model/cbi/admin_network/wifi.lua
 +++ b/luasrc/model/cbi/admin_network/wifi.lua
-@@ -243,8 +243,24 @@ if hwtype == "mac80211" then
+@@ -243,8 +243,22 @@ if hwtype == "mac80211" then
  		end
  	end
  
@@ -20,8 +20,6 @@
 +	beacon_int = s:taboption("advanced", Value, "beacon_int", translate("Beacon Interval"),"(15 - 65535)")
 +	beacon_int.optional = true
 +	beacon_int.placeholder = 100
-+	legacy_rates = s:taboption("advanced", Flag, "legacy_rates", translate("Enable Legacy Rates"))
-+	legacy_rates.default = legacy_rates.enabled
  end
  
  
