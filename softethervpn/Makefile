@@ -134,6 +134,7 @@ define Package/softethervpn/install
 	$(INSTALL_CONF) files/etc/config/* $(1)/etc/config/
 	$(INSTALL_BIN) files/etc/uci-defaults/* $(1)/etc/uci-defaults/
 	$(INSTALL_DATA) files/lib/upgrade/keep.d/softethervpn $(1)/lib/upgrade/keep.d/softethervpn
+	$(INSTALL_BIN) ./files/usr/share/softethervpn/firewall.include $(1)/usr/share/softethervpn/firewall.include
 endef
 
 $(eval $(call BuildPackage,softethervpn))
