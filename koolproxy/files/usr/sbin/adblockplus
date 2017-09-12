@@ -14,6 +14,7 @@ if [ "$?" == "0" ]; then
 	echo "$(date "+%F %T"): 检测到adblockplus规则有更新，开始应用新规则！"
 	mv /tmp/dnsmasq.adblock /usr/share/koolproxy/dnsmasq.adblock
 	cp -f /usr/share/koolproxy/dnsmasq.adblock /etc/dnsmasq.d/dnsmasq.adblock
+	[ -f "/etc/dnsmasq.d/dnsmasq.adblock" ] && ln -sf /etc/dnsmasq.d/dnsmasq.adblock /tmp/dnsmasq.d/dnsmasq.adblock
 	/etc/init.d/dnsmasq restart >/dev/null 2>&1
 	echo "$(date "+%F %T"): adblockplus规则更新完成！"
 else
