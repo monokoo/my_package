@@ -15,6 +15,9 @@ cernet=`uci get mwan3.base.cernet 2>/dev/null`
 cnn=`uci get mwan3.base.cnn 2>/dev/null` 
 foreign=`uci get mwan3.base.foreign 2>/dev/null` 
 reset=`uci get mwan3.base.reset 2>/dev/null` 
+mmx_mask=`uci get mwan3.globals.mmx_mask 2>/dev/null` 
+[ -z $mmx_mask ] && mmx_mask="0xff00"
+
 IPT4="/usr/sbin/iptables -t mangle -w"
 number=0
 
@@ -158,27 +161,27 @@ mwan3_policy_iptables_start()
 if [ "$policyenable" = "1" ]; then	
 	if [ $mobile != "none" ]; then
 		number=`expr $number + 1`
-		$IPT4 -I mwan3_rules $number -m set --match-set mwan3_mobile dst -m mark --mark 0x0/0xff00 -m comment --comment "mobile by fw867" -j "mwan3_policy_"$mobile"_m1p"
+		$IPT4 -I mwan3_rules $number -m set --match-set mwan3_mobile dst -m mark --mark 0x0/$mmx_mask -m comment --comment "mobile by fw867" -j "mwan3_policy_"$mobile"_m1p"
 	fi
 	if [ $cernet != "none" ]; then
     number=`expr $number + 1`
-		$IPT4 -I mwan3_rules $number -m set --match-set mwan3_cernet dst -m mark --mark 0x0/0xff00 -m comment --comment "cernet by fw867" -j "mwan3_policy_"$cernet"_m1p"
+		$IPT4 -I mwan3_rules $number -m set --match-set mwan3_cernet dst -m mark --mark 0x0/$mmx_mask -m comment --comment "cernet by fw867" -j "mwan3_policy_"$cernet"_m1p"
 	fi
 	if [ $unicom != "none" ]; then
 		number=`expr $number + 1`
-		$IPT4 -I mwan3_rules $number -m set --match-set mwan3_unicom dst -m mark --mark 0x0/0xff00 -m comment --comment "unicom by fw867" -j "mwan3_policy_"$unicom"_m1p"
+		$IPT4 -I mwan3_rules $number -m set --match-set mwan3_unicom dst -m mark --mark 0x0/$mmx_mask -m comment --comment "unicom by fw867" -j "mwan3_policy_"$unicom"_m1p"
 	fi
 	if [ $telecom != "none" ]; then
 		number=`expr $number + 1`
-		$IPT4 -I mwan3_rules $number -m set --match-set mwan3_telecom dst -m mark --mark 0x0/0xff00 -m comment --comment "telecom by fw867" -j "mwan3_policy_"$telecom"_m1p"
+		$IPT4 -I mwan3_rules $number -m set --match-set mwan3_telecom dst -m mark --mark 0x0/$mmx_mask -m comment --comment "telecom by fw867" -j "mwan3_policy_"$telecom"_m1p"
 	fi
 	if [ $cnn != "none" ]; then
 		number=`expr $number + 1`
-		$IPT4 -I mwan3_rules $number -m geoip --destination-country CN -m mark --mark 0x0/0xff00 -m comment --comment "china by fw867" -j "mwan3_policy_"$cnn"_m1p"
+		$IPT4 -I mwan3_rules $number -m geoip --destination-country CN -m mark --mark 0x0/$mmx_mask -m comment --comment "china by fw867" -j "mwan3_policy_"$cnn"_m1p"
 	fi
 	if [ $foreign != "none" ]; then
 		number=`expr $number + 1`
-		$IPT4 -I mwan3_rules $number -m geoip ! --destination-country CN -m mark --mark 0x0/0xff00 -m comment --comment "foreign by fw867" -j "mwan3_policy_"$foreign"_m1p"
+		$IPT4 -I mwan3_rules $number -m geoip ! --destination-country CN -m mark --mark 0x0/$mmx_mask -m comment --comment "foreign by fw867" -j "mwan3_policy_"$foreign"_m1p"
 	fi
 fi
 }
