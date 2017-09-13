@@ -33,6 +33,17 @@ endef
 
 CONFIGURE_ARGS += --disable-utmp
 
+define Package/shellinabox/postinst
+#!/bin/sh
+if [ -z "$${IPKG_INSTROOT}" ]; then
+	if [ -f "/etc/init.d/webshell" ]; then
+		/etc/init.d/webshell restart
+		/etc/init.d/webshell enable
+	fi
+fi
+exit 0
+endef
+
 define Package/shellinabox/install
 	$(INSTALL_DIR) $(1)/usr/sbin $(1)/etc/init.d $(1)/usr/share/shellinabox $(1)/usr/lib/lua/luci/view/admin_system
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/shellinaboxd $(1)/usr/sbin
