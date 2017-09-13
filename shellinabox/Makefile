@@ -2,7 +2,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=shellinabox
-PKG_VERSION:=2.20
+PKG_VERSION:=2.21
 PKG_RELEASE:=$(PKG_SOURCE_VERSION)
 
 PKG_SOURCE_PROTO:=git
@@ -36,7 +36,7 @@ CONFIGURE_ARGS += --disable-utmp
 define Package/shellinabox/install
 	$(INSTALL_DIR) $(1)/usr/sbin $(1)/etc/init.d $(1)/usr/share/shellinabox $(1)/usr/lib/lua/luci/view/admin_system
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/shellinaboxd $(1)/usr/sbin
-	$(INSTALL_BIN) ./files/shellinaboxd.init $(1)/etc/init.d/shellinaboxd
+	$(INSTALL_BIN) ./files/shellinaboxd.init $(1)/etc/init.d/webshell
 	$(INSTALL_DATA) ./files/webshell.htm $(1)/usr/lib/lua/luci/view/admin_system/
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/shellinabox/*.css $(1)/usr/share/shellinabox/
 endef
