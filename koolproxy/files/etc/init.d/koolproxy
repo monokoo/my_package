@@ -17,6 +17,7 @@ LOGFILE="/var/log/koolproxy.log"
 LOCK_FILE=/var/lock/$CONFIG.lock
 TEMPPATH="/tmp/kpd"
 alias echo_date='echo $(date +%Y年%m月%d日\ %X):'
+dnsmasq_restart=0
 
 config_n_get() {
 	local ret=$(uci get $CONFIG.$1.$2 2>/dev/null)
@@ -316,9 +317,9 @@ stop() {
 	del_rule
 	del_dns_takeover
 	remove_reboot_job
-	ipset -F adblock
-	ipset -X adblock
+	ipset -F adblock >/dev/null 2>&1 &
+	ipset -X adblock >/dev/null 2>&1 &
 	rm -f $LOGFILE
-	kill -9 $(ps|grep '/usr/share/koolproxy/koolproxy'|grep -v 'grep'|awk '{print$1}')
+	kill -9 $(ps|grep '/usr/share/koolproxy/koolproxy'|grep -v 'grep'|awk '{print$1}') >/dev/null 2>&1
 	stop_dnsmasq && restart_dnsmasq
 }

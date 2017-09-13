@@ -2,7 +2,7 @@
 #Author: monokoo <realstones2012@gmail.com>
 #Thanks to FW867's help
 
-START=99
+START=99wf
 SERVICE_WRITE_PID=1
 SERVICE_DAEMONIZE=1
 
