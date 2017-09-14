@@ -21,7 +21,7 @@ mmx_mask=`uci get mwan3.globals.mmx_mask 2>/dev/null`
 IPT4="/usr/sbin/iptables -t mangle -w"
 number=0
 
-chk_ip_list="$(cat /tmp/resolv.conf.auto | grep nameserver | cut -d' ' -f2 | sort -u | tr '\n' ' ') 223.5.5.5 223.6.6.6 119.29.29.29 114.114.114.114 114.114.115.115"
+chk_ip_list="www.qq.com www.baidu.com www.taobao.com 114.114.114.114 119.29.29.29 1.2.4.8"
 
 mwan_cfg_add() {
 	#gen mwan3_interface
@@ -30,8 +30,10 @@ mwan_cfg_add() {
 	uci set mwan3.${1}.count=1 2>/dev/null
 	uci set mwan3.${1}.timeout=2 2>/dev/null
 	uci set mwan3.${1}.interval=5 2>/dev/null
-	uci set mwan3.${1}.down=3 2>/dev/null
+	uci set mwan3.${1}.down=4 2>/dev/null
 	uci set mwan3.${1}.up=1 2>/dev/null
+	uci set mwan3.${1}.initial_state=online 2>/dev/null
+	uci set mwan3.${1}.track_method=ping 2>/dev/null
 	uci set mwan3.${1}.family="ipv4" 2>/dev/null
 	uci set mwan3.${1}.size=56 2>/dev/null
 	uci set mwan3.${1}.failure_interval=5 2>/dev/null
@@ -94,6 +96,10 @@ config interface 'wan'
 	list track_ip '223.5.5.5'
 	list track_ip '119.29.29.29'
 	list track_ip '114.114.114.114'
+	list track_ip 'www.taobao.com'
+	list track_ip 'www.qq.com'
+	option initial_state 'online'
+	option track_method 'ping'
 	option reliability '1'
 	option family 'ipv4'
 	option size '56'
