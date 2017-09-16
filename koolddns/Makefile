@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=koolddns
-PKG_VERSION:=20170517
+PKG_VERSION:=20170916
 PKG_RELEASE:=1
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
@@ -28,6 +28,8 @@ define Package/$(PKG_NAME)/postinst
 endef
 
 define Build/Prepare
+	mkdir -p $(PKG_BUILD_DIR)
+	$(CP) ./src/* $(PKG_BUILD_DIR)/
 endef
 
 define Build/Configure
@@ -55,8 +57,9 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_BIN) ./files/etc/init.d/* $(1)/etc/init.d/
 	
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) ./files/usr/bin/* $(1)/usr/bin/
-
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/aliddns $(1)/usr/bin/klaliddns
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/dnspod $(1)/usr/bin/kldnspod
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/cloudxns $(1)/usr/bin/klcloudxns
 
 endef
 
