@@ -1,6 +1,6 @@
 --- a/luasrc/model/cbi/admin_network/wifi.lua
 +++ b/luasrc/model/cbi/admin_network/wifi.lua
-@@ -243,8 +243,22 @@ if hwtype == "mac80211" then
+@@ -243,8 +243,23 @@ if hwtype == "mac80211" then
  		end
  	end
  
@@ -11,6 +11,7 @@
  	s:taboption("advanced", Value, "rts", translate("RTS/CTS Threshold"))
 +
 +	log_level = s:taboption("advanced", ListValue, "log_level", translate("Logging Level"))
++	log_level.default = "3"
 +	log_level.optional = true
 +	log_level:value("2", translate("Informational Message"))
 +	log_level:value("0", translate("Verbose Debugging"))
