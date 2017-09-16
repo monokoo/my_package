@@ -35,9 +35,9 @@ fi
 remoteresolve2ip() {
 	#remoteresolve2ip cloudxnsdomain<string>
 	cloudxnsdomain=$1
-	tmp_ip=`dig @223.5.5.5 $cloudxnsdomain 2>/dev/null |grep 'IN'|awk -F ' ' '{print $5}'|grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}"|head -n1`
+	tmp_ip=`drill @lv3ns1.ffdns.net $cloudxnsdomain 2>/dev/null |grep 'IN'|awk -F ' ' '{print $5}'|grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}"|head -n1`
 	if [ "Z$tmp_ip" == "Z" ]; then
-		tmp_ip=`dig @119.29.29.29 $cloudxnsdomain 2>/dev/null |grep 'IN'|awk -F ' ' '{print $5}'|grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}"|head -n1`
+		tmp_ip=`drill @lv3ns2.ffdns.net $cloudxnsdomain 2>/dev/null |grep 'IN'|awk -F ' ' '{print $5}'|grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}"|head -n1`
 	fi
 	if [ "Z$tmp_ip" == "Z" ]; then
 		tmp_ip=`dig @114.114.115.115 $cloudxnsdomain 2>/dev/null |grep 'IN'|awk -F ' ' '{print $5}'|grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}"|head -n1`

@@ -41,12 +41,12 @@ fi
 remoteresolve2ip() {
 	#remoteresolve2ip alidomain<string>
 	alidomain=$1
-	tmp_ip=`dig @223.5.5.5 $alidomain 2>/dev/null |grep 'IN'|awk -F ' ' '{print $5}'|grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}"|head -n1`
+	tmp_ip=`drill @ns1.alidns.com $alidomain 2>/dev/null |grep 'IN'|awk -F ' ' '{print $5}'|grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}"|head -n1`
 	if [ "Z$tmp_ip" == "Z" ]; then
-		tmp_ip=`dig @119.29.29.29 $alidomain 2>/dev/null |grep 'IN'|awk -F ' ' '{print $5}'|grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}"|head -n1`
+		tmp_ip=`drill @ns2.alidns.com $alidomain 2>/dev/null |grep 'IN'|awk -F ' ' '{print $5}'|grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}"|head -n1`
 	fi
 	if [ "Z$tmp_ip" == "Z" ]; then
-		tmp_ip=`dig @114.114.115.115 $alidomain 2>/dev/null |grep 'IN'|awk -F ' ' '{print $5}'|grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}"|head -n1`
+		tmp_ip=`dig @223.5.5.5 $alidomain 2>/dev/null |grep 'IN'|awk -F ' ' '{print $5}'|grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}"|head -n1`
 	fi
 	echo -n $tmp_ip
 }
@@ -56,10 +56,10 @@ resolve2ip() {
 	alidomain=$1
 	localtmp_ip=`nslookup $alidomain ns1.alidns.com 2>/dev/null | sed -n 's/Address 1: \([0-9.]*\)/\1/p' | sed -n '2p' | awk -F' ' '{print $1}'`
 	if [ "Z$localtmp_ip" == "Z" ]; then
-		localtmp_ip=`nslookup $alidomain 223.5.5.5 2>/dev/null | sed -n 's/Address 1: \([0-9.]*\)/\1/p' | sed -n '2p' | awk -F' ' '{print $1}'`
+		localtmp_ip=`nslookup $alidomain ns2.alidns.com 2>/dev/null | sed -n 's/Address 1: \([0-9.]*\)/\1/p' | sed -n '2p' | awk -F' ' '{print $1}'`
 	fi
 	if [ "Z$localtmp_ip" == "Z" ]; then
-		localtmp_ip=`nslookup $alidomain 114.114.115.115 2>/dev/null | sed -n 's/Address 1: \([0-9.]*\)/\1/p' | sed -n '2p' | awk -F' ' '{print $1}'`
+		localtmp_ip=`nslookup $alidomain 223.5.5.5 2>/dev/null | sed -n 's/Address 1: \([0-9.]*\)/\1/p' | sed -n '2p' | awk -F' ' '{print $1}'`
 	fi
 	echo -n $localtmp_ip
 }

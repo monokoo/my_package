@@ -12,7 +12,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/$(PKG_NAME)
 	SECTION:=net
 	CATEGORY:=net
-	TITLE:=ddns for aliddns and dnspod
+	TITLE:=ddns for aliddns and dnspod and cloudxns
         DEPENDS:=+curl +openssl-util +bind-dig
 endef
 
@@ -37,9 +37,6 @@ endef
 
 define Package/$(PKG_NAME)/conffiles
 /etc/config/koolddns
-endef
-
-define Build/Compile
 endef
 
 define Package/$(PKG_NAME)/install

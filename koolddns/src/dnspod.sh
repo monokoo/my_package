@@ -48,12 +48,12 @@ fi
 remoteresolve2ip() {
 	#remoteresolve2ip dnspoddomain<string>
 	dnspoddomain=$1
-	tmp_ip=`dig @119.29.29.29 $dnspoddomain 2>/dev/null |grep 'IN'|awk -F ' ' '{print $5}'|grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}"|head -n1`
+	tmp_ip=`drill @f1g1ns1.dnspod.net $dnspoddomain 2>/dev/null |grep 'IN'|awk -F ' ' '{print $5}'|grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}"|head -n1`
 	if [ "Z$tmp_ip" == "Z" ]; then
-		tmp_ip=`dig @223.5.5.5 $dnspoddomain 2>/dev/null |grep 'IN'|awk -F ' ' '{print $5}'|grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}"|head -n1`
+		tmp_ip=`drill @f1g1ns2.dnspod.net $dnspoddomain 2>/dev/null |grep 'IN'|awk -F ' ' '{print $5}'|grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}"|head -n1`
 	fi
 	if [ "Z$tmp_ip" == "Z" ]; then
-		tmp_ip=`dig @114.114.115.115 $dnspoddomain 2>/dev/null |grep 'IN'|awk -F ' ' '{print $5}'|grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}"|head -n1`
+		tmp_ip=`dig @119.29.29.29 $dnspoddomain 2>/dev/null |grep 'IN'|awk -F ' ' '{print $5}'|grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}"|head -n1`
 	fi
 	echo -n $tmp_ip
 }
