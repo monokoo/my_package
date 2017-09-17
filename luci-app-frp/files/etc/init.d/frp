@@ -7,11 +7,12 @@ SERVICE_WRITE_PID=1
 SERVICE_DAEMONIZE=1
 
 LOGFILE="/var/etc/frp/frpc.log"
+alias echo_date='echo $(date +%Y年%m月%d日\ %X):'
 
 Reduce_Log(){
 	local log=$1
 	[ ! -f "$log" ] && return
-	local sc=100
+	local sc=200
 	[ -n "$2" ] && sc=$2
 	local count=$(grep -c "" $log)
 	if [ $count -gt $sc ];then
@@ -124,12 +125,17 @@ fi
 }
 
 download_binary(){
-	wget --no-check-certificate --timeout=10 --tries=1 https://github.com/fatedier/frp/releases/download/v0.13.0/frp_0.13.0_linux_arm.tar.gz -O /tmp/frp_0.13.0_linux_arm.tar.gz
+	echo_date "开始下载frpc二进制文件..."
+	wget --no-check-certificate --timeout=10 --tries=1 -o $LOGFILE https://github.com/fatedier/frp/releases/download/v0.13.0/frp_0.13.0_linux_arm.tar.gz -O /tmp/frp_0.13.0_linux_arm.tar.gz
 	[ ! -s "/tmp/frp_0.13.0_linux_arm.tar.gz" ] && wget -q --no-check-certificate --timeout=10 --tries=1 https://any.mokoo.xyz/app/frp_0.13.0_linux_arm.tar.gz -O /tmp/frp_0.13.0_linux_arm.tar.gz
 	[ -f "/tmp/frp_0.13.0_linux_arm.tar.gz" ] && tar -xf /tmp/frp_0.13.0_linux_arm.tar.gz -C /tmp && \
 		mv /tmp/frp_0.13.0_linux_arm/frpc /usr/bin/frpc
 	rm -rf /tmp/frp_0.13.0_linux_arm*
-	[ -f "/usr/bin/frpc" ] && chmod +x /usr/bin/frpc
+	if [ -f "/usr/bin/frpc" ]; then
+		chmod +x /usr/bin/frpc && echo_date "成功下载frpc二进制文件"
+	else
+		echo_date "下载frpc二进制文件失败，请重试！"
+	fi
 }
 
 boot() {
@@ -181,12 +187,13 @@ start() {
 	frp_write_bool login_fail_exit common 1
 	config_foreach conf_proxy_add proxy "$tmpconf"
 
-	[ "$(cat "$tmpconf" | grep -c "type=")" -gt 0 ] || return 1
+	[ "$(cat "$tmpconf" | grep -c "type=")" -gt 0 ] || echo_date "frp服务启动失败，请首先添加服务列表！" && return 1
 	logger -t FRPC 'Starting frp service'
 	SERVICE_DAEMONIZE=1 \
 		service_start /usr/bin/frpc -c $tmpconf
-		
+
 	[ "$time" -gt 0 ] && frp_add_cru $time
+	[ -z "$(pgrep /usr/bin/frpc)" ] && echo_date "frp服务启动失败，请检查服务端 “TCP多路复用(tcp_mux)”设置，确保与客户端完全一致。"
 
 	return 0
 }
