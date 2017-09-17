@@ -7,7 +7,11 @@ SERVICE_WRITE_PID=1
 SERVICE_DAEMONIZE=1
 
 LOGFILE="/var/etc/frp/frpc.log"
-alias echo_date='echo $(date +%Y年%m月%d日\ %X):'
+
+echo_date(){
+	local log=$1
+	echo $(date +%Y/%m/%d\ %X): "$log" >> $LOGFILE
+}
 
 Reduce_Log(){
 	local log=$1
@@ -187,13 +191,13 @@ start() {
 	frp_write_bool login_fail_exit common 1
 	config_foreach conf_proxy_add proxy "$tmpconf"
 
-	[ "$(cat "$tmpconf" | grep -c "type=")" -gt 0 ] || echo_date "frp服务启动失败，请首先添加服务列表！" && return 1
+	[ "$(cat "$tmpconf" | grep -c "type=")" -gt 0 ] || (echo_date "frp服务启动失败，请首先添加服务列表！" && exit 0)
 	logger -t FRPC 'Starting frp service'
 	SERVICE_DAEMONIZE=1 \
 		service_start /usr/bin/frpc -c $tmpconf
 
 	[ "$time" -gt 0 ] && frp_add_cru $time
-	[ -z "$(pgrep /usr/bin/frpc)" ] && echo_date "frp服务启动失败，请检查服务端 “TCP多路复用(tcp_mux)”设置，确保与客户端完全一致。"
+	[ -z "$(pgrep /usr/bin/frpc)" ] && echo_date "frp服务启动失败，请检查服务端 “TCP多路复用(tcp_mux)”设置，确保与客户端完全一致！"
 
 	return 0
 }
