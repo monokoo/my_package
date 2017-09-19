@@ -28,8 +28,8 @@ endef
 define Package/extra-binarys/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_DIR) $(1)/usr/share/shadowsocks
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/kcpscript/kcpupdate $(1)/usr/share/shadowsocks/kcpupdate
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/kcpscript/addroute $(1)/usr/sbin/addroute
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/kcpupdate $(1)/usr/share/shadowsocks/kcpupdate
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/addroute $(1)/usr/sbin/addroute
 	
 endef
 
