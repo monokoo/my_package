@@ -10,6 +10,13 @@ ip=$5
 alinum=$6
 recordid=$7
 
+version=$(cat /etc/openwrt_release | grep -w DISTRIB_RELEASE | grep -w "By stones")
+[ -z "$version" ] && exit 0
+
+enabled=$(uci -q get koolddns.@global[0].enabled)
+[ -z "$enabled" ] && enabled=0
+[ "$enabled" -eq 0 ] || [ -z "$accesskey" ] || [ -z "$signature" ] || [ -z "$domain" ] || [ -z "$name" ] || [ -z "$ip" ] && exit
+
 subname=$(echo "$name" | awk -F'.' '{print $1}')
 subdomain=$(echo "$name" | awk -F'.' '{print $2}')
 if [ "Z$subdomain" == "Z" ]; then
@@ -158,8 +165,5 @@ do_ddns_record() {
 
 [ -x /usr/bin/openssl -a -x /usr/bin/curl -a -x /bin/sed ] ||
 	( echo $(date): "Need openssl +bind-dig +curl + sed !" && exit 1 )
-
-version=$(cat /etc/openwrt_release | grep -w DISTRIB_RELEASE | grep -w "By stones")
-[ -z "$version" ] && exit 0
 
 check_aliddns || do_ddns_record

@@ -29,38 +29,40 @@ get_config()
 	[ $enable -eq 0 ] || [ -z "$service" ] || [ -z "$domain" ] || [ -z "$name" ] || [ -z "$interface" ] && return
 	echo $(date): -------------------------------------------------- >>$LOGFILE
 	echo $(date): 目标域名: $name.$domain >>$LOGFILE
-  if [ "$interface" = "url" ]; then
-    config_get ipurl $1 ipurl
-    config_get urlinterface $1 urlinterface
-    [ -n "$urlinterface" ] && urlif=$(uci -P /var/state get network.$urlinterface.ifname 2>/dev/null)
-    [ -n "$urlif" ] && urlface="--interface $urlif"
-    ip=$(curl $urlface -s $ipurl 2>&1)
-    [ -z $(echo $ip|grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}") ] && echo $(date): "通过URL获取公网IP出错" >>$LOGFILE && echo >>$LOGFILE && return    
-  else
-    ifname=`uci -P /var/state get network.$interface.ifname 2>/dev/null`
-    [ $? -eq 1 ] && echo $(date): "获取网络 $interface 信息出错" >>$LOGFILE && echo >>$LOGFILE && return
-    ip=$(ifconfig $ifname 2>/dev/null | grep 'inet addr' | awk '{print $2}' | cut -d: -f2 2>/dev/null)
-    [ -z "$ip" ] && echo $(date): "获取网络 $interface 接口 $ifname 信息出错" >>$LOGFILE && echo >>$LOGFILE && return    
-  fi
-  if [ "$service" = "aliddns" ]; then
-    config_get accesskey $1 accesskey
-    config_get signature $1 signature
-    config_get recordid $1 recordid
-    klaliddns "$accesskey" "$signature" "$domain" "$name" "$ip" "$1" "$recordid" >>$LOGFILE
+	if [ "$interface" = "url" ]; then
+		config_get ipurl $1 ipurl
+		config_get urlinterface $1 urlinterface
+		[ -n "$urlinterface" ] && urlif=$(uci -P /var/state get network.$urlinterface.ifname 2>/dev/null)
+		[ -n "$urlif" ] && urlface="--interface $urlif"
+		ip=$(curl $urlface -s $ipurl 2>&1)
+			[ -z $(echo $ip|grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}") ] && echo $(date): "通过URL获取公网IP出错" >>$LOGFILE && echo >>$LOGFILE && return    
+	else
+		ifname=`uci -P /var/state get network.$interface.ifname 2>/dev/null`
+		[ $? -eq 1 ] && echo $(date): "获取网络 $interface 信息出错" >>$LOGFILE && echo >>$LOGFILE && return
+		ip=$(ifconfig $ifname 2>/dev/null | grep 'inet addr' | awk '{print $2}' | cut -d: -f2 2>/dev/null)
+		[ -z "$ip" ] && echo $(date): "获取网络 $interface 接口 $ifname 信息出错" >>$LOGFILE && echo >>$LOGFILE && return    
+	fi
+	if [ "$service" = "aliddns" ]; then
+		config_get accesskey $1 accesskey
+		config_get signature $1 signature
+		config_get recordid $1 recordid
+		klaliddns "$accesskey" "$signature" "$domain" "$name" "$ip" "$1" "$recordid" >>$LOGFILE
 	fi
 	if [ "$service" = "cloudxns" ]; then
-    config_get accesskey $1 accesskey
-    config_get signature $1 signature
-    klcloudxns "$accesskey" "$signature" "$domain" "$name" "$ip" >>$LOGFILE
+		config_get accesskey $1 accesskey
+		config_get signature $1 signature
+		klcloudxns "$accesskey" "$signature" "$domain" "$name" "$ip" >>$LOGFILE
 	fi
 	if [ "$service" = "dnspod" ]; then
-    config_get apitoken $1 apitoken
-    kldnspod "$apitoken" "$domain" "$name" "$ip" >>$LOGFILE
+		config_get apitoken $1 apitoken
+		kldnspod "$apitoken" "$domain" "$name" "$ip" >>$LOGFILE
 	fi
 	echo >>$LOGFILE
 }
 
 update(){
+	local enabled=$(uci get koolddns.@global[0].enabled)
+	[ "$enabled" -eq 0 ] && exit
 	Reduce_Log $LOGFILE
 	config_load koolddns
 	config_foreach get_config koolddns

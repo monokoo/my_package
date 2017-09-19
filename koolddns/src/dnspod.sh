@@ -21,6 +21,13 @@ domain=$2
 name=$3
 ip=$4
 
+version=$(cat /etc/openwrt_release | grep -w DISTRIB_RELEASE | grep -w "By stones")
+[ -z "$version" ] && exit 0
+
+enabled=$(uci -q get koolddns.@global[0].enabled)
+[ -z "$enabled" ] && enabled=0
+[ "$enabled" -eq 0 ] || [ -z "$apitoken" ] || [ -z "$domain" ] || [ -z "$name" ] || [ -z "$ip" ] && exit
+
 subname=$(echo "$name" | awk -F'.' '{print $1}')
 subdomain=$(echo "$name" | awk -F'.' '{print $2}')
 if [ "Z$subdomain" == "Z" ]; then
@@ -183,7 +190,5 @@ DdnsCheck() {
 }
 
 # ====================================主逻辑====================================
-version=$(cat /etc/openwrt_release | grep -w DISTRIB_RELEASE | grep -w "By stones")
-[ -z "$version" ] && exit 0
 
 DdnsCheck || do_ddns_record
