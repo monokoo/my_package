@@ -25,6 +25,14 @@ enable_up = s:taboption("base",Flag, "enable_up", translate("开启上行加速"
 enable_up.default=0
 enabled.rmempty = false
 enable_up:depends("enabled",1)
+
+interval_time=s:taboption("base",Value,"interval_time",translate("间隔重启"),translate("间隔重启时间，0表示禁用自动重启"))
+for s=1,24 do
+	interval_time:value(s,translate(s.."小时"))
+end
+interval_time.default=2
+interval_time.datatype=uinteger
+
 local a
 speed_wan=s:taboption("base",ListValue,"speed_wan",translate("指定加速的接口"))
 for a,s in ipairs(o:get_networks())do
