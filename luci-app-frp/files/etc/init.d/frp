@@ -167,13 +167,14 @@ start() {
 	config_get http_proxy common http_proxy
 	config_get protocol common protocol
 	config_get time common time
+
+	mkdir -p /var/etc/frp
+	[ ! -f "$LOGFILE" ] && touch $LOGFILE
 	
 	[ ! -f "/usr/bin/frpc" ] && download_binary
 	[ ! -f "/usr/bin/frpc" ] && logger -t Frp 'Download frpc failed, please retry.' && exit 0
 	
 	local tmpconf="/var/etc/frp/frpc.conf"
-	args="-f $tmpconf"
-	mkdir -p /var/etc/frp
 
 	echo "[common]" >$tmpconf
 	echo "server_addr=${server_addr}" >>$tmpconf
