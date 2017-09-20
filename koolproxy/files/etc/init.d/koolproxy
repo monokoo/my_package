@@ -218,8 +218,19 @@ add_rule() {
 }
 
 del_rule() {
-	iptables -t nat -D PREROUTING -p tcp -j KOOLPROXY 2>/dev/null
-	iptables -t nat -D PREROUTING -p tcp -m set --match-set adblock dst -j KOOLPROXY 2>/dev/null
+	kp_nums=`iptables -t nat -L PREROUTING 2> /dev/null|grep -c "KOOLPROXY"`
+	if [ -n "$kp_nums" ]; then
+		until [ "$kp_nums" = 0 ]
+	do
+		kp_rules=`iptables -t nat -L PREROUTING --line-num 2> /dev/null|grep "KOOLPROXY" |awk '{print $1}'`
+		for kp_rule in $kp_rules
+		do
+			iptables -t nat -D PREROUTING $kp_rule 2> /dev/null
+			break
+		done
+		kp_nums=`expr $kp_nums - 1`
+	done
+	fi
 	iptables -t nat -F KOOLPROXY 2>/dev/null && iptables -t nat -X KOOLPROXY 2>/dev/null
 	iptables -t nat -F KOOLPROXY_HTTP 2>/dev/null && iptables -t nat -X KOOLPROXY_HTTP 2>/dev/null
 	iptables -t nat -F KOOLPROXY_HTTPS 2>/dev/null && iptables -t nat -X KOOLPROXY_HTTPS 2>/dev/null
