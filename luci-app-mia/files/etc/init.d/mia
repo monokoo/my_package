@@ -35,8 +35,8 @@ load_config() {
 add_rule(){
 local kp_enabled=0
 local ss_enabled=0
-[ `iptables -t nat -L PREROUTING |grep SHADOWSOCKS 2>/dev/null |wc -l` -gt 0 ] && ss_enabled=1
-[ `iptables -t nat -L PREROUTING |grep KOOLPROXY 2>/dev/null |wc -l` -gt 0 ] && kp_enabled=1
+[ "`iptables -t nat -L PREROUTING |grep SHADOWSOCKS 2>/dev/null |wc -l`" -gt 0 ] && ss_enabled=1
+[ "`iptables -t nat -L PREROUTING |grep KOOLPROXY 2>/dev/null |wc -l`" -gt 0 ] && kp_enabled=1
 for i in $(seq 0 100)
 do
 	local enable=$(uci_get_by_type macbind enable '' $i)
@@ -63,7 +63,7 @@ do
 	if [ "$enable" == "1" ]; then
 		iptables -t filter -I MIA  -m mac --mac-source $macaddr -m time --kerneltz --timestart $timeon --timestop $timeoff --weekdays $Z1$Z2$Z3$Z4$Z5$Z6$Z7 -j DROP
 		[ "$ss_enabled" -eq 1 ] && iptables -t nat -I SHADOWSOCKS $((i+1)) -m mac --mac-source $macaddr -m time --kerneltz --timestart $timeon --timestop $timeoff --weekdays $Z1$Z2$Z3$Z4$Z5$Z6$Z7 -j RETURN
-		[ "$kp_enabled" -eq 1 ] && [ -z `iptables -t nat -L KOOLPROXY | grep -w RETURN | grep -w "$macaddr"` ] && \
+		[ "$kp_enabled" -eq 1 ] && [ -z "`iptables -t nat -L KOOLPROXY | grep -w RETURN | grep -w "$macaddr"`" ] && \
 			iptables -t nat -I KOOLPROXY $((i+1)) -m mac --mac-source $macaddr -m time --kerneltz --timestart $timeon --timestop $timeoff --weekdays $Z1$Z2$Z3$Z4$Z5$Z6$Z7 -j RETURN
 	fi
 	for n in $(seq 1 7)
@@ -73,11 +73,13 @@ do
 done
 }
 
-get_kp_disrule(){
+get_disrule(){
 	macaddr=$1
-	local is_kp_disrule=0
-	index=`uci show koolproxy |grep -w "$macaddr" |awk -F'.' '{print $2}'`
-	[ -n "$indexs" ] && [ `uci -q get koolproxy.$index.filter_mode` == "disable" ] && is_kp_disrule=1
+	mode=$2
+	distype=$3
+	local is_disrule=0
+	index=`uci show $distype | grep "@acl_rule" |grep -w "$macaddr" |awk -F'.' '{print $2}'`
+	[ -n "$index" ] && [ "`uci -q get $distype.$index.$mode`" == "disable" ] && is_disrule=1
 }
 
 del_rule(){
@@ -86,10 +88,12 @@ del_rule(){
 	[ -n "$blackMacAdd" ] && {
 		for macaddrb in $blackMacAdd
 		do
-			[ "$type" == "KOOLPROXY" ] && {
-				get_kp_disrule $macaddrb
-				[ "$is_kp_disrule" -eq 1 ] && continue
-			}
+			if [ "$type" == "KOOLPROXY" ]; then
+				get_disrule $macaddrb filter_mode koolproxy
+			else
+				get_disrule $macaddrb proxy_mode shadowsocks
+			fi
+			[ "$is_disrule" -eq 1 ] && continue
 			iptables -t nat -D $type -m mac --mac-source $macaddrb -j RETURN
 		done
 	}
@@ -107,7 +111,7 @@ stop(){
 	iptables -t filter -D FORWARD -m comment --comment "Rule For Control" -j MIA
 	iptables -t filter -F MIA
 	iptables -t filter -X MIA
-	[ `iptables -t nat -L PREROUTING |grep SHADOWSOCKS 2>/dev/null |wc -l` -gt 0 ] && del_rule SHADOWSOCKS
-	[ `iptables -t nat -L PREROUTING |grep KOOLPROXY 2>/dev/null |wc -l` -gt 0 ] && del_rule KOOLPROXY
+	[ "`iptables -t nat -L PREROUTING |grep SHADOWSOCKS 2>/dev/null |wc -l`" -gt 0 ] && del_rule SHADOWSOCKS
+	[ "`iptables -t nat -L PREROUTING |grep KOOLPROXY 2>/dev/null |wc -l`" -gt 0 ] && del_rule KOOLPROXY
 }
 
