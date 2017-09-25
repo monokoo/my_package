@@ -35,6 +35,9 @@ endef
 define Package/$(PKG_NAME)/postinst
 endef
 
+define Package/$(PKG_NAME)/conffiles
+/etc/config/smartinfo
+endef
 
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/etc/config $(1)/etc/init.d
@@ -43,7 +46,7 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/view/smartinfo $(1)/usr/lib/lua/luci/view/admin_status/index
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n $(1)/usr/lib/smartinfo
 	
-	$(INSTALL_BIN) ./files/root/etc/config/* $(1)/etc/config/
+	$(INSTALL_CONF) ./files/root/etc/config/* $(1)/etc/config/
 	$(INSTALL_BIN) ./files/root/etc/init.d/* $(1)/etc/init.d/
 	$(INSTALL_BIN) ./files/root/usr/lib/smartinfo/* $(1)/usr/lib/smartinfo/
 	$(INSTALL_DATA) ./files/luasrc/model/cbi/* $(1)/usr/lib/lua/luci/model/cbi/

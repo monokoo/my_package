@@ -53,6 +53,7 @@ endef
 
 define Package/vsftpd-dev/conffiles
 /etc/vsftpd.conf
+/etc/config/vsftpd
 endef
 
 Package/vsftpd-dev-tls/conffiles=$(Package/vsftpd-dev/conffiles)
@@ -101,7 +102,7 @@ define Package/vsftpd-dev/install
 $(call Package/vsftpd-dev/install/default, $(1))
 	$(INSTALL_BIN) ./files/vsftpd-uci.init $(1)/etc/init.d/vsftpd
 	$(INSTALL_DIR) $(1)/etc/config
-	$(INSTALL_BIN) ./files/vsftpd.uci $(1)/etc/config/vsftpd
+	$(INSTALL_CONF) ./files/vsftpd.uci $(1)/etc/config/vsftpd
 	$(INSTALL_BIN) ./files/vsftpd_wrapper $(1)/usr/sbin
 	$(INSTALL_BIN) ./files/vsftpd_prepare $(1)/usr/sbin
 endef
