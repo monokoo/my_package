@@ -47,6 +47,7 @@ start()
 	mod=`lsmod |grep -w tun`
 	[ -z "$mod" ] && modprobe tun
 	/usr/bin/env LANG=en_US.UTF-8 /usr/share/softethervpn/vpnserver start >/dev/null 2>&1
+	i=900
 	until [ ! -z "$tap" ]
 	do
 	    i=$(($i-1))
