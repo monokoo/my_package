@@ -30,19 +30,23 @@ add_rule()
 	openvpn=$(uci_get_by_type softether openvpn)
 	openvpnport=$(cat /usr/share/softethervpn/vpn_server.config |grep OpenVPN_UdpPortList | awk -F " " '{print $3}')
 	sstp=$(uci_get_by_type softether sstp)
-  if [ "$l2tp" = "1" ];then
-    iptables -I zone_wan_input 2 -p udp -m multiport --dport 500,1701,4500 -m comment --comment "Rule for softethervpn" -j ACCEPT
-    iptables -I zone_wan_forward -p esp -m comment --comment "Rule for softethervpn" -j zone_lan_dest_ACCEPT
-  fi
-  if [ "$openvpn" = "1" ];then
-    iptables -I zone_wan_input 2 -p udp --dport $openvpnport -m comment --comment "Rule for softethervpn" -j ACCEPT
-    iptables -I zone_wan_input 2 -p tcp --dport $openvpnport -m comment --comment "Rule for softethervpn" -j ACCEPT
-  fi 
-  if [ "$sstp" = "1" ];then
-    iptables -I zone_wan_input 2 -p tcp --dport 443 -m comment --comment "Rule for softethervpn" -j ACCEPT
-  fi 
+	if [ "$l2tp" = "1" ];then
+		iptables -I INPUT -p udp -m multiport --dport 500,1701,4500 -m comment --comment "Rule for softethervpn" -j ACCEPT 2>/dev/null
+	fi
+	if [ "$openvpn" = "1" ];then
+		[ -z "$openvpnport" ] && openvpnport=1194
+		iptables -I INPUT -p udp --dport $openvpnport -m comment --comment "Rule for softethervpn" -j ACCEPT
+		iptables -I INPUT -p tcp --dport $openvpnport -m comment --comment "Rule for softethervpn" -j ACCEPT
+	fi 
+	if [ "$sstp" = "1" ];then
+		iptables -I INPUT -p tcp --dport 443 -m comment --comment "Rule for softethervpn" -j ACCEPT
+	fi
+	iptables -I INPUT -p tcp --dport 5555 -m comment --comment "Rule for softethervpn" -j ACCEPT
+	iptables -I INPUT -p tcp --dport 8888 -m comment --comment "Rule for softethervpn" -j ACCEPT
+	iptables -I INPUT -p tcp --dport 992 -m comment --comment "Rule for softethervpn" -j ACCEPT
 }
 
 ! load_config && exit 0
-iptables -L zone_wan_input|grep -c "Rule for softethervpn" 2>/dev/null && [ $? -eq 0 ] && exit 0;
+soft_nums=`iptables -L INPUT|grep -c "Rule for softethervpn" 2>/dev/null`
+[ "$soft_nums" -gt 0 ] && exit 0;
 add_rule

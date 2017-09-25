@@ -29,11 +29,14 @@ uci_get_by_type() {
 del_rule()
 {
 	openvpnport=$(cat /usr/share/softethervpn/vpn_server.config 2>/dev/null|grep OpenVPN_UdpPortList | awk -F " " '{print $3}')
-	iptables -D zone_wan_input -p udp -m multiport --dport 500,1701,4500 -m comment --comment "Rule for softethervpn" -j ACCEPT 2>/dev/null
-	iptables -D zone_wan_forward -p esp -m comment --comment "Rule for softethervpn" -j zone_lan_dest_ACCEPT 2>/dev/null
-	[ -n "$openvpnport" ] && iptables -D zone_wan_input -p udp --dport $openvpnport -m comment --comment "Rule for softethervpn" -j ACCEPT 2>/dev/null
-	[ -n "$openvpnport" ] && iptables -D zone_wan_input -p tcp --dport $openvpnport -m comment --comment "Rule for softethervpn" -j ACCEPT 2>/dev/null
-	iptables -D zone_wan_input -p tcp --dport 443 -m comment --comment "Rule for softethervpn" -j ACCEPT 2>/dev/null
+	[ -z "$openvpnport" ] && openvpnport=1194
+	iptables -D INPUT -p udp -m multiport --dport 500,1701,4500 -m comment --comment "Rule for softethervpn" -j ACCEPT 2>/dev/null
+	[ -n "$openvpnport" ] && iptables -D INPUT -p udp --dport $openvpnport -m comment --comment "Rule for softethervpn" -j ACCEPT 2>/dev/null
+	[ -n "$openvpnport" ] && iptables -D INPUT -p tcp --dport $openvpnport -m comment --comment "Rule for softethervpn" -j ACCEPT 2>/dev/null
+	iptables -D INPUT -p tcp --dport 443 -m comment --comment "Rule for softethervpn" -j ACCEPT 2>/dev/null
+	iptables -D INPUT -p tcp --dport 5555 -m comment --comment "Rule for softethervpn" -j ACCEPT 2>/dev/null
+	iptables -D INPUT -p tcp --dport 8888 -m comment --comment "Rule for softethervpn" -j ACCEPT 2>/dev/null
+	iptables -D INPUT -p tcp --dport 992 -m comment --comment "Rule for softethervpn" -j ACCEPT 2>/dev/null
 }
 
 start()
@@ -41,12 +44,26 @@ start()
 	config_load softethervpn
 	config_foreach get_config softether
 	[ $enable -ne 1 ] && exit 0
-	/usr/bin/env LANG=en_US.UTF-8 /usr/share/softethervpn/vpnserver start
+	mod=`lsmod |grep -w tun`
+	[ -z "$mod" ] && modprobe tun
+	/usr/bin/env LANG=en_US.UTF-8 /usr/share/softethervpn/vpnserver start >/dev/null 2>&1
+	until [ ! -z "$tap" ]
+	do
+	    i=$(($i-1))
+		tap=`ifconfig | grep tap_ | awk '{print $1}'`
+	    if [ "$i" -lt 1 ];then
+			logger -t SoftEtherVPN "设置本地网桥超时，将不再继续运行插件，但是会保留SoftetherVPN主进程" 
+	        exit
+	    fi
+	    sleep 1
+	done
 	/usr/share/softethervpn/firewall.include
+	logger -t SoftEtherVPN "将虚拟网卡$tap桥接到br-lan..."
+	brctl addif br-lan $tap
 }
 
 stop()
 {
-	/usr/bin/env LANG=en_US.UTF-8 /usr/share/softethervpn/vpnserver stop
-  del_rule
+	/usr/bin/env LANG=en_US.UTF-8 /usr/share/softethervpn/vpnserver stop >/dev/null 2>&1
+	del_rule
 }
