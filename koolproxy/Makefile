@@ -16,7 +16,6 @@ define Package/koolproxy
 	SECTION:=net
 	CATEGORY:=net
 	TITLE:=Koolproxy
-	DEPENDS:=+libpcre2
 	MAINTAINER:=fw867
 endef
 
