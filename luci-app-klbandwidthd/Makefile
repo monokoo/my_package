@@ -1,8 +1,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-klbandwidthd
-PKG_VERSION=20170801
-PKG_RELEASE:=2
+PKG_VERSION=20170926
+PKG_RELEASE:=1
 PKG_MAINTAINER:=Alex Zhuo <1886090@gmail.com>
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
@@ -57,6 +57,9 @@ define Package/$(PKG_NAME)/install
 	
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/model/cbi
 	$(INSTALL_DATA) ./files/usr/lib/lua/luci/model/cbi/*.lua $(1)/usr/lib/lua/luci/model/cbi/
+
+	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/view/bandwidthd
+	$(INSTALL_DATA) ./files/usr/lib/lua/luci/view/bandwidthd/* $(1)/usr/lib/lua/luci/view/bandwidthd/
 
 endef
 
