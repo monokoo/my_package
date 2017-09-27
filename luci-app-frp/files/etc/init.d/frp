@@ -130,8 +130,8 @@ fi
 
 download_binary(){
 	echo_date "开始下载frpc二进制文件..."
-	wget --no-check-certificate --timeout=10 --tries=1 -o $LOGFILE https://github.com/fatedier/frp/releases/download/v0.13.0/frp_0.13.0_linux_arm.tar.gz -O /tmp/frp_0.13.0_linux_arm.tar.gz
-	[ ! -s "/tmp/frp_0.13.0_linux_arm.tar.gz" ] && wget -q --no-check-certificate --timeout=10 --tries=1 https://any.mokoo.xyz/app/frp_0.13.0_linux_arm.tar.gz -O /tmp/frp_0.13.0_linux_arm.tar.gz
+	/usr/bin/wget --no-check-certificate --timeout=10 --tries=1 -o $LOGFILE https://github.com/fatedier/frp/releases/download/v0.13.0/frp_0.13.0_linux_arm.tar.gz -O /tmp/frp_0.13.0_linux_arm.tar.gz
+	[ ! -s "/tmp/frp_0.13.0_linux_arm.tar.gz" ] && /usr/bin/wget -q --no-check-certificate --timeout=10 --tries=1 https://any.mokoo.xyz/app/frp_0.13.0_linux_arm.tar.gz -O /tmp/frp_0.13.0_linux_arm.tar.gz
 	[ -f "/tmp/frp_0.13.0_linux_arm.tar.gz" ] && tar -xf /tmp/frp_0.13.0_linux_arm.tar.gz -C /tmp && \
 		mv /tmp/frp_0.13.0_linux_arm/frpc /usr/bin/frpc
 	rm -rf /tmp/frp_0.13.0_linux_arm*
