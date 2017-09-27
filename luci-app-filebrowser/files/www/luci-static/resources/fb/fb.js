@@ -21,7 +21,7 @@ String.prototype.replaceAll = function(search, replacement) {
   function removePath(filename, isdir) {
       var c = confirm('确认删除 ' + filename + ' ?');
       if (c) {
-          iwxhr.get('/luci/admin/system/filebrowser_delete',
+          iwxhr.get('/cgi-bin/luci/admin/system/filebrowser_delete',
             {
                 path: concatPath(currentPath, filename),
                 isdir: isdir
@@ -37,7 +37,7 @@ String.prototype.replaceAll = function(search, replacement) {
       var newname = prompt('输入新名字:', filename).trim();
       if (newname && newname != filename) {
           var newpath = concatPath(currentPath, newname);
-          iwxhr.get('/luci/admin/system/filebrowser_rename',
+          iwxhr.get('/cgi-bin/luci/admin/system/filebrowser_rename',
             {
                 filepath: concatPath(currentPath, filename),
                 newpath: newpath
@@ -54,7 +54,7 @@ String.prototype.replaceAll = function(search, replacement) {
   function openpath(filename, dirname) {
     dirname = dirname || currentPath;
     var encodePath = encodeURIComponent(concatPath(dirname, filename).replace(/\//g, '<>'));
-    window.open('/luci/admin/system/filebrowser_open/' + encodePath + '/' + filename);
+    window.open('/cgi-bin/luci/admin/system/filebrowser_open/' + encodePath + '/' + filename);
   }
 
   function getFileElem(elem) {
@@ -152,7 +152,7 @@ String.prototype.replaceAll = function(search, replacement) {
   }
   function update_list(path) {
     path = concatPath(path, '');
-    iwxhr.get('/luci/admin/system/filebrowser_list',
+    iwxhr.get('/cgi-bin/luci/admin/system/filebrowser_list',
       {path: path},
       function (x, res) {
         if (res.ec === 0) {
@@ -194,7 +194,7 @@ String.prototype.replaceAll = function(search, replacement) {
       formData.append('upload-dir', concatPath(currentPath, ''));
       formData.append('upload-file', uploadinput.files[0]);
       var xhr = new XMLHttpRequest();
-      xhr.open("POST", "/luci/admin/system/filebrowser_upload", true);
+      xhr.open("POST", "/cgi-bin/luci/admin/system/filebrowser_upload", true);
       xhr.onload = function() {
         if (xhr.status == 200) {
           var res = JSON.parse(xhr.responseText);
