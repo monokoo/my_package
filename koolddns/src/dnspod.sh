@@ -119,7 +119,7 @@ update_record() {
 	local recordRS
 	get_domainid
     # Update IP
-    recordRS=$(arApiPost "Record.Ddns" "domain_id=${domainID}&record_id=$1&sub_domain=${name}&record_type=A&value=${ip}&record_line=默认")
+    recordRS=$(arApiPost "Record.Ddns" "domain_id=${domainID}&record_id=$1&sub_domain=${name}&value=${ip}&record_line=默认")
 	echo -n $recordRS
 }
 
