@@ -59,10 +59,10 @@ get_bind_address(){
 #bind_address='113.248.3.11'
 get_http_req(){
 	if [ -n "$bind_address" ]; then
-		HTTP_REQ="wget --bind-address=$bind_address --no-check-certificate -O - "
+		HTTP_REQ="/usr/bin/wget --bind-address=$bind_address --no-check-certificate -O - "
 		POST_ARG="--post-data="
 	else
-		HTTP_REQ="wget --no-check-certificate -O - "
+		HTTP_REQ="/usr/bin/wget --no-check-certificate -O - "
 		POST_ARG="--post-data="
 	fi
 	kuainiao_HTTP_REQ=$HTTP_REQ

@@ -88,7 +88,7 @@ arApiPost() {
     else
         local param="login_token=${apitoken}&format=json&${2}"
     fi
-    wget --quiet --no-check-certificate --output-document=- --user-agent=$agent --post-data $param $inter
+    /usr/bin/wget --quiet --no-check-certificate --output-document=- --user-agent=$agent --post-data $param $inter
 }
 
 get_domainid() {
