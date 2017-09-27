@@ -9,6 +9,9 @@ LOGFILE=/var/log/kuainiao.log
 
 start_service()
 {
+  enabled=`uci -q get kuainiao.base.enabled`
+  [ -z "$enabled" ] && enabled=0
+  [ "$enabled" -eq 0 ] && exit
   write_reboot_job
   procd_open_instance
   procd_set_param command /usr/bin/kuainiao
