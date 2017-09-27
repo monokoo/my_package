@@ -169,10 +169,10 @@
 			<a class="label notice" href="<%=controller%>/<%=category%>/uci/changes?redir=<%=http.urlencode(http.formvalue("redir") or REQUEST_URI)%>"><span class="mobile-hide"><%:Unsaved Changes%>: </span><%=ucichanges%></a>
 			<% end %>
 		<% end %>
-		<a class="cbi-button cbi-button-reset" href="/luci/admin/system/reboot" style="margin-right:-6px;">
+		<a class="cbi-button cbi-button-reset" href="/cgi-bin/luci/admin/system/reboot" style="margin-right:-6px;">
 		<span class="myIcon myIcon-reboot"></span> <%=pcdata(striptags(translate("Reboot")))%></a>
 		</a>
-		<a class="cbi-button cbi-button-apply" href="/luci/admin/logout">
+		<a class="cbi-button cbi-button-apply" href="/cgi-bin/luci/admin/logout">
 		<span class="myIcon myIcon-logout"></span> <%=pcdata(striptags(translate("Logout")))%></a>
 		</div>
 	</div>
