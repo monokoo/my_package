@@ -4,7 +4,7 @@ reboot="0"
 
 echo_date(){
 	local log=$1
-	echo $(date +%Y/%m/%d\ %X): "$log" >> $LOGFILE
+	echo $(date): "$log" >> $LOGFILE
 }
 
 version=$(cat /etc/openwrt_release | grep -w DISTRIB_RELEASE | grep -w "By stones")
