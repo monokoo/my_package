@@ -18,17 +18,27 @@ get_config()
 	config_get_bool enable_web $1 enable_web 0
 }
 
+del_srv_host()
+{
+	[ -f "/etc/dnsmasq.conf" ] && {
+		isvlmcs=$(cat /etc/dnsmasq.conf |grep -w "srv-host=_vlmcs._tcp.lan")
+		[ -n "$isvlmcs" ] && sed -i '/srv-host=_vlmcs._tcp.lan/d' /etc/dnsmasq.conf
+	}
+}
+
 start()
 {
 	config_load vlmcsd
 	config_foreach get_config vlmcsd
 	[ $enable -ne 1 ] && exit 0
-	
+
+	del_srv_host
+
 	if [ $use_conf_file -ne 1 ]; then
 		/usr/bin/vlmcsd -d -P $port -l /var/log/vlmcsd.log
 	else
 		hostname=$(uci get system.@system[0].hostname)
-		echo srv-host=_vlmcs._tcp.lan,$hostname.lan,1688,0,100 >> /etc/dnsmasq.conf	
+		echo srv-host=_vlmcs._tcp.lan,$hostname.lan,1688,0,100 >> /etc/dnsmasq.conf
 		/usr/bin/vlmcsd -i /usr/share/vlmcsd/vlmcsd.ini
 	fi
 	[ "$enable_web" -eq 1 ] && {
@@ -44,8 +54,5 @@ stop()
 	kms_nu=`iptables -t filter -L INPUT --line-num 2> /dev/null|grep "Rule For VLMCSD" |awk '{print $1}'`
 	[ -n "$kms_nu" ] && iptables -t filter -D INPUT $kms_nu 2>/dev/null
 	kill -9 $(ps|grep '/usr/bin/vlmcsd'|grep -v 'grep'|awk '{print$1}') >/dev/null
-	[ -f "/etc/dnsmasq.conf" ] && {
-		isvlmcs=$(cat /etc/dnsmasq.conf |grep -w "srv-host=_vlmcs._tcp.lan")
-		[ -n "$isvlmcs" ] && sed -i '/srv-host=_vlmcs._tcp.lan/d' /etc/dnsmasq.conf
-	}
+	del_srv_host
 }
