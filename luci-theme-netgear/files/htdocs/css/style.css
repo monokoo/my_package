@@ -962,6 +962,10 @@ form.inline + form.inline,
     display: table-cell;
 }
 
+.cbi-value-field {
+    padding:6px 10px;
+}
+
 .cbi-value-helpicon > img {
     display: none;
 }
@@ -982,7 +986,6 @@ form.inline + form.inline,
     vertical-align: middle;
     padding:6px 10px;
     width: 23rem;
-    float: left;
     text-align: right;
     display: table-cell;
 }
