@@ -3,8 +3,10 @@
 
 USE_PROCD=1
 START=97
+uci set k3screenctrl.@general[0].webshell='shellinabox' && sed -i "/webshell='shellinabox/d" /etc/init.d/webshell
 WEBSHELL=`uci -q get k3screenctrl.@general[0].webshell`
 [ -z "$WEBSHELL" ] && WEBSHELL="shellinabox"
+
 if [ "$WEBSHELL" == "ttyd" ]; then
 	BIN=/usr/bin/ttyd
 else
