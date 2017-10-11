@@ -4,7 +4,7 @@
 USE_PROCD=1
 START=97
 WEBSHELL=`uci -q get k3screenctrl.@general[0].webshell`
-[ -z "$WEBSHELL" ] && WEBSHELL="ttyd"
+[ -z "$WEBSHELL" ] && WEBSHELL="shellinabox"
 if [ "$WEBSHELL" == "ttyd" ]; then
 	BIN=/usr/bin/ttyd
 else
