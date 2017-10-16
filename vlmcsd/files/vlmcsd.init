@@ -25,6 +25,11 @@ del_srv_host()
 		[ -n "$isvlmcs" ] && sed -i '/srv-host=_vlmcs._tcp.lan/d' /etc/dnsmasq.conf
 	}
 }
+del_web_port()
+{
+	kms_nu=`iptables -t filter -L INPUT --line-num 2> /dev/null|grep "Rule For VLMCSD" |awk '{print $1}'`
+	[ -n "$kms_nu" ] && iptables -t filter -D INPUT $kms_nu 2>/dev/null
+}
 
 start()
 {
@@ -42,17 +47,15 @@ start()
 		/usr/bin/vlmcsd -i /usr/share/vlmcsd/vlmcsd.ini
 	fi
 	[ "$enable_web" -eq 1 ] && {
-		ifenable=`iptables -S -t filter | grep INPUT |grep "Rule For VLMCSD" | grep dport |grep $port`
-		[ -z "$ifenable" ] && iptables -t filter -I INPUT -p tcp --dport $port -m comment --comment "Rule For VLMCSD" -j ACCEPT > /dev/null 2>&1
+		del_web_port
+		iptables -t filter -I INPUT -p tcp --dport $port -m comment --comment "Rule For VLMCSD" -j ACCEPT > /dev/null 2>&1
 	}
 	/etc/init.d/dnsmasq restart
 }
 
 stop()
 {
-	iptables -t filter -D INPUT -p tcp --dport 1688 -j ACCEPT > /dev/null 2>&1
-	kms_nu=`iptables -t filter -L INPUT --line-num 2> /dev/null|grep "Rule For VLMCSD" |awk '{print $1}'`
-	[ -n "$kms_nu" ] && iptables -t filter -D INPUT $kms_nu 2>/dev/null
+	del_web_port
 	kill -9 $(ps|grep '/usr/bin/vlmcsd'|grep -v 'grep'|awk '{print$1}') >/dev/null
 	del_srv_host
 }
