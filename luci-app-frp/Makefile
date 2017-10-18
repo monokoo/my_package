@@ -76,6 +76,11 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/view/frp
 	$(INSTALL_DATA) ./files/usr/lib/lua/luci/view/frp/* $(1)/usr/lib/lua/luci/view/frp/
 
+ifeq ($(ARCH),x86_64)
+	$(INSTALL_DIR) $(1)/usr/bin
+	$(INSTALL_BIN) ./files/bin/frpc-x86_64 $(1)/usr/bin/frpc
+endif
+	
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))

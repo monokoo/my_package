@@ -171,8 +171,13 @@ start() {
 	mkdir -p /var/etc/frp
 	[ ! -f "$LOGFILE" ] && touch $LOGFILE
 	
-	[ ! -f "/usr/bin/frpc" ] && download_binary
-	[ ! -f "/usr/bin/frpc" ] && logger -t Frp 'Download frpc failed, please retry.' && exit 0
+	[ ! -f "/usr/bin/frpc" ] && {
+		arch=`uname -m`
+		if [ "$arch" == "armv7l" ]; then
+			download_binary
+			[ ! -f "/usr/bin/frpc" ] && logger -t Frp 'Download frpc failed, please retry.' && exit 0
+		fi
+	}
 	
 	local tmpconf="/var/etc/frp/frpc.conf"
 
