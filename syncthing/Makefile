@@ -2,8 +2,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=syncthing
-PKG_VERSION:=0.14.36
-PKG_RELEASE:=20170812
+PKG_VERSION:=0.14.39
+PKG_RELEASE:=20171018
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -44,8 +44,6 @@ define Package/syncthing/conffiles
 endef
 
 define Package/syncthing/install
-	$(INSTALL_DIR) $(1)/usr/sbin
-	$(INSTALL_BIN) ./files/usr/sbin/* $(1)/usr/sbin/
 	
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/etc/init.d/* $(1)/etc/init.d/
@@ -61,7 +59,11 @@ define Package/syncthing/install
 	
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
 	$(INSTALL_BIN) ./files/etc/uci-defaults/99-syncthing $(1)/etc/uci-defaults/99-syncthing
-	
+
+ifeq ($(ARCH),x86_64)
+	$(INSTALL_BIN) ./files/bin/syncthing-x86_64 $(1)/usr/share/syncthing/syncthing
+endif
+
 endef
 
 $(eval $(call BuildPackage,syncthing))

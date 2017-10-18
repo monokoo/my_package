@@ -28,11 +28,11 @@ get_config()
 }
 
 download_binary(){
-	/usr/bin/wget --no-check-certificate --timeout=10 --tries=1 https://github.com/syncthing/syncthing/releases/download/v0.14.36/syncthing-linux-arm-v0.14.36.tar.gz -O /tmp/syncthing-linux-arm-v0.14.36.tar.gz
-	[ ! -s "/tmp/syncthing-linux-arm-v0.14.36.tar.gz" ] && /usr/bin/wget -q --no-check-certificate --timeout=10 --tries=1 https://any.mokoo.xyz/app/syncthing-linux-arm-v0.14.36.tar.gz -O /tmp/syncthing-linux-arm-v0.14.36.tar.gz
-	[ -f "/tmp/syncthing-linux-arm-v0.14.36.tar.gz" ] && tar -xf /tmp/syncthing-linux-arm-v0.14.36.tar.gz -C /tmp && \
-		mv /tmp/syncthing-linux-arm-v0.14.36/syncthing /usr/share/syncthing/syncthing
-	rm -rf /tmp/syncthing-linux-arm-v0.14.36*
+	/usr/bin/wget --no-check-certificate --timeout=10 --tries=1 https://github.com/syncthing/syncthing/releases/download/v0.14.39/syncthing-linux-$s_arch-v0.14.39.tar.gz -O /tmp/syncthing-linux-$s_arch-v0.14.39.tar.gz
+	[ ! -s "/tmp/syncthing-linux-$s_arch-v0.14.39.tar.gz" ] && /usr/bin/wget -q --no-check-certificate --timeout=10 --tries=1 https://any.mokoo.xyz/app/syncthing-linux-$s_arch-v0.14.39.tar.gz -O /tmp/syncthing-linux-$s_arch-v0.14.39.tar.gz
+	[ -f "/tmp/syncthing-linux-$s_arch-v0.14.39.tar.gz" ] && tar -xf /tmp/syncthing-linux-$s_arch-v0.14.39.tar.gz -C /tmp && \
+		mv /tmp/syncthing-linux-$s_arch-v0.14.39/syncthing /usr/share/syncthing/syncthing
+	rm -rf /tmp/syncthing-linux-$s_arch-v0.14.39*
 	[ -f "/usr/share/syncthing/syncthing" ] && chmod +x /usr/share/syncthing/syncthing
 }
 
@@ -40,8 +40,15 @@ start() {
 	config_load $CONFIG
 	get_config global
 	[ "$syncenabled" -eq 0 ] && exit 0
-	[ ! -f "/usr/share/syncthing/syncthing" ] && download_binary
-	[ ! -f "/usr/share/syncthing/syncthing" ] && logger -t syncthing 'Download syncthing failed, please retry.' && exit 0
+	[ ! -f "/usr/share/syncthing/syncthing" ] && {
+		arch=`uname -m`
+		if [ "$arch" == "armv7l" ]; then
+			s_arch="arm"
+			download_binary
+			[ ! -f "/usr/share/syncthing/syncthing" ] && logger -t syncthing 'Download syncthing failed, please retry.' && exit 0
+		fi
+	}
+	
 	/usr/sbin/syncthingready $wan_enable $syncthing_port $CONPATH $LOGFILE $sharepath
 	service_start /usr/share/syncthing/syncthing -home $CONPATH -logfile $LOGFILE >/dev/null 2>&1 &
 	logger -t syncthing 'Start syncthing service'
