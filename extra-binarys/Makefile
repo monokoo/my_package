@@ -3,7 +3,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=extra-binarys
 PKG_VERSION:=0.1
-PKG_RELEASE:=20170919
+PKG_RELEASE:=20171018
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)/$(BUILD_VARIANT)/$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE)
 
@@ -30,6 +30,7 @@ define Package/extra-binarys/install
 	$(INSTALL_DIR) $(1)/usr/share/shadowsocks
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/kcpupdate $(1)/usr/share/shadowsocks/kcpupdate
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/addroute $(1)/usr/sbin/addroute
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/syncthingready $(1)/usr/sbin/syncthingready
 	
 endef
 
