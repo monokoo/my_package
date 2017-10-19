@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dnsc
 PKG_VERSION:=1.0.0
-PKG_RELEASE:=2
+PKG_RELEASE:=3
 
 #PKG_SOURCE_PROTO:=git
 #PKG_SOURCE_URL:=https://github.com/fangdingjun/dnsproxy
@@ -31,8 +31,14 @@ endef
 
 define Package/dnsc/install
 	$(INSTALL_DIR) $(1)/usr/bin $(1)/etc/dnsc
-	$(INSTALL_BIN) ./files/dnsproxy $(1)/usr/bin/dnsc
 	$(INSTALL_DATA) ./files/iplist.txt $(1)/etc/dnsc/
+ifeq ($(ARCH),arm)
+	$(INSTALL_BIN) ./files/dnsproxy-arm $(1)/usr/bin/dnsc
+endif
+ifeq ($(ARCH),x86_64)
+	$(INSTALL_BIN) ./files/dnsproxy-x86_64 $(1)/usr/bin/dnsc
+endif
+
 endef
 
 $(eval $(call BuildPackage,dnsc))
