@@ -8,7 +8,8 @@ routeip=$2
 cleanfile=$3
 
 version=$(cat /etc/openwrt_release | grep -w DISTRIB_RELEASE | grep -w "By stones")
-[ -z "$version" ] && exit 0
+version2=$(cat /etc/openwrt_release | grep -w DISTRIB_DESCRIPTION | grep -w Koolshare)
+[ -z "$version" -a -z "$version2" ] && exit 0
 
 if [ $wanport -gt 0 ] && [ -z $(/usr/sbin/ip route show|grep $routeip) ];then
   gateway=$(/usr/sbin/ip route show|grep default|awk -F " " '{print $3}'|sed -n $wanport"p")

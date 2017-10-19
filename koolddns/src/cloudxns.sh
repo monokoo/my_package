@@ -10,7 +10,8 @@ name=$4
 ip=$5
 
 version=$(cat /etc/openwrt_release | grep -w DISTRIB_RELEASE | grep -w "By stones")
-[ -z "$version" ] && exit 0
+version2=$(cat /etc/openwrt_release | grep -w DISTRIB_DESCRIPTION | grep -w Koolshare)
+[ -z "$version" -a -z "$version2" ] && exit 0
 
 enabled=$(uci -q get koolddns.@global[0].enabled)
 [ -z "$enabled" ] && enabled=0
