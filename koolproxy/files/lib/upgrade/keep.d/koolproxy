@@ -1,1 +1,4 @@
 /usr/share/koolproxy/data/rules/user.txt
+/usr/share/koolproxy/data/certs/ca.crt
+/usr/share/koolproxy/data/private/ca.key.pem
+/usr/share/koolproxy/data/private/base.key.pem
