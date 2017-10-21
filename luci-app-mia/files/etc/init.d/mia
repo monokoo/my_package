@@ -94,9 +94,22 @@ del_rule(){
 				get_disrule $macaddrb proxy_mode shadowsocks
 			fi
 			[ "$is_disrule" -eq 1 ] && continue
-			iptables -t nat -D $type -m mac --mac-source $macaddrb -j RETURN
+			blackMacnums=`iptables -t nat -L $type --line-num | grep -w RETURN | grep -w "MAC" | grep -w "$macaddrb" | wc -l`
+			if [ ! -z "$blackMacnums" ];then
+				until [ "$blackMacnums" = 0 ]
+				do
+					line_num=`iptables -t nat -L $type --line-num | grep -w RETURN | grep -w "MAC" | grep -w "$macaddrb" | awk '{print $1}'`
+					for line in $line_num
+					do
+						iptables -t nat -D $type $line
+						continue
+					done
+					blackMacnums=`expr $blackMacnums - 1`
+				done
+			fi
+			
 		done
-	}
+	}	
 }
 
 start(){
