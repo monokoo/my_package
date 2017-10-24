@@ -7,38 +7,6 @@ SCRIPTS_BASE=/lib/k3screenctrl/
 TEMP_DIR=/tmp/k3screenctrl
 
 start() {
-
-	usb3_setting=`uci get k3screenctrl.@general[0].usb3_disable 2>/dev/null`
-	[ -z "$usb3_setting" ] && usb3_setting=0
-	if [ "$usb3_setting" -eq 0 ]; then
-		enable_usb3
-	else
-		disable_usb3
-	fi
-	
-	ROUTER_MODE=`uci get k3screenctrl.@general[0].route_mode 2>/dev/null`
-	[ -z "$ROUTER_MODE" ] && ROUTER_MODE="none"
-	if [ "$ROUTER_MODE" == "apmode" ]; then
-		uci set network.lan.proto='dhcp'
-		uci set network.lan.ifname="eth0.1 eth0.2"
-		uci set network.wan.proto=none
-		uci set dhcp.lan.dynamicdhcp='0'
-		uci set k3screenctrl.@general[0].route_mode='none'
-		uci commit
-		echo 1 >/etc/k3screenctrl-apmode
-		/etc/init.d/network restart
-	elif [ "$ROUTER_MODE" == "dhcpmode" ]; then
-		uci set network.wan.proto='dhcp'
-		uci set network.lan.ifname="eth0.1"
-		uci set network.lan.proto='static'
-		uci set network.lan.ipaddr='192.168.1.1'
-		uci set network.lan.netmask='255.255.255.0'
-		uci del dhcp.lan.dynamicdhcp
-		uci set k3screenctrl.@general[0].route_mode='none'
-		uci commit
-		echo 0 >/etc/k3screenctrl-apmode
-		/etc/init.d/network restart
-	fi
 	
 	mkdir -p $TEMP_DIR
 	mkdir -p $TEMP_DIR/device_speed
@@ -55,30 +23,4 @@ stop() {
     killall k3screenctrl device_online.sh
     kill -9 $(pidof device_online.sh) >/dev/null 2>&1
     rm -rf $TEMP_DIR
-}
-
-disable_usb3() {
-	[ -f "/etc/modules-boot.d/54-usb3" ] && rm /etc/modules-boot.d/54-usb3
-	[ -f "/etc/modules.d/54-usb3" ] && rm /etc/modules.d/54-usb3
-}
-
-enable_usb3() {
-	[ ! -f "/etc/modules.d/54-usb3" ] && {
-		cat > /etc/modules.d/54-usb3 <<EOF
-xhci-hcd
-xhci-plat-hcd
-xhci-pci
-EOF
-	}
-	[ ! -f "/etc/modules-boot.d/54-usb3" ] && {
-		basepath=$(cd `dirname $0`; pwd)
-		echo basepath is $basepath
-		cd /etc/modules-boot.d/ && ln -s ../modules.d/54-usb3 54-usb3
-		cd $basepath
-	}
-	[ -z `lsmod|grep xhci_hcd` ] && {
-		insmod xhci-hcd
-		insmod xhci-plat-hcd
-		insmod xhci-pci
-	}	
 }
