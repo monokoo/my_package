@@ -1,2 +1,4 @@
-config advanced
-  	option enabled '1'
+config advanced 'base'
+	option enabled '1'
+	option usb3_disable '0'
+	option webshell 'shellinabox'

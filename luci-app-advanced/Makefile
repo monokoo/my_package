@@ -38,8 +38,9 @@ endef
 
 define Package/$(PKG_NAME)/install
 
-	$(INSTALL_DIR) $(1)/etc/config
+	$(INSTALL_DIR)  $(1)/etc/config $(1)/etc/init.d
 	$(INSTALL_CONF) ./files/etc/config/advanced $(1)/etc/config/
+	$(INSTALL_BIN) ./files/etc/init.d/advanced $(1)/etc/init.d/
 	
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/controller
 	$(INSTALL_DATA) ./files/usr/lib/lua/luci/controller/*.lua $(1)/usr/lib/lua/luci/controller/

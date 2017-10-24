@@ -3,6 +3,24 @@ local t=require"luci.sys"
 m=Map("advanced",translate("进阶设置"),translate("各类服务配置文档的直接编辑,除非你知道自己在干什么,否则请不要轻易修改这些配置文档，配置不正确可能会导致不能开机等严重错误。"))
 s=m:section(TypedSection,"advanced")
 s.anonymous=true
+
+s:tab("base",translate("Basic Settings"))
+o=s:taboption("base",Flag, "usb3_disable", translate("Switch off USB3.0"), translate("Turn off USB3.0, reduce effects of interference to 2.4G wireless, <b><font color=\"red\">it works after rebooted</font></b>."))
+o.default = 0
+o=s:taboption("base",ListValue, "webshell", translate("WebShell"), translate("Choose Which WebShell Service to Use"))
+o:value("ttyd",translate("ttyd"))
+o:value("shellinabox",translate("shellinabox"))
+o.default = "shellinabox"
+
+o=s:taboption("base",ListValue, "route_mode", translate("Operating Mode"), translate("Display partial data when APmode is enabled, Use Router Mode to disable AP mode."))
+o.default="none"
+o:value("none",translate("Current Mode"))
+o:value("apmode",translate("AP Mode"))
+o:value("dhcpmode",translate("Router Mode"))
+
+
+
+
 if nixio.fs.access("/etc/dnsmasq.conf")then
 s:tab("dnsmasqconf",translate("配置dnsmasq"),translate("本页是配置/etc/dnsmasq.conf的文档内容。应用保存后自动重启生效"))
 conf=s:taboption("dnsmasqconf",Value,"dnsmasqeditconf",nil,translate("开头的数字符号（＃）或分号的每一行（;）被视为注释；删除（;）启用指定选项。"))
