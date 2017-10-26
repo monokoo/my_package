@@ -38,10 +38,6 @@ start() {
 
 }
 
-stop() {
-
-}
-
 disable_usb3() {
 	[ -f "/etc/modules-boot.d/54-usb3" ] && rm /etc/modules-boot.d/54-usb3
 	[ -f "/etc/modules.d/54-usb3" ] && rm /etc/modules.d/54-usb3
