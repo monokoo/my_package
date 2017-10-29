@@ -3,7 +3,7 @@
 
 USE_PROCD=1
 START=97
-uci set advanced.base.webshell='shellinabox' && sed -i "/webshell='shellinabox/d" /etc/init.d/webshell
+
 WEBSHELL=`uci -q get advanced.base.webshell`
 [ -z "$WEBSHELL" ] && WEBSHELL="shellinabox"
 
