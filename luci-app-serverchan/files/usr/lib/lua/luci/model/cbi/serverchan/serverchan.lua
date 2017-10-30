@@ -22,7 +22,7 @@ t.addremove=false
 e=t:option(Value,"title",translate("微信推送标题"))
 e.rmempty=false
 
-e=t:option(ListValue,"reboot_mode",translate("定时任务设定"))
+e=t:option(ListValue,"send_mode",translate("定时任务设定"))
 e.default="disable"
 e.rmempty=false
 e:value("disable",translate("关闭"))
@@ -34,14 +34,14 @@ e:value(t,translate("每天"..t.."点"))
 end
 e.default=5
 e.datatype=uinteger
-e:depends("reboot_mode","regular")
+e:depends("send_mode","regular")
 e=t:option(Value,"interval_time",translate("interval"))
 for t=1,72 do
 	e:value(t,translate(t.."小时"))
 end
 e.default=24
 e.datatype=uinteger
-e:depends("reboot_mode","interval")
+e:depends("send_mode","interval")
 
 e=t:option(Flag,"router_status",translate("系统运行情况"))
 e.default=0
