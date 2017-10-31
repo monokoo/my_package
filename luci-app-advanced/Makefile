@@ -25,6 +25,14 @@ define Package/$(PKG_NAME)/preinst
 endef
 
 define Package/$(PKG_NAME)/postinst
+#!/bin/sh
+if [ -z "$${IPKG_INSTROOT}" ]; then
+	if [ -f /etc/uci-defaults/35_luci-advanced ]; then
+		( . /etc/uci-defaults/35_luci-advanced ) && rm -f /etc/uci-defaults/35_luci-advanced
+	fi
+	rm -rf /tmp/luci-indexcache /tmp/luci-modulecache
+fi
+exit 0
 endef
 
 define Build/Prepare
@@ -37,6 +45,9 @@ define Build/Compile
 endef
 
 define Package/$(PKG_NAME)/install
+
+	$(INSTALL_DIR) $(1)/etc/uci-defaults
+	$(INSTALL_BIN) ./files/etc/uci-defaults/35_luci-advanced $(1)/etc/uci-defaults/35_luci-advanced
 
 	$(INSTALL_DIR)  $(1)/etc/config $(1)/etc/init.d
 	$(INSTALL_CONF) ./files/etc/config/advanced $(1)/etc/config/
