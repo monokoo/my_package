@@ -32,7 +32,7 @@ auto_mount(){
 	# }
 	chmod -R 777 $mountpath
 	if [ "$my_fstype" == "ntfs" ]; then
-		mount -t ntfs-3g -o rw,noatime,big_writes,nls=utf8,umask=000 /dev/$device $mountpath
+		mount -t ntfs-3g -o rw,nls=utf8,umask=000 /dev/$device $mountpath
 	else
 		case "$my_fstype" in
 			ext*)
@@ -59,7 +59,7 @@ auto_mount(){
 }
 auto_umount(){
 	logger -t Auto-Mount "The device $device has been mounted to $mountpoint, now remove it first!"
-	umount $mountpoint && sleep 4s
+	umount $mountpoint && sleep 2s
 	mountpoint=$(cat /proc/self/mounts | grep -w "/dev/$device" | awk '{print $2}')
 }
 
