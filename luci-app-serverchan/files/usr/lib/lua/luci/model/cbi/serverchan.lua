@@ -61,7 +61,7 @@ e.default="disable"
 e:value("disable",translate("关闭"))
 e:value("all",translate("发送"))
 e:value("nomac",translate("发送(不包含MAC地址)"))
-e=t:option(ListValue,"t_client_up_filter",translate("黑白名单（设备上线）"))
+e=t:option(ListValue,"t_client_up_type",translate("黑白名单（设备上线）"))
 e.default="blacklist"
 e:value("blacklist",translate("黑名单"))
 e:value("whitelist",translate("白名单"))
@@ -73,12 +73,12 @@ e.optional=false
 m.net.mac_hints(function(m,a)
 e:value(m,"%s (%s)"%{m,a})                                                                                                                    
 end)
-e:depends("t_client_up_filter","blacklist")
+e:depends("t_client_up_type","blacklist")
 e=t:option(DynamicList,"t_client_up_whitelist",translate("白名单（设备上线）"))
 e.datatype="macaddr"
 e.optional=false
 m.net.mac_hints(function(m,a)
 e:value(m,"%s (%s)"%{m,a})                                                                                                                    
 end)
-e:depends("t_client_up_filter","whitelist")
+e:depends("t_client_up_type","whitelist")
 return a
