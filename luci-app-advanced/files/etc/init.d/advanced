@@ -39,30 +39,24 @@ start() {
 }
 
 disable_usb3() {
-	# [ -f "/etc/modules-boot.d/54-usb3" ] && rm /etc/modules-boot.d/54-usb3
-	# [ -f "/etc/modules.d/54-usb3" ] && rm /etc/modules.d/54-usb3
+	dev_path=`ls /dev/sd* 2>/dev/null`
+	[ -n "$dev_path" ] && {
+		for device in $dev_path
+		do
+			mountpoint=$(cat /proc/self/mounts | grep -w "$device" | awk '{print $2}')
+			[ -n "$mountpoint" ] && umount $mountpoint
+		done
+	}
 	usb_mods="xhci-pci xhci-plat-hcd xhci-hcd"
 	for mod in $usb_mods
 	do
 		rmmod $mod 2>/dev/null
 	done
+	
 }
 
 enable_usb3() {
-	# [ ! -f "/etc/modules.d/54-usb3" ] && {
-		# cat > /etc/modules.d/54-usb3 <<EOF
-# xhci-hcd
-# xhci-plat-hcd
-# xhci-pci
-# EOF
-	# }
-	# [ ! -f "/etc/modules-boot.d/54-usb3" ] && {
-		# basepath=$(cd `dirname $0`; pwd)
-		# echo basepath is $basepath
-		# cd /etc/modules-boot.d/ && ln -s ../modules.d/54-usb3 54-usb3
-		# cd $basepath
-	# }
-	[ -z `lsmod|grep xhci_hcd` ] && {
+	[ -z "`lsmod|grep xhci_hcd`" ] && {
 		insmod xhci-hcd 2>/dev/null
 		insmod xhci-plat-hcd 2>/dev/null
 		insmod xhci-pci 2>/dev/null
