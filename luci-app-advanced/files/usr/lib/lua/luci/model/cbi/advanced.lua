@@ -4,7 +4,7 @@ m=Map("advanced",translate("高级设置"),translate("各类服务配置文档�
 s=m:section(TypedSection,"advanced")
 s.anonymous=true
 s:tab("base",translate("Basic Settings"))
-o=s:taboption("base",Flag, "usb3_disable", translate("Switch off USB3.0"), translate("Turn off USB3.0, reduce effects of interference to 2.4G wireless, <b><font color=\"red\">it works after rebooted</font></b>."))
+o=s:taboption("base",Flag, "usb3_disable", translate("Switch off USB3.0"), translate("Turn off USB3.0, reduce effects of interference to 2.4G wireless."))
 o.default = 0
 o=s:taboption("base",ListValue, "webshell", translate("WebShell"), translate("Choose Which WebShell Service to Use"))
 o:value("ttyd",translate("ttyd"))
