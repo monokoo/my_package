@@ -1,0 +1,44 @@
+#!/bin/sh /etc/rc.common
+#Author: monokoo <realstones2012@gmail.com>
+
+
+START=99
+STOP=10
+
+sc_add_cru(){
+	[ ! -f  "/etc/crontabs/root" ] && touch /etc/crontabs/root
+	CRONTAB=`cat /etc/crontabs/root | grep "koolproxy restart"`
+	if [ "$REBOOT_MODE" == "regular" ]; then
+		[ -z "$CRONTAB" ] && {
+			regular_time=$(config_t_get global regular_time 5)
+			echo "0 $regular_time * * * /etc/init.d/koolproxy restart" >> /etc/crontabs/root
+		}
+	elif [ "$REBOOT_MODE" == "interval" ]; then
+		[ -z "$CRONTAB" ] && {
+			interval_time=$(config_t_get global interval_time 24)
+			echo "0 */$interval_time * * * /etc/init.d/koolproxy restart" >> /etc/crontabs/root
+		}
+	fi
+}
+
+sc_del_cru(){
+	jobexist=`cat /etc/crontabs/root 2>/dev/null | grep "koolproxy restart"`
+	[ -n "$jobexist" ] && sed -i '/koolproxy restart/d' /etc/crontabs/root >/dev/null 2>&1
+}
+
+reload(){
+	stop
+	start
+	#update
+}
+
+start() {
+	local enabled=$(uci get serverchan.global.enabled)
+	[ "$enabled" -eq 0 ] && exit
+	#sc_add_cru
+}
+
+stop()
+{
+	#sc_del_cru
+}

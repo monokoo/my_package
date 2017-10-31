@@ -1,0 +1,2 @@
+#!/bin/sh
+logger -t ServerChan "参数为 $ACTION $MACADDR $IPADDR $HOSTNAME"
