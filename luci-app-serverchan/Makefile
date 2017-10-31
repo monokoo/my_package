@@ -15,8 +15,9 @@ define Package/$(PKG_NAME)
 	SUBMENU:=3. Applications
 	PKGARCH:=all
 	TITLE:=luci for serverchan
+	DEPENDS:=+serverchan
 endef
-#DEPENDS:=+serverchan
+
 
 define Package/$(PKG_NAME)/description
     A luci app for serverchan
