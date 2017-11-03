@@ -16,7 +16,7 @@ define Package/serverchan
 	SECTION:=net
 	CATEGORY:=Extra packages
 	TITLE:=ServerChan
-	DEPENDS:=+wget
+	DEPENDS:=+curl
 endef
 
 define Package/serverchan/description
