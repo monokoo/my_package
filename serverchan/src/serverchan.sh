@@ -137,7 +137,7 @@ get_client_list(){
 	echo "**客户端列表：**" >>/tmp/client_list
 	echo -e "\n"  >>/tmp/client_list
 	if [ "$client_list" == "all" ]; then
-		echo "|ip地址　|mac地址　|客户端名 |" >>/tmp/client_list
+		echo "|IP地址　|MAC地址　|客户端名 |" >>/tmp/client_list
 		echo "| :- | :- | :- |" >>/tmp/client_list
 	else
 		echo "|ip地址　|客户端名 |" >>/tmp/client_list
