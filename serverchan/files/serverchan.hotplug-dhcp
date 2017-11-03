@@ -1,2 +1,6 @@
 #!/bin/sh
-logger -t ServerChan "参数为 $ACTION $MACADDR $IPADDR $HOSTNAME"
+logger -t ServerChan "dhcp参数为 $ACTION $MACADDR $IPADDR $HOSTNAME"
+
+[ "$ACTION" = "add" ] || exit 0
+
+/usr/bin/serverchan_trigger dhcp $ACTION $MACADDR $IPADDR $HOSTNAME

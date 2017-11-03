@@ -37,6 +37,7 @@ MAKE_FLAGS += -C $(PKG_BUILD_DIR)
 define Package/serverchan/install
 	$(INSTALL_DIR) $(1)/usr/bin $(1)/etc/init.d $(1)/etc/hotplug.d/dhcp $(1)/etc/config $(1)/etc/hotplug.d/iface
 	$(INSTALL_BIN)	$(PKG_BUILD_DIR)/serverchan $(1)/usr/bin/serverchan
+	$(INSTALL_BIN)	$(PKG_BUILD_DIR)/serverchan_trigger $(1)/usr/bin/serverchan_trigger
 	$(INSTALL_BIN) ./files/serverchan.init $(1)/etc/init.d/serverchan
 	$(INSTALL_BIN) ./files/serverchan.hotplug-dhcp $(1)/etc/hotplug.d/dhcp/10-serverchan
 	$(INSTALL_BIN) ./files/serverchan.hotplug-iface $(1)/etc/hotplug.d/iface/99-serverchan

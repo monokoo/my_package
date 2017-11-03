@@ -1,2 +1,6 @@
 #!/bin/sh
-logger -t ServerChan "参数为 $ACTION $MACADDR $IPADDR $HOSTNAME"
+logger -t ServerChan "iface参数为 $ACTION $INTERFACE $DEVICE"
+
+[ "$ACTION" = "ifup" ] || exit 0
+
+/usr/bin/serverchan_trigger iface $ACTION $INTERFACE $DEVICE
