@@ -28,6 +28,39 @@ api_post() {
   curl -sSL "$server/$sckey.send?text=$1" -d "desp=$2"
 }
 
+get_client_list(){
+	echo -e "\n"  >/tmp/client_lease
+	if [ "$t_client_up" == "all" ]; then
+		echo "|IP地址　|MAC地址　|客户端名 |" >>/tmp/client_lease
+		echo "| :- | :- | :- |" >>/tmp/client_lease
+	else
+		echo "|IP地址　|客户端名 |" >>/tmp/client_lease
+		echo "| :- | :- |" >>/tmp/client_lease
+	fi
+	all_leases=`cat /tmp/dhcp.leases 2>/dev/null | sed 's/ /+/g'`
+	for lease in $all_leases
+	do
+		lease_mac=`echo $lease | awk -F'+' '{print $2}' | tr '[a-z]' '[A-Z]'`
+		lease_ip=`echo $lease | awk -F'+' '{print $3}'`
+		lease_hostname=`echo $lease | awk -F'+' '{print $4}'`
+		if [ "$t_client_up" == "all" ]; then
+			tmp_client="
+|$lease_ip　|$lease_mac　|$lease_hostname |
+"
+		else
+			tmp_client="
+|$lease_ip　|$lease_hostname |
+"
+		fi
+		echo $tmp_client >>/tmp/client_lease
+	done
+	echo "****"  >>/tmp/client_lease
+	lease_client=$(cat /tmp/client_lease)
+	rm -rf /tmp/client_lease
+	echo -n "$lease_client"
+
+}
+
 enabled=`uci -q get serverchan.global.enabled`
 sckey=`uci -q get serverchan.global.sckey`
 [ "$enabled" -gt 0 ] && [ -n "$sckey" ] || exit
@@ -66,30 +99,35 @@ elif [ "$TYPE" == "dhcp" -a "$ACTION" == "add" ]; then
 	is_inwlist=`uci -q get serverchan.trigger_message.t_client_up_whitelist | grep -c "$upper_PARAM3"`
 	is_inblist=`uci -q get serverchan.trigger_message.t_client_up_blacklist | grep -c "$upper_PARAM3"`
 	if [ "$t_client_up_type" == "whitelist" -a "$is_inwlist" -eq 0 ] ||  [ "$t_client_up_type" == "blacklist" -a "$is_inblist" -gt 0 ]; then
+		temp_lease_time_remaining=`cat /tmp/dhcp.leases 2>/dev/null | grep -w "$PARAM3" |awk '{print $1}'`
+		lease_time_remaining=`date -d @$temp_lease_time_remaining  "+%Y-%m-%d %H:%M:%S"`
 		if [ "$t_client_up" == "all" ]; then
-			desp_client="
+			desp_header="
+**有新的客户端加入网络，信息如下：**  
 ****
-**上线时间：**$nowtime  
+客户端名：$PARAM5  
+客户端IP：$PARAM4  
+客户端MAC：$upper_PARAM3  
+客户端上线时间：$nowtime  
+租约过期的时间：$lease_time_remaining
 ****
-**客户端信息**
-
-|IP地址　|MAC地址　|客户端名 |
-| :- | :- | :- |
-|$PARAM4　|$upper_PARAM3　|$PARAM5 |
+**现在租约期内的客户端共有：$(cat /tmp/dhcp.leases 2>/dev/null |wc -l)个，具体如下：**  
 "
 			else
-				desp_client="
+				desp_header="
+**有新的客户端加入网络，信息如下：**  
 ****
-上线时间：$nowtime  
+客户端名：$PARAM5  
+客户端IP：$PARAM4  
+客户端上线时间：$nowtime  
+租约过期的时间：$lease_time_remaining
 ****
-**客户端信息**
-
-|ip地址　|客户端名 |
-| :- | :- |
-|$PARAM4　|$PARAM5 |
+**现在租约期内的客户端共有：$(cat /tmp/dhcp.leases 2>/dev/null |wc -l)个，具体如下：**  
 "
 		fi
 		text="您有新的客户端接入路由"
+		lease_client=`get_client_list`
+		desp_client=$desp_header$lease_client
 		api_post "$text" "$desp_client" >/dev/null
 	fi
 		

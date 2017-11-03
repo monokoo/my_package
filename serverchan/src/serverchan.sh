@@ -140,7 +140,7 @@ get_client_list(){
 		echo "|IP地址　|MAC地址　|客户端名 |" >>/tmp/client_list
 		echo "| :- | :- | :- |" >>/tmp/client_list
 	else
-		echo "|ip地址　|客户端名 |" >>/tmp/client_list
+		echo "|IP地址　|客户端名 |" >>/tmp/client_list
 		echo "| :- | :- |" >>/tmp/client_list
 	fi
 	mac_list=`ip neigh show | grep REACHABLE | grep br-lan |awk '{print $5}'`
