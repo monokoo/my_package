@@ -4,7 +4,6 @@ local e=luci.http
 local o=require"luci.model.network".init()
 local a,t,e,b
 a=Map("serverchan",translate("ServerChan"),translate("「Server酱」，英文名「ServerChan」，是一款从服务器推送报警信息和日志到微信的工具。"))
-a:section(SimpleSection).template  = "serverchan/serverchan_status"
 t=a:section(NamedSection,"global","serverchan",translate("Server酱配置"))
 t.anonymous=true
 t.addremove=false
