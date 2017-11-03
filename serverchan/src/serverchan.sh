@@ -84,7 +84,7 @@ get_router_status(){
 
 平均负载：$loadavg
 
-总内存：$sum_mem MB； 空闲数：$free_mem MB  
+内存总数：$sum_mem MB； 空闲内存：$free_mem MB  
 "
 	echo -n "$router_status"
 }
