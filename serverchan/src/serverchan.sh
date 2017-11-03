@@ -48,9 +48,9 @@ get_wan_info() {
 
 **$iface状态：**
 
-$iface 公网地址: $publicip
+$iface 公网IP: $publicip
 
-$iface IP地址: $wanip
+$iface 接口IP: $wanip
 
 $iface 连接时间: $wan_uptime
 
@@ -64,6 +64,10 @@ $iface 发送流量: $TX_bytes
 			logger -t ServerChan "无法获取接口名称，请稍候尝试！"
 		fi
 	done
+	desp_wan_header="
+****
+"
+	desp_wan=$desp_wan_header$desp_wan
 	echo -n "$desp_wan"
 }
 
@@ -71,11 +75,11 @@ get_router_status(){
 	nowtime=`date '+%Y-%m-%d %H:%M:%S'`
 	uptime=$(awk '{print int($1/86400)"天 "int($1%86400/3600)"小时 "int(($1%3600)/60)"分钟 "int($1%60)"秒"}' /proc/uptime)
 	loadavg=`cat /proc/loadavg |awk '{print $1,$2,$3}' | sed 's/ /,/g'`
-	meminfos=`cat /proc/meminfo`
-	sum_mem=$((`echo $meminfos |grep "MemTotal"| awk '{print $2}'`/1024))
-	free_mem=$((`echo $meminfos |grep "MemFree"| awk '{print $2}'`/1024))
+	sum_mem=$((`cat /proc/meminfo |grep "MemTotal"| awk '{print $2}'`/1024))
+	free_mem=$((`cat /proc/meminfo |grep "MemFree"| awk '{print $2}'`/1024))
 	
 	router_status="
+****
 **系统运行状态：**
 
 系统时间：$nowtime
@@ -93,6 +97,7 @@ get_router_temp(){
 	CPU_TEMP=$(awk 'BEGIN{printf "%.2f\n",'$(cat /sys/class/thermal/thermal_zone0/temp)'/1000}')"℃"
 	router_temp="
 
+****
 **cpu温度状况：**
 
 温度：$CPU_TEMP  
@@ -115,6 +120,7 @@ get_koolss_status(){
 	fi
 	koolss_status="
 
+****
 **koolss连接状态：**
 
 国内连接：$koolss_china
@@ -127,6 +133,7 @@ get_koolss_status(){
 get_client_list(){
 	local client
 	echo -e "\n"  >/tmp/client_list
+	echo "****"  >>/tmp/client_list
 	echo "**客户端列表：**" >>/tmp/client_list
 	echo -e "\n"  >>/tmp/client_list
 	if [ "$client_list" == "all" ]; then
@@ -147,17 +154,19 @@ get_client_list(){
             [ -z "$hostip" ] && hostip=`uci -q get dhcp.$dhcp_index.ip`
 			[ -z "$hostname" ] && hostname=`uci -q get dhcp.$dhcp_index.name`
 		}
+		upper_mac=`echo $mac | tr '[a-z]' '[A-Z]'`
 		if [ "$client_list" == "all" ]; then
 			tmp_client="
-|$hostip　|$mac　|$hostname |
+|$hostip　|$upper_mac　|$hostname |
 "
 		else
 			tmp_client="
 |$hostip　|$hostname |
 "
 		fi
-		echo  $tmp_client >>/tmp/client_list
+		echo  $tmp_client >>/tmp/client_list		
 	done
+	echo "****"  >>/tmp/client_list
 	client=$(cat /tmp/client_list)
 	rm -rf /tmp/client_list
 	echo -n "$client"

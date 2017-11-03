@@ -6,7 +6,7 @@ START=99
 STOP=10
 
 config_t_get() {
-        local ret=$(uci get $CONFIG.$1.$2 2>/dev/null)
+        local ret=$(uci get serverchan.$1.$2 2>/dev/null)
         #echo ${ret:=$3}
 		[ -z "$ret" -a -n "$3" ] && ret=$3
         echo $ret
@@ -17,12 +17,12 @@ sc_add_cru(){
 	CRONTAB=`cat /etc/crontabs/root | grep "serverchan auto"`
 	if [ "$send_mode" == "regular" ]; then
 		[ -z "$CRONTAB" ] && {
-			regular_time=$(config_t_get timing_message regular_time 5)
+			regular_time=$(config_t_get timing_message regular_time 12)
 			echo "0 $regular_time * * * /usr/bin/serverchan auto" >> /etc/crontabs/root
 		}
 	elif [ "$send_mode" == "interval" ]; then
 		[ -z "$CRONTAB" ] && {
-			interval_time=$(config_t_get timing_message interval_time 24)
+			interval_time=$(config_t_get timing_message interval_time 6)
 			echo "0 */$interval_time * * * /usr/bin/serverchan auto" >> /etc/crontabs/root
 		}
 	fi
