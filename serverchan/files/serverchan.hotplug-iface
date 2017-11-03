@@ -1,5 +1,4 @@
 #!/bin/sh
-logger -t ServerChan "iface参数为 $ACTION $INTERFACE $DEVICE"
 
 [ "$ACTION" = "ifup" ] || exit 0
 

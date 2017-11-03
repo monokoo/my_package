@@ -195,7 +195,7 @@ start(){
 	load_config
 
 	local desp="
-本条消息由手动发送	
+本条消息来自于：手动发送
 "
 	[ "$router_status" -eq 1 ] && {
 		desp_router_status=`get_router_status`
@@ -230,7 +230,7 @@ auto(){
 	[ "$send_mode" == "disable" ] && exit
 
 	local desp="
-本条消息来自于定时发送	
+本条消息来自于：定时发送
 "
 
 	[ "$router_status" -eq 1 ] && {
