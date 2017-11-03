@@ -41,16 +41,22 @@ e=t:option(ListValue,"regular_time",translate("regular"))
 for t=0,23 do
 e:value(t,translate("每天"..t.."点"))
 end
-e.default=5
+e.default=12
 e.datatype=uinteger
 e:depends("send_mode","regular")
 e=t:option(Value,"interval_time",translate("interval"))
 for t=1,72 do
 	e:value(t,translate(t.."小时"))
 end
-e.default=24
+e.default=6
 e.datatype=uinteger
 e:depends("send_mode","interval")
+e=t:option(Button,"_add",translate("手动发送"))
+e.inputtitle=translate("发送")
+e.inputstyle="apply"
+function e.write(e,e)
+luci.sys.exec("/usr/bin/serverchan start")
+end
 t=a:section(NamedSection,"trigger_message","serverchan",translate("触发发送通知消息 (短消息)"))
 t.anonymous=true
 t.addremove=false
@@ -62,19 +68,19 @@ e:value("disable",translate("关闭"))
 e:value("all",translate("发送"))
 e:value("nomac",translate("发送(不包含MAC地址)"))
 e=t:option(ListValue,"t_client_up_type",translate("黑白名单（设备上线）"))
-e.default="blacklist"
+e.default="whitelist"
 e:value("blacklist",translate("黑名单"))
 e:value("whitelist",translate("白名单"))
 e:depends("t_client_up","all")
 e:depends("t_client_up","nomac")
-e=t:option(DynamicList,"t_client_up_blacklist",translate("黑名单（设备上线）"))
+e=t:option(DynamicList,"t_client_up_blacklist",translate("黑名单（设备上线）"),translate("仅推送黑名单内设备"))
 e.datatype="macaddr"
 e.optional=false
 m.net.mac_hints(function(m,a)
 e:value(m,"%s (%s)"%{m,a})                                                                                                                    
 end)
 e:depends("t_client_up_type","blacklist")
-e=t:option(DynamicList,"t_client_up_whitelist",translate("白名单（设备上线）"))
+e=t:option(DynamicList,"t_client_up_whitelist",translate("白名单（设备上线）"),translate("白名单内的设备不推送"))
 e.datatype="macaddr"
 e.optional=false
 m.net.mac_hints(function(m,a)
