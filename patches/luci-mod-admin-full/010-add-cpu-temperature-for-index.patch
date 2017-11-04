@@ -1,6 +1,13 @@
 --- a/luasrc/view/admin_status/index.htm
 +++ b/luasrc/view/admin_status/index.htm
-@@ -53,6 +53,7 @@
+@@ -47,12 +47,13 @@
+ 
+ 		local rv = {
+ 			uptime     = sysinfo.uptime or 0,
+-			localtime  = os.date(),
++			localtime  = os.date("%Y-%m-%d %a %H:%M:%S"),
+ 			loadavg    = sysinfo.load or { 0, 0, 0 },
+ 			memory     = meminfo,
  			swap       = swapinfo,
  			connmax    = conn_max,
  			conncount  = conn_count,
