@@ -1,5 +1,3 @@
 #!/bin/sh
 
-[ "$ACTION" = "add" ] || exit 0
-
 /usr/bin/serverchan_trigger dhcp "$ACTION" "$MACADDR" "$IPADDR" "$HOSTNAME"

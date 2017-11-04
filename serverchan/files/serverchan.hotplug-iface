@@ -1,6 +1,6 @@
 #!/bin/sh
 
 [ "$ACTION" = "ifup" ] || exit 0
-[ "$INTERFACE" = "lan" -o "$INTERFACE" = "loopback" ] && exit 0 
+[ "$INTERFACE" = "lan" -o "$INTERFACE" = "loopback" ] && exit 0
 
 /usr/bin/serverchan_trigger iface "$ACTION" "$INTERFACE" "$DEVICE"

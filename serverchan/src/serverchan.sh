@@ -77,6 +77,7 @@ get_router_status(){
 	loadavg=`cat /proc/loadavg |awk '{print $1,$2,$3}' | sed 's/ /,/g'`
 	sum_mem=$((`cat /proc/meminfo |grep "MemTotal"| awk '{print $2}'`/1024))
 	free_mem=$((`cat /proc/meminfo |grep "MemFree"| awk '{print $2}'`/1024))
+	lan_ip=`uci -q get network.lan.ipaddr` || lan_ip=`ifconfig br-lan 2>/dev/null | grep "inet addr:" | grep -E -o "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"|head -1`
 	
 	router_status="
 ****
@@ -85,6 +86,8 @@ get_router_status(){
 系统时间：$nowtime
 
 开机时长：$uptime
+
+管理地址：$lan_ip
 
 平均负载：$loadavg
 
@@ -143,7 +146,7 @@ get_client_list(){
 		echo "|IP地址　|客户端名 |" >>/tmp/client_list
 		echo "| :- | :- |" >>/tmp/client_list
 	fi
-	mac_list=`ip neigh show | grep REACHABLE | grep br-lan |awk '{print $5}'`
+	mac_list=`cat /proc/net/arp | grep br-lan | grep -w "0x2" | awk '{print $4}'`
 	for mac in $mac_list
 	do
 		hostip=`cat /tmp/dhcp.leases 2>/dev/null| grep "$mac" |awk '{print $3}'`
@@ -194,13 +197,7 @@ load_config(){
 }
 
 
-start(){
-	# t_redial=$(config_t_get trigger_message t_redial 0)
-	# t_client_up=$(config_t_get trigger_message t_client_up 0)
-	# t_client_up_type=$(config_t_get trigger_message t_client_up_type 0)
-	# t_client_up_blacklist=$(config_t_get trigger_message t_client_up_blacklist 0)
-	# t_client_up_whitelist=$(config_t_get trigger_message t_client_up_whitelist 0)
-	
+start(){	
 	load_config
 
 	local desp="

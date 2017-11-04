@@ -89,8 +89,12 @@ $INTERFACE 接口IP: $wanip
 	text="接口$INTERFACE上线啦"
 	api_post "$text" "$desp_wan" >/dev/null
 	
-elif [ "$TYPE" == "dhcp" -a "$ACTION" == "add" ]; then
+elif [ "$TYPE" == "dhcp" ]; then
 	[ -z "$PARAM3" ] || [ -z "$PARAM4" ] || [ -z "$PARAM5" ] && exit
+	[ "$ACTION" == "update" ] && {
+		is_newonline=`logread -l 10 | grep "DHCPDISCOVER(br-lan)" | grep -w "$PARAM3"`
+		[ -z "$is_newonline" ] && exit
+	}
 	t_client_up=`uci -q get serverchan.trigger_message.t_client_up`
 	[ "$t_client_up" == "disable" ] && exit
 	check_network
