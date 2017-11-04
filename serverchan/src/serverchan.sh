@@ -18,7 +18,7 @@ config_t_get() {
 check_network() {
   curl -s $server
   if [ "$?" = "0" ]; then
-    /etc/init.d/sysntpd restart
+    /usr/sbin/ntpd -q -p 0.openwrt.pool.ntp.org -p 3.openwrt.pool.ntp.org -p asia.pool.ntp.org -p ntp.sjtu.edu.cn
   else
     logger -t ServerChan "网络连接错误，请稍候尝试！"
     exit

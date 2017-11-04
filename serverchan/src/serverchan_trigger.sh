@@ -2,7 +2,6 @@
 #Author: monokoo <realstones2012@gmail.com>
 
 server=http://sc.ftqq.com
-nowtime=`date '+%Y-%m-%d %H:%M:%S'`
 
 version=$(cat /etc/openwrt_release | grep -w DISTRIB_RELEASE | grep -w "By stones")
 version2=$(cat /etc/openwrt_release | grep -w DISTRIB_DESCRIPTION | grep -w Koolshare)
@@ -17,7 +16,8 @@ PARAM5=$5
 check_network() {
   curl -s $server
   if [ "$?" = "0" ]; then
-    /etc/init.d/sysntpd restart
+    /usr/sbin/ntpd -q -p 0.openwrt.pool.ntp.org -p 3.openwrt.pool.ntp.org -p asia.pool.ntp.org -p ntp.sjtu.edu.cn
+	nowtime=`date '+%Y-%m-%d %H:%M:%S'`
   else
     logger -t ServerChan "网络连接错误，请稍候尝试！"
     exit
