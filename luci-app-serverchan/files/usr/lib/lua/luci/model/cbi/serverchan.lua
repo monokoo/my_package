@@ -50,6 +50,22 @@ end
 e.default=6
 e.datatype=uinteger
 e:depends("send_mode","interval")
+e=t:option(Flag,"no_disturb_time",translate("免打扰时段设置"),translate("在指定整点时间段内，暂停自动推送消息"))
+e.default=0
+e=t:option(ListValue,"timeoff",translate("免打扰开始时间"))
+for t=0,23 do
+e:value(t,translate("每天"..t.."点"))
+end
+e.default=1
+e.datatype=uinteger
+e:depends("no_disturb_time",1)
+e=t:option(ListValue,"timeon",translate("免打扰结束时间"))
+for t=0,23 do
+e:value(t,translate("每天"..t.."点"))
+end
+e.default=7
+e.datatype=uinteger
+e:depends("no_disturb_time",1)
 e=t:option(Button,"_add",translate("手动发送"))
 e.inputtitle=translate("发送")
 e.inputstyle="apply"

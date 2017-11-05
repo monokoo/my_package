@@ -177,14 +177,10 @@ get_client_list(){
 
 load_config(){
 	[ ! -f "$CONFIG" ] && exit
-
 	enabled=$(config_t_get global enabled 0)
 	sckey=$(config_t_get global sckey)
-	
 	[ "$enabled" -gt 0 ] && [ -n "$sckey" ] || exit
-	
 	check_network
-	
 	title=$(config_t_get timing_message title "K3 Lede 路由状态消息:")
 	text=`echo -n "$title" | sed 's/ /+/g'`
 	router_wan=$(config_t_get timing_message router_wan 0)
@@ -194,12 +190,12 @@ load_config(){
 	koolss_status=$(config_t_get timing_message koolss_status 0)
 	client_list=$(config_t_get timing_message client_list disable)
 	send_mode=$(config_t_get timing_message send_mode disable)
+	no_disturb_time=$(config_t_get timing_message no_disturb_time 0)
 }
 
 
 start(){	
 	load_config
-
 	local desp="
 本条消息来自于：手动发送
 "
@@ -215,30 +211,29 @@ start(){
 		desp_koolss_status=`get_koolss_status`
 		desp=$desp$desp_koolss_status
 	}
-
 	[ "$router_wan" -eq 1 ] && {
 		desp_router_wan=`get_wan_info`
 		desp=$desp$desp_router_wan
 	}
-	
 	[ "$client_list" != "disable" ] && {
 		desp_client_list=`get_client_list`
 		desp=$desp$desp_client_list
 	}
-
 	api_post "$text" "$desp" >/dev/null
-
-	
 }
 
 auto(){
 	load_config
 	[ "$send_mode" == "disable" ] && exit
-
+	[ "$no_disturb_time" -eq 1 ] && {
+		timeoff=$(config_t_get timing_message timeoff 1)
+		timeon=$(config_t_get timing_message timeon 7)
+		nowh=`date '+%H'`
+		[ "$nowh" -gt "$timeoff" -a "$nowh" -lt "$timeon" ] && exit
+	}
 	local desp="
 本条消息来自于：定时发送
 "
-
 	[ "$router_status" -eq 1 ] && {
 		desp_router_status=`get_router_status`
 		desp=$desp$desp_router_status
@@ -251,19 +246,15 @@ auto(){
 		desp_koolss_status=`get_koolss_status`
 		desp=$desp$desp_koolss_status
 	}
-	
 	[ "$router_wan" -eq 1 ] && {
 		desp_router_wan=`get_wan_info`
 		desp=$desp$desp_router_wan
 	}
-	
 	[ "$client_list" != "disable" ] && {
 		desp_client_list=`get_client_list`
 		desp=$desp$desp_client_list
 	}
-	
 	api_post "$text" "$desp" >/dev/null
-
 }
 
 case $1 in
