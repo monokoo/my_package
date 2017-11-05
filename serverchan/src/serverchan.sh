@@ -137,7 +137,7 @@ get_client_list(){
 	local client
 	echo -e "\n"  >/tmp/client_list
 	echo "****"  >>/tmp/client_list
-	echo "**客户端列表：**" >>/tmp/client_list
+	echo "**在线客户端列表：**" >>/tmp/client_list
 	echo -e "\n"  >>/tmp/client_list
 	if [ "$client_list" == "all" ]; then
 		echo "|IP地址　|MAC地址　|客户端名 |" >>/tmp/client_list
