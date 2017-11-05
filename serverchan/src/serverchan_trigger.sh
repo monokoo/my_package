@@ -17,7 +17,6 @@ check_network() {
   curl -s $server
   if [ "$?" = "0" ]; then
     /usr/sbin/ntpd -q -p 0.openwrt.pool.ntp.org -p 3.openwrt.pool.ntp.org -p asia.pool.ntp.org -p ntp.sjtu.edu.cn
-	nowtime=`date '+%Y-%m-%d %H:%M:%S'`
   else
     logger -t ServerChan "网络连接错误，请稍候尝试！"
     exit
@@ -64,15 +63,14 @@ get_client_list(){
 enabled=`uci -q get serverchan.global.enabled`
 sckey=`uci -q get serverchan.global.sckey`
 [ "$enabled" -gt 0 ] && [ -n "$sckey" ] || exit
-
+check_network
 if [ "$TYPE" == "iface" -a "$ACTION" == "ifup" ]; then
 	INTERFACE=$PARAM3
 	DEVICE=$PARAM4
 	[ -z "$INTERFACE" ] || [ -z "$DEVICE" ] && exit
 	t_redial=`uci -q get serverchan.trigger_message.t_redial`
 	[ "$t_redial" -eq 1 ] || exit
-
-	check_network
+	nowtime=`date '+%Y-%m-%d %H:%M:%S'`
 	publicip=`curl -s --interface $DEVICE http://members.3322.org/dyndns/getip 2>/dev/null` || publicip=`curl -s --interface $DEVICE http://1212.ip138.com/ic.asp 2>/dev/null | grep -Eo '([0-9]+\.){3}[0-9]+'`
 	[ -z "$publicip" ] && publicip="暂时无法获取公网IP"
 	wanip=$(ifconfig $DEVICE 2>/dev/null | grep "inet addr:" | grep -E -o "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"|head -1)
@@ -92,12 +90,12 @@ $INTERFACE 接口IP: $wanip
 elif [ "$TYPE" == "dhcp" ]; then
 	[ -z "$PARAM3" ] || [ -z "$PARAM4" ] || [ -z "$PARAM5" ] && exit
 	[ "$ACTION" == "update" ] && {
-		is_newonline=`logread -l 10 | grep "DHCPDISCOVER(br-lan)" | grep -w "$PARAM3"`
+		is_newonline=`logread -l 30 | grep "DHCPACK(br-lan)" | grep -w "$PARAM3"`
 		[ -z "$is_newonline" ] && exit
 	}
 	t_client_up=`uci -q get serverchan.trigger_message.t_client_up`
 	[ "$t_client_up" == "disable" ] && exit
-	check_network
+	nowtime=`date '+%Y-%m-%d %H:%M:%S'`
 	t_client_up_type=`uci -q get serverchan.trigger_message.t_client_up_type`
 	upper_PARAM3=`echo $PARAM3 | tr '[a-z]' '[A-Z]'`
 	is_inwlist=`uci -q get serverchan.trigger_message.t_client_up_whitelist | grep -c "$upper_PARAM3"`
