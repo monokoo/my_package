@@ -7,13 +7,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=pcap-dnsproxy
-PKG_VERSION:=0.4.9.4
+PKG_VERSION:=0.4.9.5
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/chengr28/Pcap_DNSProxy.git
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_VERSION:=9a897ac63b34eae98d2d68d3a8ab4c797e992496
+PKG_SOURCE_VERSION:=ac44a412dde0697ce2e3f2e5e4fc42057fa48692
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
 CMAKE_INSTALL:=1
 
@@ -153,7 +153,7 @@ define Package/pcap-dnsproxy/install
 	$(INSTALL_CONF) $(PKG_BUILD_DIR)/Source/Auxiliary/ExampleConfig/Config.ini $(1)/etc/pcap-dnsproxy/Config.conf
 	$(INSTALL_CONF) $(PKG_BUILD_DIR)/Source/Auxiliary/ExampleConfig/Hosts.ini $(1)/etc/pcap-dnsproxy/Hosts.conf
 	$(INSTALL_CONF) $(PKG_BUILD_DIR)/Source/Auxiliary/ExampleConfig/IPFilter.ini $(1)/etc/pcap-dnsproxy/IPFilter.conf
-	$(INSTALL_CONF) ./files/configs/Routing.txt $(1)/etc/pcap-dnsproxy/Routing.txt
+	$(INSTALL_CONF) $(PKG_BUILD_DIR)/Source/Auxiliary/ExampleConfig/Routing.txt $(1)/etc/pcap-dnsproxy/Routing.txt
 	$(INSTALL_CONF) $(PKG_BUILD_DIR)/Source/Auxiliary/ExampleConfig/WhiteList.txt $(1)/etc/pcap-dnsproxy/WhiteList.txt
 	$(INSTALL_CONF) ./files/configs/dnscrypt-resolvers.csv $(1)/etc/pcap-dnsproxy/dnscrypt-resolvers.csv
 endef
