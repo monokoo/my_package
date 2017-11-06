@@ -6,7 +6,7 @@ CONFIG=/etc/config/serverchan
 
 version=$(cat /etc/openwrt_release | grep -w DISTRIB_RELEASE | grep -w "By stones")
 version2=$(cat /etc/openwrt_release | grep -w DISTRIB_DESCRIPTION | grep -w Koolshare)
-[ -z "$version" -a -z "$version2" ] && exit
+[ -z "$version" -a -z "$version2" ] && exit 0
 
 config_t_get() {
         local ret=$(uci get $CONFIG.$1.$2 2>/dev/null)
@@ -21,7 +21,7 @@ check_network() {
     /usr/sbin/ntpd -q -p 0.openwrt.pool.ntp.org -p 3.openwrt.pool.ntp.org -p asia.pool.ntp.org -p ntp.sjtu.edu.cn
   else
     logger -t ServerChan "网络连接错误，请稍候尝试！"
-    exit
+    exit 0
   fi
 }
 
@@ -177,10 +177,10 @@ get_client_list(){
 }
 
 load_config(){
-	[ ! -f "$CONFIG" ] && exit
+	[ ! -f "$CONFIG" ] && exit 0
 	enabled=$(config_t_get global enabled 0)
 	sckey=$(config_t_get global sckey)
-	[ "$enabled" -gt 0 ] && [ -n "$sckey" ] || exit
+	[ "$enabled" -gt 0 ] && [ -n "$sckey" ] || exit 0
 	check_network
 	title=$(config_t_get timing_message title "K3 Lede 路由状态消息:")
 	text=`echo -n "$title" | sed 's/ /+/g'`
@@ -225,12 +225,12 @@ start(){
 
 auto(){
 	load_config
-	[ "$send_mode" == "disable" ] && exit
+	[ "$send_mode" == "disable" ] && exit 0
 	[ "$no_disturb_time" -eq 1 ] && {
 		timeoff=$(config_t_get timing_message timeoff 1)
 		timeon=$(config_t_get timing_message timeon 7)
 		nowh=`date '+%H'`
-		[ "$nowh" -gt "$timeoff" -a "$nowh" -lt "$timeon" ] && exit
+		[ "$nowh" -gt "$timeoff" -a "$nowh" -lt "$timeon" ] && exit 0
 	}
 	local desp="
 本条消息来自于：定时发送

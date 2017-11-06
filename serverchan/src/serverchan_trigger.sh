@@ -5,7 +5,7 @@ server=http://sc.ftqq.com
 
 version=$(cat /etc/openwrt_release | grep -w DISTRIB_RELEASE | grep -w "By stones")
 version2=$(cat /etc/openwrt_release | grep -w DISTRIB_DESCRIPTION | grep -w Koolshare)
-[ -z "$version" -a -z "$version2" ] && exit
+[ -z "$version" -a -z "$version2" ] && exit 0
 
 TYPE=$1
 ACTION=$2
@@ -19,7 +19,7 @@ check_network() {
     /usr/sbin/ntpd -q -p 0.openwrt.pool.ntp.org -p 3.openwrt.pool.ntp.org -p asia.pool.ntp.org -p ntp.sjtu.edu.cn
   else
     logger -t ServerChan "网络连接错误，请稍候尝试！"
-    exit
+    exit 0
   fi
 }
 
@@ -63,14 +63,14 @@ get_client_list(){
 
 enabled=`uci -q get serverchan.global.enabled`
 sckey=`uci -q get serverchan.global.sckey`
-[ "$enabled" -gt 0 ] && [ -n "$sckey" ] || exit
+[ "$enabled" -gt 0 ] && [ -n "$sckey" ] || exit 0
 check_network
 if [ "$TYPE" == "iface" -a "$ACTION" == "ifup" ]; then
 	INTERFACE=$PARAM3
 	DEVICE=$PARAM4
-	[ -z "$INTERFACE" ] || [ -z "$DEVICE" ] && exit
+	[ -z "$INTERFACE" ] || [ -z "$DEVICE" ] && exit 0
 	t_redial=`uci -q get serverchan.trigger_message.t_redial`
-	[ "$t_redial" -eq 1 ] || exit
+	[ "$t_redial" -eq 1 ] || exit 0
 	nowtime=`date '+%Y-%m-%d %H:%M:%S'`
 	publicip=`curl -s --interface $DEVICE http://members.3322.org/dyndns/getip 2>/dev/null` || publicip=`curl -s --interface $DEVICE http://1212.ip138.com/ic.asp 2>/dev/null | grep -Eo '([0-9]+\.){3}[0-9]+'`
 	[ -z "$publicip" ] && publicip="暂时无法获取公网IP"
@@ -89,13 +89,14 @@ $INTERFACE 接口IP: $wanip
 	api_post "$text" "$desp_wan" >/dev/null
 	
 elif [ "$TYPE" == "dhcp" ]; then
-	[ -z "$PARAM3" ] || [ -z "$PARAM4" ] || [ -z "$PARAM5" ] && exit
+	[ -z "$PARAM3" ] || [ -z "$PARAM4" ] || [ -z "$PARAM5" ] && exit 0
 	[ "$ACTION" == "update" ] && {
 		is_newonline=`logread -l 30 | grep "DHCPACK(br-lan)" | grep -w "$PARAM3"`
-		[ -z "$is_newonline" ] && exit
+		logger -t ServerChan "现在开始1"
+		[ -z "$is_newonline" ] && exit 0
 	}
 	t_client_up=`uci -q get serverchan.trigger_message.t_client_up`
-	[ "$t_client_up" == "disable" ] && exit
+	[ "$t_client_up" == "disable" ] && exit 0
 	nowtime=`date '+%Y-%m-%d %H:%M:%S'`
 	t_client_up_type=`uci -q get serverchan.trigger_message.t_client_up_type`
 	upper_PARAM3=`echo $PARAM3 | tr '[a-z]' '[A-Z]'`
