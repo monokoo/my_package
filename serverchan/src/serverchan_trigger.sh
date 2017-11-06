@@ -92,7 +92,6 @@ elif [ "$TYPE" == "dhcp" ]; then
 	[ -z "$PARAM3" ] || [ -z "$PARAM4" ] || [ -z "$PARAM5" ] && exit 0
 	[ "$ACTION" == "update" ] && {
 		is_newonline=`logread -l 30 | grep "DHCPACK(br-lan)" | grep -w "$PARAM3"`
-		logger -t ServerChan "现在开始1"
 		[ -z "$is_newonline" ] && exit 0
 	}
 	t_client_up=`uci -q get serverchan.trigger_message.t_client_up`
