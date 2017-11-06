@@ -83,6 +83,8 @@ get_router_status(){
 ****
 **系统运行状态：**
 
+路由名称：$(uname -n)
+
 系统时间：$nowtime
 
 开机时长：$uptime
