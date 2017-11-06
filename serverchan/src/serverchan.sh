@@ -135,16 +135,17 @@ get_koolss_status(){
 
 get_client_list(){
 	local client
-	echo -e "\n"  >/tmp/client_list
-	echo "****"  >>/tmp/client_list
-	echo "**在线客户端列表：**" >>/tmp/client_list
-	echo -e "\n"  >>/tmp/client_list
+	local list_file=/tmp/client_list_$(date '+%N')
+	echo -e "\n"  >$list_file
+	echo "****"  >>$list_file
+	echo "**在线客户端列表：**" >>$list_file
+	echo -e "\n"  >>$list_file
 	if [ "$client_list" == "all" ]; then
-		echo "|IP地址　|MAC地址　|客户端名 |" >>/tmp/client_list
-		echo "| :- | :- | :- |" >>/tmp/client_list
+		echo "|IP地址　|MAC地址　|客户端名 |" >>$list_file
+		echo "| :- | :- | :- |" >>$list_file
 	else
-		echo "|IP地址　|客户端名 |" >>/tmp/client_list
-		echo "| :- | :- |" >>/tmp/client_list
+		echo "|IP地址　|客户端名 |" >>$list_file
+		echo "| :- | :- |" >>$list_file
 	fi
 	mac_list=`cat /proc/net/arp | grep br-lan | grep -w "0x2" | awk '{print $4}'`
 	for mac in $mac_list
@@ -167,11 +168,11 @@ get_client_list(){
 |$hostip　|$hostname |
 "
 		fi
-		echo  $tmp_client >>/tmp/client_list		
+		echo  $tmp_client >>$list_file		
 	done
-	echo "****"  >>/tmp/client_list
-	client=$(cat /tmp/client_list)
-	rm -rf /tmp/client_list
+	echo "****"  >>$list_file
+	client=$(cat $list_file)
+	rm -rf $list_file
 	echo -n "$client"
 }
 

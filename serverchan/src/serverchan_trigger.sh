@@ -28,13 +28,14 @@ api_post() {
 }
 
 get_client_list(){
-	echo -e "\n"  >/tmp/client_lease
+	local client_lease_file=/tmp/client_lease_$(echo $PARAM3 | sed 's/://g')
+	echo -e "\n"  >$client_lease_file
 	if [ "$t_client_up" == "all" ]; then
-		echo "|IP地址　|MAC地址　|客户端名 |" >>/tmp/client_lease
-		echo "| :- | :- | :- |" >>/tmp/client_lease
+		echo "|IP地址　|MAC地址　|客户端名 |" >>$client_lease_file
+		echo "| :- | :- | :- |" >>$client_lease_file
 	else
-		echo "|IP地址　|客户端名 |" >>/tmp/client_lease
-		echo "| :- | :- |" >>/tmp/client_lease
+		echo "|IP地址　|客户端名 |" >>$client_lease_file
+		echo "| :- | :- |" >>$client_lease_file
 	fi
 	all_leases=`cat /tmp/dhcp.leases 2>/dev/null | sed 's/ /+/g'`
 	for lease in $all_leases
@@ -51,11 +52,11 @@ get_client_list(){
 |$lease_ip　|$lease_hostname |
 "
 		fi
-		echo $tmp_client >>/tmp/client_lease
+		echo $tmp_client >>$client_lease_file
 	done
-	echo "****"  >>/tmp/client_lease
-	lease_client=$(cat /tmp/client_lease)
-	rm -rf /tmp/client_lease
+	echo "****"  >>$client_lease_file
+	lease_client=$(cat $client_lease_file)
+	rm -rf $client_lease_file
 	echo -n "$lease_client"
 
 }
