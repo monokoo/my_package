@@ -104,7 +104,7 @@ elif [ "$TYPE" == "dhcp" ]; then
 	is_inblist=`uci -q get serverchan.trigger_message.t_client_up_blacklist | grep -c "$upper_PARAM3"`
 	if [ "$t_client_up_type" == "whitelist" -a "$is_inwlist" -eq 0 ] ||  [ "$t_client_up_type" == "blacklist" -a "$is_inblist" -gt 0 ]; then
 		temp_lease_time_remaining=`cat /tmp/dhcp.leases 2>/dev/null | grep -w "$PARAM3" |awk '{print $1}'`
-		lease_time_remaining=`date -d @$temp_lease_time_remaining  "+%Y-%m-%d %H:%M:%S"`
+		lease_time_remaining=`date -d @$temp_lease_time_remaining  "+%Y-%m-%d %H:%M:%S" 2>/dev/null` || lease_time_remaining="暂时无法获取"
 		if [ "$t_client_up" == "all" ]; then
 			desp_header="
 **有新的客户端加入$(uname -n)网络，信息如下：**  
