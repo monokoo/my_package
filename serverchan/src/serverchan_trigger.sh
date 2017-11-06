@@ -85,7 +85,7 @@ $INTERFACE 公网IP: $publicip
 
 $INTERFACE 接口IP: $wanip
 "
-	text="接口$INTERFACE上线啦"
+	text="路由$(uname -n)--接口$INTERFACE上线啦"
 	api_post "$text" "$desp_wan" >/dev/null
 	
 elif [ "$TYPE" == "dhcp" ]; then
@@ -106,7 +106,7 @@ elif [ "$TYPE" == "dhcp" ]; then
 		lease_time_remaining=`date -d @$temp_lease_time_remaining  "+%Y-%m-%d %H:%M:%S"`
 		if [ "$t_client_up" == "all" ]; then
 			desp_header="
-**有新的客户端加入网络，信息如下：**  
+**有新的客户端加入$(uname -n)网络，信息如下：**  
 ****
 客户端名：$PARAM5  
 客户端IP：$PARAM4  
@@ -118,7 +118,7 @@ elif [ "$TYPE" == "dhcp" ]; then
 "
 			else
 				desp_header="
-**有新的客户端加入网络，信息如下：**  
+**有新的客户端加入$(uname -n)网络，信息如下：**  
 ****
 客户端名：$PARAM5  
 客户端IP：$PARAM4  
