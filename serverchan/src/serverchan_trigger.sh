@@ -77,6 +77,7 @@ if [ "$TYPE" == "iface" -a "$ACTION" == "ifup" ]; then
 	wanip=$(ifconfig $DEVICE 2>/dev/null | grep "inet addr:" | grep -E -o "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"|head -1)
 	desp_wan="
 ****
+**路由名称：**$(uname -n)  
 **上线时间：**$nowtime  
 ****
 **$INTERFACE信息：**
@@ -85,7 +86,7 @@ $INTERFACE 公网IP: $publicip
 
 $INTERFACE 接口IP: $wanip
 "
-	text="路由$(uname -n)--接口$INTERFACE上线啦"
+	text="接口$INTERFACE上线啦"
 	api_post "$text" "$desp_wan" >/dev/null
 	
 elif [ "$TYPE" == "dhcp" ]; then
