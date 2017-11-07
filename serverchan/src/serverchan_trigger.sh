@@ -72,7 +72,8 @@ if [ "$TYPE" == "iface" -a "$ACTION" == "ifup" ]; then
 	[ "$t_redial" -eq 1 ] || exit 0
 	check_network
 	nowtime=`date '+%Y-%m-%d %H:%M:%S'`
-	publicip=`curl -s --interface $DEVICE http://members.3322.org/dyndns/getip 2>/dev/null` || publicip=`curl -s --interface $DEVICE http://1212.ip138.com/ic.asp 2>/dev/null | grep -Eo '([0-9]+\.){3}[0-9]+'`
+	publicip=`curl -s --interface $DEVICE http://members.3322.org/dyndns/getip 2>/dev/null` || publicip=`curl -s --interface $DEVICE http://45.35.71.105/ip.php 2>/dev/null | grep -Eo '([0-9]+\.){3}[0-9]+'`
+	[ -z "$publicip" ] && publicip=`curl -s --interface $DEVICE http://whatismyip.akamai.com 2>/dev/null`
 	[ -z "$publicip" ] && publicip="暂时无法获取公网IP"
 	wanip=$(ifconfig $DEVICE 2>/dev/null | grep "inet addr:" | grep -E -o "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"|head -1)
 	desp_wan="
