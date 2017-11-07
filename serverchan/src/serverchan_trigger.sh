@@ -64,13 +64,13 @@ get_client_list(){
 enabled=`uci -q get serverchan.global.enabled`
 sckey=`uci -q get serverchan.global.sckey`
 [ "$enabled" -gt 0 ] && [ -n "$sckey" ] || exit 0
-check_network
 if [ "$TYPE" == "iface" -a "$ACTION" == "ifup" ]; then
 	INTERFACE=$PARAM3
 	DEVICE=$PARAM4
 	[ -z "$INTERFACE" ] || [ -z "$DEVICE" ] && exit 0
 	t_redial=`uci -q get serverchan.trigger_message.t_redial`
 	[ "$t_redial" -eq 1 ] || exit 0
+	check_network
 	nowtime=`date '+%Y-%m-%d %H:%M:%S'`
 	publicip=`curl -s --interface $DEVICE http://members.3322.org/dyndns/getip 2>/dev/null` || publicip=`curl -s --interface $DEVICE http://1212.ip138.com/ic.asp 2>/dev/null | grep -Eo '([0-9]+\.){3}[0-9]+'`
 	[ -z "$publicip" ] && publicip="暂时无法获取公网IP"
@@ -95,6 +95,7 @@ elif [ "$TYPE" == "dhcp" ]; then
 		is_newonline=`logread -l 30 | grep "DHCPACK(br-lan)" | grep -w "$PARAM3"`
 		[ -z "$is_newonline" ] && exit 0
 	}
+	check_network
 	t_client_up=`uci -q get serverchan.trigger_message.t_client_up`
 	[ "$t_client_up" == "disable" ] && exit 0
 	nowtime=`date '+%Y-%m-%d %H:%M:%S'`
