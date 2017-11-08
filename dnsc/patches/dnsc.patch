@@ -1,0 +1,27 @@
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -1,4 +1,4 @@
+-bin_PROGRAMS = dnsc dnsproxy sqlite3
++bin_PROGRAMS = dnsc dnsproxy
+ 
+ noinst_LIBRARIES = libldns.a libsqlite.a
+ 
+@@ -69,12 +69,10 @@ endif
+ 
+ AM_CFLAGS += -I../third-part/ldns-1.6.17 -I../third-part/sqlite
+ 
+-sqlite3_CFLAGS = $(AM_CFLAGS) -DHAVE_READLINE=1
+ #libldns_a_CFLAGS = $(AM_CFLAGS) -DHAVE_CONFIG_H
+ 
+ dnsc_LDADD = $(AM_LDFLAGS) libldns.a
+ dnsproxy_LDADD =  $(AM_LDFLAGS) libldns.a libsqlite.a
+-sqlite3_LDADD = $(AM_LDFLAGS) libsqlite.a -lreadline
+ 
+ 
+ if WIN32
+@@ -82,5 +80,4 @@ dnsc_LDADD += -lws2_32
+ dnsproxy_LDADD += -lws2_32
+ else
+ dnsproxy_LDADD += -ldl -lpthread
+-sqlite3_LDADD += -ldl -lpthread
+ endif
