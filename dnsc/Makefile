@@ -17,22 +17,12 @@ PKG_BUILD_PARALLEL:=1
 
 include $(INCLUDE_DIR)/package.mk
 
-define Build/Prepare
-endef
-
-define Build/Configure
-endef
-
-define Build/Compile
-endef
-
 define Package/dnsc
         SECTION:=net
         CATEGORY:=Network
         TITLE:=A simple DNS proxy server
         URL:=https://github.com/fangdingjun/dnsproxy
 endef
-
 
 define Package/dnsc/install
 	$(INSTALL_DIR) $(1)/usr/bin $(1)/etc/dnsc
