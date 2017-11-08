@@ -63,7 +63,7 @@ $LOG notice "Execute "$ACTION" event on interface $INTERFACE (${DEVICE:-unknown}
 
 case "$ACTION" in
 	ifup)
-		mwan3_policy_iface_start				  
+		
 		mwan3_set_general_rules
 		mwan3_set_general_iptables
 		mwan3_create_iface_iptables $INTERFACE $DEVICE
@@ -76,6 +76,7 @@ case "$ACTION" in
 			mwan3_set_policies_iptables
 			mwan3_set_user_rules
 			mwan3_flush_conntrack $INTERFACE $DEVICE "ifup"
+			mwan3_policy_iface_start
 			mwan3_policy_iptables_start
 		else
 			$LOG notice "Starting tracker on interface $INTERFACE (${DEVICE:-unknown})"
