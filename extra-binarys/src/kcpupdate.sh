@@ -31,7 +31,11 @@ fi
 arch=`uname -m`
 if [ "$arch" == "armv7l" ]; then
 	s_arch="arm"
-	client_arch="arm5"
+	if [ -n "`cat /etc/openwrt_release | grep DISTRIB_ARCH | grep arm_cortex | grep vfpv`" ]; then
+		client_arch="arm7"
+	else
+		client_arch="arm5"
+	fi
 elif [ "$arch" == "x86_64" ]; then
 	s_arch="amd64"
 	client_arch="amd64"
