@@ -209,8 +209,7 @@ mwan3_create_iface_iptables()
 
 	if [ "$family" == "ipv4" ]; then
 
-		ubus call network.interface.${1}_4 status &>/dev/null
-		if [ "$?" -eq "0" ]; then
+		if ubus call network.interface.${1}_4 status &>/dev/null; then
 			network_get_ipaddr src_ip ${1}_4
 		else
 			network_get_ipaddr src_ip $1
@@ -250,8 +249,7 @@ mwan3_create_iface_iptables()
 
 	if [ "$family" == "ipv6" ]; then
 
-		ubus call network.interface.${1}_6 status &>/dev/null
-		if [ "$?" -eq "0" ]; then
+		if ubus call network.interface.${1}_6 status &>/dev/null; then
 			network_get_ipaddr6 src_ipv6 ${1}_6
 		else
 			network_get_ipaddr6 src_ipv6 $1
@@ -327,32 +325,38 @@ mwan3_create_iface_route()
 	[ -n "$id" ] || return 0
 
 	if [ "$family" == "ipv4" ]; then
-		ubus call network.interface.${1}_4 status &>/dev/null
-		if [ "$?" -eq "0" ]; then
+		if ubus call network.interface.${1}_4 status &>/dev/null; then
 			network_get_gateway route_args ${1}_4
 		else
 			network_get_gateway route_args $1
 		fi
 
-		route_args="via $route_args dev $2"
+		if [ -n "$route_args" -a "$route_args" != "0.0.0.0" ]; then
+			route_args="via $route_args"
+		else
+			route_args=""
+		fi
 
 		$IP4 route flush table $id
-		$IP4 route add table $id default $route_args
+		$IP4 route add table $id default $route_args dev $2
 	fi
 
 	if [ "$family" == "ipv6" ]; then
 
-		ubus call network.interface.${1}_6 status &>/dev/null
-		if [ "$?" -eq "0" ]; then
+		if ubus call network.interface.${1}_6 status &>/dev/null; then
 			network_get_gateway6 route_args ${1}_6
 		else
 			network_get_gateway6 route_args $1
 		fi
 
-		route_args="via $route_args dev $2"
+		if [ -n "$route_args" -a "$route_args" != "::" ]; then
+			route_args="via $route_args"
+		else
+			route_args=""
+		fi
 
 		$IP6 route flush table $id
-		$IP6 route add table $id default $route_args
+		$IP6 route add table $id default $route_args dev $2
 	fi
 }
 
