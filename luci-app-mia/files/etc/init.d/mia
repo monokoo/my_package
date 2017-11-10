@@ -77,7 +77,7 @@ get_disrule(){
 	macaddr=$1
 	mode=$2
 	distype=$3
-	local is_disrule=0
+	is_disrule=0
 	index=`uci show $distype | grep "@acl_rule" |grep -w "$macaddr" |awk -F'.' '{print $2}'`
 	[ -n "$index" ] && [ "`uci -q get $distype.$index.$mode`" == "disable" ] && is_disrule=1
 }
