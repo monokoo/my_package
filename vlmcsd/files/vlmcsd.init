@@ -56,6 +56,6 @@ start()
 stop()
 {
 	del_web_port
-	kill -9 $(ps|grep '/usr/bin/vlmcsd'|grep -v 'grep'|awk '{print$1}') >/dev/null
+	kill -9 $(ps|grep '/usr/bin/vlmcsd'|grep -v 'grep'|awk '{print$1}') 2>/dev/null
 	del_srv_host
 }
