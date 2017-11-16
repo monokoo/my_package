@@ -26,11 +26,34 @@ uci_get_by_type() {
 	echo ${ret:=$3}
 }
 
+add_rule()
+{
+	l2tp=$(uci_get_by_type softether l2tp)
+	openvpn=$(uci_get_by_type softether openvpn)
+	openvpnport=$(cat /usr/share/softethervpn/vpn_server.config |grep OpenVPN_UdpPortList | awk -F " " '{print $3}')
+	sstp=$(uci_get_by_type softether sstp)
+	if [ "$l2tp" = "1" ];then
+		iptables -I INPUT -p udp -m multiport --dports 500,1701,4500 -m comment --comment "Rule for softethervpn" -j ACCEPT 2>/dev/null
+	fi
+	if [ "$openvpn" = "1" ];then
+		[ -z "$openvpnport" ] && openvpnport=1194
+		iptables -I INPUT -p udp --dport $openvpnport -m comment --comment "Rule for softethervpn" -j ACCEPT
+		iptables -I INPUT -p tcp --dport $openvpnport -m comment --comment "Rule for softethervpn" -j ACCEPT
+	fi 
+	if [ "$sstp" = "1" ];then
+		iptables -I INPUT -p tcp --dport 443 -m comment --comment "Rule for softethervpn" -j ACCEPT
+	fi
+	iptables -I INPUT -p tcp --dport 5555 -m comment --comment "Rule for softethervpn" -j ACCEPT
+	iptables -I INPUT -p tcp --dport 8888 -m comment --comment "Rule for softethervpn" -j ACCEPT
+	iptables -I INPUT -p tcp --dport 992 -m comment --comment "Rule for softethervpn" -j ACCEPT
+}
+
+
 del_rule()
 {
 	openvpnport=$(cat /usr/share/softethervpn/vpn_server.config 2>/dev/null|grep OpenVPN_UdpPortList | awk -F " " '{print $3}')
 	[ -z "$openvpnport" ] && openvpnport=1194
-	iptables -D INPUT -p udp -m multiport --dport 500,1701,4500 -m comment --comment "Rule for softethervpn" -j ACCEPT 2>/dev/null
+	iptables -D INPUT -p udp -m multiport --dports 500,1701,4500 -m comment --comment "Rule for softethervpn" -j ACCEPT 2>/dev/null
 	[ -n "$openvpnport" ] && iptables -D INPUT -p udp --dport $openvpnport -m comment --comment "Rule for softethervpn" -j ACCEPT 2>/dev/null
 	[ -n "$openvpnport" ] && iptables -D INPUT -p tcp --dport $openvpnport -m comment --comment "Rule for softethervpn" -j ACCEPT 2>/dev/null
 	iptables -D INPUT -p tcp --dport 443 -m comment --comment "Rule for softethervpn" -j ACCEPT 2>/dev/null
@@ -58,7 +81,7 @@ start()
 	    fi
 	    sleep 1
 	done
-	/usr/share/softethervpn/firewall.include
+	add_rule
 	logger -t SoftEtherVPN "将虚拟网卡$tap桥接到br-lan..."
 	brctl addif br-lan $tap
 }
