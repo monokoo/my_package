@@ -34,7 +34,7 @@ get_wan_info() {
 	all_interfaces=`uci show network | grep -v 'lan\|loopback' | grep "=interface" | awk -F'.' '{print $2}' |awk -F'=' '{print $1}'`
 	for iface in $all_interfaces
 	do
-		devname=`uci -P /var/state get network.$iface.ifname 2>/dev/null`
+		devname=`cat /var/state/network 2>/dev/null | grep -w "network.$iface.ifname" |awk -F"'" '{print $2}'`
 		[ -z "$devname" ] && devname=`ifstatus $iface 2>/dev/null| grep l3_device |awk -F'"' '{print $4}'`
 		if [ -n "$devname" ]; then
 			publicip=`curl -s --interface $devname http://members.3322.org/dyndns/getip 2>/dev/null` || publicip=`curl -s --interface $devname http://1212.ip138.com/ic.asp 2>/dev/null | grep -Eo '([0-9]+\.){3}[0-9]+'`
