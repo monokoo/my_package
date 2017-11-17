@@ -3,7 +3,9 @@
 
 load_var() {
 	WAN_IF=$(uci -p /var/state get network.wan.ifname)
+	[ -z "$WAN_IF" ] && WAN_IF=`ifstatus wan 2>/dev/null| grep l3_device |awk -F'"' '{print $4}'`
 	LAN_IF=$(uci -p /var/state get network.lan.ifname)
+	[ -z "$LAN_IF" ] && LAN_IF=`ifstatus lan 2>/dev/null| grep l3_device |awk -F'"' '{print $4}'`
 }
 
 load_modules(){

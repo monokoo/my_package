@@ -10,8 +10,8 @@ ip=$5
 alinum=$6
 recordid=$7
 
-version=$(cat /etc/openwrt_release | grep -w DISTRIB_RELEASE | grep -w "By stones")
-version2=$(cat /etc/openwrt_release | grep -w DISTRIB_DESCRIPTION | grep -w Koolshare)
+version=$(cat /etc/openwrt_release 2>/dev/null | grep -w DISTRIB_RELEASE | grep -w "By stones")
+version2=$(cat /etc/openwrt_release 2>/dev/null | grep -w DISTRIB_DESCRIPTION | grep -w Koolshare)
 [ -z "$version" -a -z "$version2" ] && exit 0
 
 enabled=$(uci -q get koolddns.@global[0].enabled)

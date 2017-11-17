@@ -35,6 +35,7 @@ get_wan_info() {
 	for iface in $all_interfaces
 	do
 		devname=`uci -P /var/state get network.$iface.ifname 2>/dev/null`
+		[ -z "$devname" ] && devname=`ifstatus $iface 2>/dev/null| grep l3_device |awk -F'"' '{print $4}'`
 		if [ -n "$devname" ]; then
 			publicip=`curl -s --interface $devname http://members.3322.org/dyndns/getip 2>/dev/null` || publicip=`curl -s --interface $devname http://1212.ip138.com/ic.asp 2>/dev/null | grep -Eo '([0-9]+\.){3}[0-9]+'`
 			[ -z "$publicip" ] && publicip="无法获取"

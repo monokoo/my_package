@@ -184,6 +184,7 @@ add_rule() {
 	sed -e "s/^/add $IPSET_ADB &/g" /etc/gfwlist/adblockip | awk '{print $0} END{print "COMMIT"}' | ipset -R 2>/dev/null
 	#生成代理规则
 	#  忽略特殊IP段
+	lan_ipc=`ip address show br-lan | grep -w "inet" |awk '{print $2}'`  #当前LAN IP段
 	iptables_ext A KOOLPROXY "-d 0.0.0.0/8 -j RETURN"
 	iptables_ext A KOOLPROXY "-d 10.0.0.0/8 -j RETURN"
 	iptables_ext A KOOLPROXY "-d 100.64.0.0/10 -j RETURN"
@@ -193,6 +194,7 @@ add_rule() {
 	iptables_ext A KOOLPROXY "-d 192.168.0.0/16 -j RETURN"
 	iptables_ext A KOOLPROXY "-d 224.0.0.0/4 -j RETURN"
 	iptables_ext A KOOLPROXY "-d 240.0.0.0/4 -j RETURN"
+	[ -n "$lan_ipc" ] && iptables_ext A KOOLPROXY "-d $lan_ipc -j RETURN"
 	#  生成对应CHAIN
 	LOCAL_PORT=3000
 	iptables_ext A KOOLPROXY_HTTP "-p tcp -m multiport --dport 80 -j REDIRECT --to-ports $LOCAL_PORT"

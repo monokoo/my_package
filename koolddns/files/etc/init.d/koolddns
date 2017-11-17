@@ -33,11 +33,13 @@ get_config()
 		config_get ipurl $1 ipurl
 		config_get urlinterface $1 urlinterface
 		[ -n "$urlinterface" ] && urlif=$(uci -P /var/state get network.$urlinterface.ifname 2>/dev/null)
+		[ -z "$urlif" ] && urlif=`ifstatus $urlinterface 2>/dev/null| grep l3_device |awk -F'"' '{print $4}'`
 		[ -n "$urlif" ] && urlface="--interface $urlif"
 		ip=$(curl $urlface -s $ipurl 2>&1)
 			[ -z $(echo $ip|grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}") ] && echo $(date): "通过URL获取公网IP出错" >>$LOGFILE && echo >>$LOGFILE && return    
 	else
 		ifname=`uci -P /var/state get network.$interface.ifname 2>/dev/null`
+		[ -z "$ifname" ] && ifname=`ifstatus $interface 2>/dev/null| grep l3_device |awk -F'"' '{print $4}'`
 		[ $? -eq 1 ] && echo $(date): "获取网络 $interface 信息出错" >>$LOGFILE && echo >>$LOGFILE && return
 		ip=$(ifconfig $ifname 2>/dev/null | grep 'inet addr' | awk '{print $2}' | cut -d: -f2 2>/dev/null)
 		[ -z "$ip" ] && echo $(date): "获取网络 $interface 接口 $ifname 信息出错" >>$LOGFILE && echo >>$LOGFILE && return    
