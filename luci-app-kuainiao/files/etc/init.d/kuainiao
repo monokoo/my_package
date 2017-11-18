@@ -21,7 +21,7 @@ start_service()
 
 stop_service(){	
 	clean_log
-	pid_kuainiao=`ps | grep -v grep | grep -w "/usr/bin/kuainiao" |awk '{print $1}' 2>/dev/null`
+	pid_kuainiao=`ps 2>/dev/null| grep -v grep | grep -w "/usr/bin/kuainiao" |awk '{print $1}' 2>/dev/null`
 	[ -n "$pid_kuainiao" ] && {
 		for pid in $pid_kuainiao
 		do
@@ -29,7 +29,7 @@ stop_service(){
 			kill $pid 2>/dev/null
 			for spid in `pgrep sleep`
 			do
-				ppid=`cat /proc/$spid/status | grep -w "PPid" | awk '{print $2}'`
+				ppid=`cat /proc/$spid/status 2>/dev/null| grep -w "PPid" | awk '{print $2}'`
 				[ "$ppid" -eq "$pid" ] && kill $spid 2>/dev/null && echo "Stop service kuainiao SPID: $spid"
 			done
 		done
@@ -41,7 +41,7 @@ stop_service(){
 
 clean_log() {
 	[ -f "$LOGFILE" ] && {
-		logsnum=$(cat $LOGFILE | grep -c .)
+		logsnum=$(cat $LOGFILE 2>/dev/null | grep -c .)
 		if [ $logsnum -gt 300 ];then
 			rm -f $LOGFILE >/dev/null 2>&1 &
 			echo "$(date): 日志文件过长，清空处理！" >> $LOGFILE
