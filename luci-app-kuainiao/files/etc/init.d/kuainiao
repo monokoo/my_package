@@ -19,7 +19,7 @@ start_service()
   procd_close_instance
 }
 
-stop_service(){	
+stop_service(){
 	clean_log
 	pid_kuainiao=`ps 2>/dev/null| grep -v grep | grep -w "/usr/bin/kuainiao" |awk '{print $1}' 2>/dev/null`
 	[ -n "$pid_kuainiao" ] && {
