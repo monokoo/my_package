@@ -180,7 +180,7 @@ add_rule() {
 	
 	#创建所需的ipset
 	IPSET_ADB="adblock"
-	ipset -! create $IPSET_ADB nethash && ipset -! add $IPSET_ADB 110.110.110.110 2>/dev/null
+	ipset -! create $IPSET_ADB iphash && ipset -! add $IPSET_ADB 110.110.110.110 2>/dev/null
 	sed -e "s/^/add $IPSET_ADB &/g" /etc/gfwlist/adblockip | awk '{print $0} END{print "COMMIT"}' | ipset -R 2>/dev/null
 	#生成代理规则
 	#  忽略特殊IP段
