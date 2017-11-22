@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=koolproxy
 PKG_VERSION:=3.6.3
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_MAINTAINER:=fw867 <ffkykzs@gmail.com>
 PKG_LICENSE:=GPLv3
@@ -37,12 +37,13 @@ endef
 
 define Package/koolproxy/conffiles
 /etc/config/koolproxy
+/etc/dnsmasq.d/kpadblock.conf
 endef
 
 
 define Package/koolproxy/install
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
-	$(INSTALL_DIR) $(1)/etc/config
+	$(INSTALL_DIR) $(1)/etc/config $(1)/etc/dnsmasq.d
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_DIR) $(1)/usr/share/koolproxy
@@ -52,7 +53,9 @@ define Package/koolproxy/install
 	$(INSTALL_BIN) ./files/etc/uci-defaults/95-koolproxy $(1)/etc/uci-defaults/95-koolproxy
 	$(INSTALL_BIN) ./files/etc/init.d/* $(1)/etc/init.d/
 	$(INSTALL_CONF) ./files/etc/config/* $(1)/etc/config/
+	$(INSTALL_CONF) ./files/etc/dnsmasq.d/* $(1)/etc/dnsmasq.d/
 	$(INSTALL_BIN) ./files/usr/sbin/* $(1)/usr/sbin/
+	$(INSTALL_DATA) ./files/usr/share/koolproxy/adblock.conf $(1)/usr/share/koolproxy/adblock.conf
 	$(INSTALL_BIN) ./files/usr/share/koolproxy/data/gen_ca.sh $(1)/usr/share/koolproxy/data/
 	$(INSTALL_DATA) ./files/usr/share/koolproxy/data/openssl.cnf $(1)/usr/share/koolproxy/data/
 	$(INSTALL_DATA) ./files/usr/share/koolproxy/data/rules/* $(1)/usr/share/koolproxy/data/rules/
