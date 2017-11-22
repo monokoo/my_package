@@ -101,13 +101,13 @@ add_dnsmasq() {
 		if [ "$adblockenable" == "1" ];then
 			ln -sf /etc/dnsmasq.d/dnsmasq.adblock /tmp/dnsmasq.d/dnsmasq.adblock
 		fi
-		
+		rm -rf /usr/share/koolproxy/adblock_tmp.conf /tmp/dnsmasq.d/adblock.conf
+		cp -r /usr/share/koolproxy/adblock.conf /usr/share/koolproxy/adblock_tmp.conf
 		[ -s "/etc/dnsmasq.d/kpadblock.conf" ] && {
 			cat /etc/dnsmasq.d/kpadblock.conf | sed "s/,/\n/g" | sed "s/^/ipset=&\/./g" | sed "s/$/\/adblock/g"  >> /tmp/kpadblock.conf
-			cat /tmp/kpadblock.conf >> /usr/share/koolproxy/adblock.conf && rm -rf /tmp/kpadblock.conf
+			cat /tmp/kpadblock.conf >> /usr/share/koolproxy/adblock_tmp.conf && rm -rf /tmp/kpadblock.conf
 		}
-		rm -rf /tmp/dnsmasq.d/adblock.conf
-		ln -sf /usr/share/koolproxy/adblock.conf /tmp/dnsmasq.d/adblock.conf
+		ln -sf /usr/share/koolproxy/adblock_tmp.conf /tmp/dnsmasq.d/adblock.conf
 		dnsmasq_restart=1
 	}
 }
