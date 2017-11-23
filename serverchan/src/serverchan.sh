@@ -161,6 +161,7 @@ get_client_list(){
             [ -z "$hostip" ] && hostip=`uci -q get dhcp.$dhcp_index.ip`
 			[ -z "$hostname" ] && hostname=`uci -q get dhcp.$dhcp_index.name`
 		}
+		[ -z "$(ip neigh show | grep -w REACHABLE | grep -w "$mac")" ] && continue
 		upper_mac=`echo $mac | tr '[a-z]' '[A-Z]'`
 		if [ "$client_list" == "all" ]; then
 			tmp_client="
