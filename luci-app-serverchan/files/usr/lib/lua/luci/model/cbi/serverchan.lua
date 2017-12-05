@@ -52,6 +52,7 @@ e.datatype=uinteger
 e:depends("send_mode","interval")
 e=t:option(Flag,"no_disturb_time",translate("免打扰时段设置"),translate("在指定整点时间段内，暂停自动推送消息"))
 e.default=0
+e:depends("send_mode","interval")
 e=t:option(ListValue,"timeoff",translate("免打扰开始时间"))
 for t=0,23 do
 e:value(t,translate("每天"..t.."点"))
