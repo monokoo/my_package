@@ -1,7 +1,7 @@
 Index: v4.22-9634/src/Mayaqua/Network.c
 ===================================================================
---- v4.22-9634.orig/src/Mayaqua/Network.c
-+++ v4.22-9634/src/Mayaqua/Network.c
+--- v4.24-9651.orig/src/Mayaqua/Network.c
++++ v4.24-9651/src/Mayaqua/Network.c
 @@ -13013,20 +13013,28 @@ bool StartSSLEx(SOCK *sock, X *x, K *pri
  		}
  		else
