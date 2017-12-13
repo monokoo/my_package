@@ -8,6 +8,7 @@ version=$(cat /etc/openwrt_release 2>/dev/null| grep -w DISTRIB_RELEASE | grep -
 version2=$(cat /etc/openwrt_release 2>/dev/null| grep -w DISTRIB_DESCRIPTION | grep -w Koolshare)
 [ -z "$version" -a -z "$version2" ] && exit 0
 
+ip neigh flush dev br-lan 2>/dev/null
 config_t_get() {
         local ret=$(uci get $CONFIG.$1.$2 2>/dev/null)
         #echo ${ret:=$3}
@@ -150,7 +151,6 @@ get_client_list(){
 		echo "|IP地址　|客户端名 |" >>$list_file
 		echo "| :- | :- |" >>$list_file
 	fi
-	ip neigh flush dev br-lan 2>/dev/null
 	mac_list=`cat /proc/net/arp | grep br-lan | grep -w "0x2" | awk '{print $4}'`
 	for mac in $mac_list
 	do
