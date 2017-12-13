@@ -150,6 +150,7 @@ get_client_list(){
 		echo "|IP地址　|客户端名 |" >>$list_file
 		echo "| :- | :- |" >>$list_file
 	fi
+	ip neigh flush dev br-lan 2>/dev/null
 	mac_list=`cat /proc/net/arp | grep br-lan | grep -w "0x2" | awk '{print $4}'`
 	for mac in $mac_list
 	do
@@ -161,7 +162,7 @@ get_client_list(){
             [ -z "$hostip" ] && hostip=`uci -q get dhcp.$dhcp_index.ip`
 			[ -z "$hostname" ] && hostname=`uci -q get dhcp.$dhcp_index.name`
 		}
-		[ -z "$(ip neigh show | grep -w REACHABLE | grep -w "$mac")" ] && continue
+		[ -z "$(ip neigh show | grep br-lan | grep -w REACHABLE | grep -w "$mac")" ] && continue
 		upper_mac=`echo $mac | tr '[a-z]' '[A-Z]'`
 		if [ "$client_list" == "all" ]; then
 			tmp_client="
