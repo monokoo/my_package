@@ -4,11 +4,12 @@
 server=http://sc.ftqq.com
 CONFIG=/etc/config/serverchan
 
+ip neigh flush dev br-lan 2>/dev/null
+
 version=$(cat /etc/openwrt_release 2>/dev/null| grep -w DISTRIB_RELEASE | grep -w "By stones")
 version2=$(cat /etc/openwrt_release 2>/dev/null| grep -w DISTRIB_DESCRIPTION | grep -w Koolshare)
 [ -z "$version" -a -z "$version2" ] && exit 0
 
-ip neigh flush dev br-lan 2>/dev/null
 config_t_get() {
         local ret=$(uci get $CONFIG.$1.$2 2>/dev/null)
         #echo ${ret:=$3}
@@ -87,6 +88,8 @@ get_router_status(){
 
 路由名称：$(uname -n)
 
+固件版本：$(cat /etc/openwrt_release | grep DISTRIB_RELEASE |awk -F"'" '{print $2}')
+
 系统时间：$nowtime
 
 开机时长：$uptime
@@ -162,7 +165,7 @@ get_client_list(){
             [ -z "$hostip" ] && hostip=`uci -q get dhcp.$dhcp_index.ip`
 			[ -z "$hostname" ] && hostname=`uci -q get dhcp.$dhcp_index.name`
 		}
-		[ -z "$(ip neigh show | grep br-lan | grep -w REACHABLE | grep -w "$mac")" ] && continue
+		[ -z "$(ip neigh show dev br-lan | grep -E "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" | grep -w REACHABLE | grep -w "$mac")" ] && continue
 		upper_mac=`echo $mac | tr '[a-z]' '[A-Z]'`
 		if [ "$client_list" == "all" ]; then
 			tmp_client="
