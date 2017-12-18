@@ -22,6 +22,7 @@ e:value("https",translate("HTTPS"))
 e:value("tcp",translate("TCP"))
 e:value("udp",translate("UDP"))
 e:value("stcp",translate("STCP"))
+e:value("xtcp",translate("XTCP"))
 e = t:taboption("base",ListValue, "domain_type", translate("Domain Type"))
 e.default = "custom_domains"
 e:value("custom_domains",translate("Custom Domains"))
@@ -40,6 +41,11 @@ e.default = "server"
 e:value("server",translate("STCP Server"))
 e:value("vistor",translate("STCP Vistor"))
 e:depends("type","stcp")
+e = t:taboption("base",ListValue, "xtcp_role", translate("XTCP Role"))
+e.default = "server"
+e:value("server",translate("XTCP Server"))
+e:value("vistor",translate("XTCP Vistor"))
+e:depends("type","xtcp")
 e = t:taboption("base",Value, "remote_port", translate("Remote Port"))
 e.datatype = "port"
 e:depends("type","tcp")
@@ -68,6 +74,12 @@ e:depends("type","stcp")
 e = t:taboption("base",Value, "stcp_servername", translate("STCP Server Name"), translate("STCP Server Name is Service Remark Name of STCP Server"))
 e.default = "secret_tcp"
 e:depends("stcp_role","vistor")
+e = t:taboption("base",Value, "xtcp_secretkey", translate("XTCP Screct Key"), translate("In order to support XTCP protocol, please make sure <code>bind_udp_port</code> has been configured in your server."))
+e.default = "abcdefg"
+e:depends("type","xtcp")
+e = t:taboption("base",Value, "xtcp_servername", translate("XTCP Server Name"), translate("XTCP Server Name is Service Remark Name of XTCP Server"))
+e.default = "xsecret_tcp"
+e:depends("xtcp_role","vistor")
 e = t:taboption("other",Flag, "enable_locations", translate("Enable URL routing"), translate("Frp support forward http requests to different backward web services by url routing."))
 e:depends("type","http")
 e = t:taboption("other",Value, "locations ", translate("URL routing"), translate("Http requests with url prefix /news will be forwarded to this service."))

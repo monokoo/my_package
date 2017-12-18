@@ -120,8 +120,23 @@ msgstr "STCP 密钥"
 msgid "STCP Server Name"
 msgstr "STCP 代理名称"
 
+msgid "XTCP Role"
+msgstr "XTCP 服务类型"
+
+msgid "XTCP Screct Key"
+msgstr "XTCP 密钥"
+
+msgid "XTCP Server Name"
+msgstr "XTCP 代理名称"
+
+msgid "In order to support XTCP protocol, please make sure <code>bind_udp_port</code> has been configured in your server."
+msgstr "请确保服务端配置有 <code>bind_udp_port</code> 参数以支持XTCP协议。"
+
 msgid "STCP Server Name is Service Remark Name of STCP Server"
 msgstr "STCP 代理名称就是 STCP 服务端的服务备注名"
+
+msgid "XTCP Server Name is Service Remark Name of XTCP Server"
+msgstr "XTCP 代理名称就是 XTCP 服务端的服务备注名"
 
 msgid "Local Host Address"
 msgstr "内网主机地址"
