@@ -50,16 +50,9 @@ define Build/Compile
 endef
 
 define Package/$(PKG_NAME)/conffiles
-/etc/config/frp
 endef
 
 define Package/$(PKG_NAME)/install
-
-	$(INSTALL_DIR) $(1)/etc/config
-	$(INSTALL_CONF) ./files/etc/config/frp $(1)/etc/config/
-	
-	$(INSTALL_DIR) $(1)/etc/init.d
-	$(INSTALL_BIN) ./files/etc/init.d/* $(1)/etc/init.d/
 	
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
 	$(INSTALL_BIN) ./files/etc/uci-defaults/luci-frp $(1)/etc/uci-defaults/luci-frp
@@ -75,11 +68,6 @@ define Package/$(PKG_NAME)/install
 	
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/view/frp
 	$(INSTALL_DATA) ./files/usr/lib/lua/luci/view/frp/* $(1)/usr/lib/lua/luci/view/frp/
-
-ifeq ($(ARCH),x86_64)
-	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) ./files/bin/frpc-x86_64 $(1)/usr/bin/frpc
-endif
 	
 endef
 
