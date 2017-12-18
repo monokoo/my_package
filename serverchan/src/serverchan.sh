@@ -4,8 +4,6 @@
 server=http://sc.ftqq.com
 CONFIG=/etc/config/serverchan
 
-ip neigh flush dev br-lan 2>/dev/null
-
 version=$(cat /etc/openwrt_release 2>/dev/null| grep -w DISTRIB_RELEASE | grep -w "By stones")
 version2=$(cat /etc/openwrt_release 2>/dev/null| grep -w DISTRIB_DESCRIPTION | grep -w Koolshare)
 [ -z "$version" -a -z "$version2" ] && exit 0
@@ -157,8 +155,8 @@ get_client_list(){
 	mac_list=`cat /proc/net/arp | grep br-lan | grep -w "0x2" | awk '{print $4}'`
 	for mac in $mac_list
 	do
-		hostip=`cat /tmp/dhcp.leases 2>/dev/null| grep "$mac" |awk '{print $3}'`
-		hostname=`cat /tmp/dhcp.leases 2>/dev/null| grep "$mac" |awk '{print $4}'`
+		hostip=`cat /tmp/dhcp.leases 2>/dev/null | grep -E "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" | grep "$mac" |awk '{print $3}'`
+		hostname=`cat /tmp/dhcp.leases 2>/dev/null | grep -E "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" | grep "$mac" |awk '{print $4}'`
 
 		[ -z "$hostip" -o -z "$hostname" ] && {
 			dhcp_index=`uci show dhcp | grep "$mac" |awk -F'.' '{print $2}'`

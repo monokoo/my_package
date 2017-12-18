@@ -37,7 +37,7 @@ get_client_list(){
 		echo "|IP地址　|客户端名 |" >>$client_lease_file
 		echo "| :- | :- |" >>$client_lease_file
 	fi
-	all_leases=`cat /tmp/dhcp.leases 2>/dev/null | sed 's/ /+/g'`
+	all_leases=`cat /tmp/dhcp.leases 2>/dev/null | grep -E "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" | sed 's/ /+/g'`
 	for lease in $all_leases
 	do
 		lease_mac=`echo $lease | awk -F'+' '{print $2}' | tr '[a-z]' '[A-Z]'`
@@ -106,7 +106,7 @@ elif [ "$TYPE" == "dhcp" ]; then
 	is_inwlist=`uci -q get serverchan.trigger_message.t_client_up_whitelist | grep -c "$upper_PARAM3"`
 	is_inblist=`uci -q get serverchan.trigger_message.t_client_up_blacklist | grep -c "$upper_PARAM3"`
 	if [ "$t_client_up_type" == "whitelist" -a "$is_inwlist" -eq 0 ] ||  [ "$t_client_up_type" == "blacklist" -a "$is_inblist" -gt 0 ]; then
-		temp_lease_time_remaining=`cat /tmp/dhcp.leases 2>/dev/null | grep -w "$PARAM3" |awk '{print $1}'`
+		temp_lease_time_remaining=`cat /tmp/dhcp.leases 2>/dev/null | grep -E "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" | grep -w "$PARAM3" |awk '{print $1}'`
 		lease_time_remaining=`date -d @$temp_lease_time_remaining  "+%Y-%m-%d %H:%M:%S" 2>/dev/null` || lease_time_remaining="暂时无法获取"
 		if [ "$t_client_up" == "all" ]; then
 			desp_header="
@@ -118,7 +118,7 @@ elif [ "$TYPE" == "dhcp" ]; then
 客户端上线时间：$nowtime  
 租约过期的时间：$lease_time_remaining
 ****
-**现在租约期内的客户端共有：$(cat /tmp/dhcp.leases 2>/dev/null |wc -l)个，具体如下：**  
+**现在租约期内的客户端共有：$(cat /tmp/dhcp.leases 2>/dev/null | grep -E "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" |wc -l)个，具体如下：**  
 "
 			else
 				desp_header="
@@ -129,7 +129,7 @@ elif [ "$TYPE" == "dhcp" ]; then
 客户端上线时间：$nowtime  
 租约过期的时间：$lease_time_remaining
 ****
-**现在租约期内的客户端共有：$(cat /tmp/dhcp.leases 2>/dev/null |wc -l)个，具体如下：**  
+**现在租约期内的客户端共有：$(cat /tmp/dhcp.leases 2>/dev/null | grep -E "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" |wc -l)个，具体如下：**  
 "
 		fi
 		text="您有新的客户端接入路由"
