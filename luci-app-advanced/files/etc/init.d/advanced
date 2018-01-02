@@ -35,7 +35,16 @@ start() {
 		echo 0 >/etc/k3screenctrl-apmode
 		/etc/init.d/network restart
 	fi
-
+	
+	lan_port=`uci get advanced.base.lan2wan 2>/dev/null`
+	[ -z "$lan_port" ] && lan_port="none"
+	lan_vlanid=`uci -q get network.lan.ifname | awk -F'.' '{print $2}'`
+	lan_vlanindex=$(($lan_vlanid - 1 ))
+	if [ "$lan_port" == "factory" ]; then
+		restore_vlan
+	elif [ "$lan_port" != "none" ]; then
+		add_vlan
+	fi
 }
 
 disable_usb3() {
@@ -61,4 +70,66 @@ enable_usb3() {
 		insmod xhci-plat-hcd 2>/dev/null
 		insmod xhci-pci 2>/dev/null
 	}	
+}
+
+restore_vlan(){
+	wans="wan2 wan3"
+	for del_wan in $wans
+	do
+		[ -n "$(uci show network | grep "=interface" | grep -w $del_wan)" ] && {
+			vlan_id=`uci -q get network.$del_wan.ifname | awk -F'.' '{print $2}'`
+			switch_vlan_index=`uci show network | grep -w switch_vlan | grep "vlan='$vlan_id'" | awk -F'.' '{print $2}'`
+			uci -q delete network.$del_wan
+			uci -q delete network.$switch_vlan_index
+			uci del_list firewall.@zone[1].network="$del_wan"
+		}
+	done
+	uci set network.@switch_vlan[$lan_vlanindex].ports="0 1 2 5t"
+	uci set advanced.base.lan2wan='none'
+	uci commit
+	/etc/init.d/network reload
+}
+
+add_vlan(){
+	lan_ports=`uci get network.@switch_vlan[$lan_vlanindex].ports`
+	[ -n "`echo $lan_ports | grep -w "$lan_port"`" ] && {
+		new_lan_ports=""
+		for port in $lan_ports
+		do
+			if [ "$port" == "$lan_port" ]; then
+				continue
+			else
+				if [ -z "$new_lan_ports" ]; then
+					new_lan_ports=$port
+                else
+					new_lan_ports=$new_lan_ports" "$port
+                fi
+			fi
+		done
+		
+		[ "`swconfig dev switch0 show | grep -w VLAN | wc -l`" -gt 1 ] && {
+			switch_device=`uci -q get network.@switch_vlan[$lan_vlanindex].device`
+			uci set network.@switch_vlan[$lan_vlanindex].ports="$new_lan_ports"
+			switch_vlan_index=`uci add network switch_vlan`
+			uci set network.$switch_vlan_index.device=$switch_device
+			uci set network.$switch_vlan_index.ports=$lan_port" 5t"
+			uci set network.$switch_vlan_index.vlan=$(($(uci show network | grep -w switch_vlan | grep -w "vlan=" | wc -l) + 1))
+			if [ -z "$(uci show network | grep "=interface" | grep -w "wan2")" ]; then
+				new_wan="wan2"
+			elif [ -z "$(uci show network | grep "=interface" | grep -w "wan3")" ]; then
+				new_wan="wan3"
+			else
+				new_wan=""
+			fi
+			[ -n "$new_wan" ] && {
+				uci set network.$new_wan=interface
+				uci set network.$new_wan.proto='dhcp'
+				uci set network.$new_wan.ifname="eth0.$(uci show network | grep -w switch_vlan | grep -w "vlan=" | wc -l)"
+				uci add_list firewall.@zone[1].network="$new_wan"
+			}
+			uci set advanced.base.lan2wan='none'
+			uci commit
+			/etc/init.d/network reload
+		}
+	}
 }

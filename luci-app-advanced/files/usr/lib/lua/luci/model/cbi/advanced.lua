@@ -15,8 +15,27 @@ o.default="none"
 o:value("none",translate("Current Mode"))
 o:value("apmode",translate("AP Mode"))
 o:value("dhcpmode",translate("Router Mode"))
+
+if(luci.sys.call("cat /etc/os-release | grep LEDE_BOARD | grep -w bcm53xx >/dev/null")==0)then
+o=s:taboption("base",ListValue, "lan2wan", translate("Lan2Wan"), translate("Choose which lan port to be setted to another WAN port for Multi-ISP"))
+o:value("none",translate("Current Mode"))
+o:value("1",translate("LAN1"))
+o:value("0",translate("LAN2"))
+o:value("2",translate("LAN3"))
+o:value("factory",translate("Back to Default"))
+o.default = "none"
+end
+
 if nixio.fs.access("/etc/dnsmasq.conf")then
-s:tab("dnsmasqconf",translate("配置dnsmasq"),translate("本页是配置/etc/dnsmasq.conf的文档内容。应用保存后自动重启生效"))
+s:tab("dnsmasqconf",translate("配置dnsmasq"),translate("本页是配置/etc/dnsmasq.conf的文档内容。编辑后点击重启按钮后生效"))
+
+o=s:taboption("dnsmasqconf",Button,"_drestart")
+o.inputtitle=translate("重启dnsmasq")
+o.inputstyle="apply"
+function o.write(e,e)
+luci.sys.exec("/etc/init.d/dnsmasq restart >/dev/null")
+end
+
 conf=s:taboption("dnsmasqconf",Value,"dnsmasqeditconf",nil,translate("开头的数字符号（＃）或分号的每一行（;）被视为注释；删除（;）启用指定选项。"))
 conf.template="cbi/tvalue"
 conf.rows=50
@@ -30,14 +49,19 @@ t=t:gsub("\r\n?","\n")
 e.writefile("/tmp/dnsmasq.conf",t)
 if(luci.sys.call("cmp -s /tmp/dnsmasq.conf /etc/dnsmasq.conf")==1)then
 e.writefile("/etc/dnsmasq.conf",t)
-luci.sys.call("/etc/init.d/dnsmasq restart >/dev/null")
 end
 e.remove("/tmp/dnsmasq.conf")
 end
 end
 end
 if nixio.fs.access("/etc/hosts")then
-s:tab("hostsconf",translate("配置hosts"),translate("本页是配置/etc/hosts的文档内容。应用保存后自动重启生效"))
+s:tab("hostsconf",translate("配置hosts"),translate("本页是配置/etc/hosts的文档内容。编辑后点击重启按钮后生效"))
+o=s:taboption("hostsconf",Button,"_hrestart")
+o.inputtitle=translate("重启dnsmasq")
+o.inputstyle="apply"
+function o.write(e,e)
+luci.sys.exec("/etc/init.d/dnsmasq restart >/dev/null")
+end
 conf=s:taboption("hostsconf",Value,"hostsconf",nil,translate("开头的数字符号（＃）或分号的每一行（;）被视为注释；删除（;）启用指定选项。"))
 conf.template="cbi/tvalue"
 conf.rows=50
@@ -51,14 +75,19 @@ t=t:gsub("\r\n?","\n")
 e.writefile("/tmp/hosts.tmp",t)
 if(luci.sys.call("cmp -s /tmp/hosts.tmp /etc/hosts")==1)then
 e.writefile("/etc/hosts",t)
-luci.sys.call("/etc/init.d/dnsmasq restart >/dev/null")
 end
 e.remove("/tmp/hosts.tmp")
 end
 end
 end
 if nixio.fs.access("/etc/config/network")then
-s:tab("netwrokconf",translate("配置网络"),translate("本页是配置/etc/config/network的文档内容。应用保存后自动重启生效"))
+s:tab("netwrokconf",translate("配置网络"),translate("本页是配置/etc/config/network的文档内容。编辑后点击重启按钮后生效"))
+o=s:taboption("netwrokconf",Button,"_nrestart")
+o.inputtitle=translate("重启网络")
+o.inputstyle="apply"
+function o.write(e,e)
+luci.sys.exec("/etc/init.d/network restart >/dev/null")
+end
 conf=s:taboption("netwrokconf",Value,"netwrokconf",nil,translate("开头的数字符号（＃）或分号的每一行（;）被视为注释；删除（;）启用指定选项。"))
 conf.template="cbi/tvalue"
 conf.rows=50
@@ -72,14 +101,19 @@ t=t:gsub("\r\n?","\n")
 e.writefile("/tmp/network",t)
 if(luci.sys.call("cmp -s /tmp/network /etc/config/network")==1)then
 e.writefile("/etc/config/network",t)
-luci.sys.call("/etc/init.d/network restart >/dev/null")
 end
 e.remove("/tmp/network")
 end
 end
 end
 if nixio.fs.access("/etc/config/dhcp")then
-s:tab("dhcpconf",translate("配置DHCP"),translate("本页是配置/etc/config/DHCP的文档内容。应用保存后自动重启生效"))
+s:tab("dhcpconf",translate("配置DHCP"),translate("本页是配置/etc/config/DHCP的文档内容。编辑后点击重启按钮后生效"))
+o=s:taboption("dhcpconf",Button,"_dhrestart")
+o.inputtitle=translate("重启网络")
+o.inputstyle="apply"
+function o.write(e,e)
+luci.sys.exec("/etc/init.d/network restart >/dev/null")
+end
 conf=s:taboption("dhcpconf",Value,"dhcpconf",nil,translate("开头的数字符号（＃）或分号的每一行（;）被视为注释；删除（;）启用指定选项。"))
 conf.template="cbi/tvalue"
 conf.rows=50
@@ -93,14 +127,19 @@ t=t:gsub("\r\n?","\n")
 e.writefile("/tmp/dhcp",t)
 if(luci.sys.call("cmp -s /tmp/dhcp /etc/config/dhcp")==1)then
 e.writefile("/etc/config/dhcp",t)
-luci.sys.call("/etc/init.d/network restart >/dev/null")
 end
 e.remove("/tmp/dhcp")
 end
 end
 end
 if nixio.fs.access("/etc/config/firewall")then
-s:tab("firewallconf",translate("配置防火墙"),translate("本页是配置/etc/config/firewall的文档内容。应用保存后自动重启生效"))
+s:tab("firewallconf",translate("配置防火墙"),translate("本页是配置/etc/config/firewall的文档内容。编辑后点击重启按钮后生效"))
+o=s:taboption("firewallconf",Button,"_frestart")
+o.inputtitle=translate("重启防火墙")
+o.inputstyle="apply"
+function o.write(e,e)
+luci.sys.exec("/etc/init.d/firewall restart >/dev/null")
+end
 conf=s:taboption("firewallconf",Value,"firewallconf",nil,translate("开头的数字符号（＃）或分号的每一行（;）被视为注释；删除（;）启用指定选项。"))
 conf.template="cbi/tvalue"
 conf.rows=50
@@ -114,14 +153,21 @@ t=t:gsub("\r\n?","\n")
 e.writefile("/tmp/firewall",t)
 if(luci.sys.call("cmp -s /tmp/firewall /etc/config/firewall")==1)then
 e.writefile("/etc/config/firewall",t)
-luci.sys.call("/etc/init.d/firewall restart >/dev/null")
 end
 e.remove("/tmp/firewall")
 end
 end
 end
 if nixio.fs.access("/etc/pcap-dnsproxy/Config.conf")then
-s:tab("pcapconf",translate("配置pcap-dnsproxy"),translate("本页是配置/etc/pcap-dnsproxy/Config.conf的文档内容。应用保存后自动重启生效"))
+s:tab("pcapconf",translate("配置pcap-dnsproxy"),translate("本页是配置/etc/pcap-dnsproxy/Config.conf的文档内容。编辑后点击重启按钮后生效"))
+if(luci.sys.call("pgrep -l /usr/sbin/Pcap_DNSProxy >/dev/null")==0)then
+o=s:taboption("pcapconf",Button,"_prestart")
+o.inputtitle=translate("重启Koolss")
+o.inputstyle="apply"
+function o.write(e,e)
+luci.sys.exec("/etc/init.d/shadowsocks restart >/dev/null")
+end
+end
 conf=s:taboption("pcapconf",Value,"pcapconf",nil,translate("开头的数字符号（＃）或分号的每一行（;）被视为注释；删除（;）启用指定选项。"))
 conf.template="cbi/tvalue"
 conf.rows=50
@@ -135,7 +181,6 @@ t=t:gsub("\r\n?","\n")
 e.writefile("/tmp/Config.conf",t)
 if(luci.sys.call("cmp -s /tmp/Config.conf /etc/pcap-dnsproxy/Config.conf")==1)then
 e.writefile("/etc/pcap-dnsproxy/Config.conf",t)
-luci.sys.call("/etc/init.d/pcap-dnsproxy restart >/dev/null")
 end
 e.remove("/tmp/Config.conf")
 end
