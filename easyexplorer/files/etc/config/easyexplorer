@@ -1,5 +1,5 @@
 
-config global
+config easyexplorer 'global'
 	option token ''
 	option enable '0'
 	option folder ''

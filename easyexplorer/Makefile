@@ -2,8 +2,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=easyexplorer
-PKG_VERSION:=0.1.3
-PKG_RELEASE:=beta
+PKG_VERSION:=0.1.4
+PKG_RELEASE:=1
 
 include $(INCLUDE_DIR)/package.mk
 

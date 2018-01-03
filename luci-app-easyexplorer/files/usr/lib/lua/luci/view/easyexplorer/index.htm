@@ -8,7 +8,7 @@
 	XHR.poll(2, '<%=luci.dispatcher.build_url("admin", "services", "easyexplorer", "status")%>', null,
 		function(x, result)
 		{
-			var status = document.getElementsByClassName('ddnsto_status');
+			var status = document.getElementsByClassName('easyexplorer_status');
 			status[0].innerHTML = result.easyexplorer?'<b><font color=green><%=translate("RUNNING")%></font></b>':'<b><font color=red><%=translate("NOT RUNNING")%></font></b>';
 		}
 	);
