@@ -17,17 +17,16 @@ CONFIG=easyexplorer
 LOGFILE=/var/log/$CONFIG.log
 
 config_t_get() {
-	local index=0
-	[ -n "$4" ] && index=$4
-	local ret=$(uci get $CONFIG.@$1[$index].$2 2>/dev/null)
-	echo ${ret:=$3}
+	local ret=$(uci get $CONFIG.$1.$2 2>/dev/null)
+	[ -z "$ret" -a -n "$3" ] && ret=$3
+	echo $ret
 }
 
 get_config()
 {
-	config_get enable $1 enable 0
-	config_get token $1 token
-	config_get folder $1 folder
+	enable=$(config_t_get global enable 0)
+	token=$(config_t_get global token)
+	folder=$(config_t_get global folder)
 }
 
 delay_start() {
@@ -45,8 +44,7 @@ boot() {
 }
 
 start() {
-	config_load $CONFIG
-	config_foreach get_config global
+	get_config
 	[ "$enable" -ne 1 ] && exit 0
 	[ -z "$token" ] && exit 0
 	service_start /usr/bin/easyexplorer -u $token -share $folder >/dev/null 2>&1 &
