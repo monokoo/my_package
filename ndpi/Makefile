@@ -37,7 +37,7 @@ endef
 
 define Package/ndpi/install
 	$(INSTALL_DIR) $(1)/usr/lib $(1)/etc $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/ndpi/lib/libndpi.so*  $(1)/usr/lib/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/ndpi/src/lib/.libs/libndpi.so*  $(1)/usr/lib/
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/ndpi/example/protos.txt $(1)/etc/protos.txt
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/ndpi/example/ndpiReader $(1)/usr/bin/ndpi
 endef
