@@ -168,10 +168,10 @@ get_jump_mode(){
 add_koolproxy_cru(){
 	[ "$GLOBAL_MODE" == "adblock" ] && {
 		time=$(config_t_get global time_update)
-		wirtecron=$(cat /etc/crontabs/root | grep "00 $time * * *" | grep koolproxy)
+		wirtecron=$(cat /etc/crontabs/root | grep "0 $time * * *" | grep "koolproxy update")
 		if [ -z "$wirtecron" ];then
-		sed -i '/koolproxy update/d' /etc/crontabs/root >/dev/null 2>&1
-		echo "0 $time * * * /etc/init.d/koolproxy update" >> /etc/crontabs/root 
+			sed -i '/koolproxy update/d' /etc/crontabs/root >/dev/null 2>&1
+			echo "0 $time * * * /etc/init.d/koolproxy update" >> /etc/crontabs/root 
 		fi
 	}
 }
@@ -289,16 +289,13 @@ del_dns_takeover(){
 write_reboot_job(){
 	[ ! -f  "/etc/crontabs/root" ] && touch /etc/crontabs/root
 	CRONTAB=`cat /etc/crontabs/root | grep "koolproxy restart"`
+	[ -n "$CRONTAB" ] && sed -i '/koolproxy restart/d' /etc/crontabs/root >/dev/null 2>&1
 	if [ "$REBOOT_MODE" == "regular" ]; then
-		[ -z "$CRONTAB" ] && {
-			regular_time=$(config_t_get global regular_time 5)
-			echo "0 $regular_time * * * /etc/init.d/koolproxy restart" >> /etc/crontabs/root
-		}
+		regular_time=$(config_t_get global regular_time 5)
+		echo "0 $regular_time * * * /etc/init.d/koolproxy restart" >> /etc/crontabs/root
 	elif [ "$REBOOT_MODE" == "interval" ]; then
-		[ -z "$CRONTAB" ] && {
-			interval_time=$(config_t_get global interval_time 24)
-			echo "0 */$interval_time * * * /etc/init.d/koolproxy restart" >> /etc/crontabs/root
-		}
+		interval_time=$(config_t_get global interval_time 24)
+		echo "0 */$interval_time * * * /etc/init.d/koolproxy restart" >> /etc/crontabs/root
 	fi
 }
 

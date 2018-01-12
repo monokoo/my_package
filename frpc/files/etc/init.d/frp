@@ -128,16 +128,16 @@ frp_write_bool() {
 
 frp_add_cru(){
 time=$1
-if [ ! -f "/etc/crontabs/root" ] || [ -z "$(cat /etc/crontabs/root | grep frp)" ]; then
-  sed -i '/frp/d' /etc/crontabs/root >/dev/null 2>&1
-  echo "*/$time * * * * /etc/init.d/frp restart" >> /etc/crontabs/root 
+local cmd="*/$time * * * * /etc/init.d/frp restart"
+if [ ! -f "/etc/crontabs/root" ] || [ $(cat /etc/crontabs/root | grep "$cmd" | wc -l) -eq 0 ]; then
+  sed -i '/frp restart/d' /etc/crontabs/root >/dev/null 2>&1
+  echo "$cmd" >> /etc/crontabs/root 
 fi
-
 }
 
 frp_del_cru(){
-if [ ! -f "/etc/crontabs/root" ] || [ -n "$(cat /etc/crontabs/root | grep frp)" ]; then
-  sed -i '/frp/d' /etc/crontabs/root >/dev/null 2>&1
+if [ ! -f "/etc/crontabs/root" ] || [ -n "$(cat /etc/crontabs/root | grep "frp restart")" ]; then
+  sed -i '/frp restart/d' /etc/crontabs/root >/dev/null 2>&1
 fi
 }
 
