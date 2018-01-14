@@ -45,10 +45,12 @@ start() {
 	config_get send_mode timing_message send_mode send_mode
 	[ "$enabled" -gt 0 ] && [ -n "$sckey" ] || exit
 	
+	/etc/init.d/serverchan enable
 	[ "$send_mode" != "disable" ] && sc_add_cru
 }
 
 stop()
 {
 	sc_del_cru
+	/etc/init.d/serverchan disable
 }

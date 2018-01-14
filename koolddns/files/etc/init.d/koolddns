@@ -95,8 +95,10 @@ start() {
 	local enabled=$(uci get koolddns.@global[0].enabled)
 	[ "$enabled" -eq 0 ] && exit
 	add_cru
+	/etc/init.d/koolddns enable
 }
 
 stop() {
 	del_cru
+	/etc/init.d/koolddns disable
 }

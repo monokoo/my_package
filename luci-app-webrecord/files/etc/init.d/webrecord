@@ -44,10 +44,12 @@ start(){
 	iptables -t filter -N WEB_MONITOR
 	iptables -t filter -I FORWARD -m comment --comment "Rule For Control" -j WEB_MONITOR
   add_rule
+  /etc/init.d/webrecord enable
 }
 stop(){
   iptables -t filter -D FORWARD -m comment --comment "Rule For Control" -j WEB_MONITOR
   iptables -t filter -F WEB_MONITOR
   iptables -t filter -X WEB_MONITOR
+  /etc/init.d/webrecord disable
 }
 

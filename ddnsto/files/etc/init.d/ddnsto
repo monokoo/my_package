@@ -49,6 +49,7 @@ start() {
 	[ "$enable" -ne 1 ] && exit 0
 	[ -z "$token" ] && exit 0
 	service_start /usr/bin/ddnsto -u $token -d >/dev/null 2>&1 &
+	/etc/init.d/ddnsto enable
 	logger -t ddnsto 'Start ddnsto service'
 }
 
@@ -60,6 +61,7 @@ stop() {
 			kill -9 $pid >/dev/null 2>&1 &
 		done
 	}
+	/etc/init.d/ddnsto disable
 	logger -t ddnsto 'Stop ddnsto service'
 }
 

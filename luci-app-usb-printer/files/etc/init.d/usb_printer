@@ -6,6 +6,7 @@ START=70
 
 stop() {
 	killall p910nd 2>/dev/null
+	/etc/init.d/usb_printer disable
 }
 
 start() {
@@ -14,6 +15,7 @@ start() {
 
 		/usr/bin/usb_printer_hotplug "$product" add
 	done
+	/etc/init.d/usb_printer enable
 }
 
 restart() {

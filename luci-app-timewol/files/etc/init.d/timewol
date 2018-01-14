@@ -68,7 +68,9 @@ done
 start() {
     ! load_config && exit 0
     add_rule
+	/etc/init.d/timewol enable
 }
 stop() {
 	sed -i '/etherwake/d' /etc/crontabs/root >/dev/null 2>&1
+	/etc/init.d/timewol disable
 }

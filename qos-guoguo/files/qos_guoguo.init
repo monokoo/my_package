@@ -714,6 +714,7 @@ stop()
 	iptables -t mangle -X qos_ingress 2>/dev/null
 	iptables -t mangle -X qos_egress 2>/dev/null
 	$echo_off
+	/etc/init.d/qos_guoguo disable
 
 }
 
@@ -752,7 +753,7 @@ start()
 		load_all_config_options "$config_file_name" "global"
 		initialize_qos
 	fi
-
+	/etc/init.d/qos_guoguo enable
 	rm -rf "$lock_file"
 
 }

@@ -51,6 +51,7 @@ start()
 		iptables -t filter -I INPUT -p tcp --dport $port -m comment --comment "Rule For VLMCSD" -j ACCEPT > /dev/null 2>&1
 	}
 	/etc/init.d/dnsmasq restart
+	/etc/init.d/vlmcsd enable
 }
 
 stop()
@@ -58,4 +59,5 @@ stop()
 	del_web_port
 	kill -9 $(ps|grep '/usr/bin/vlmcsd'|grep -v 'grep'|awk '{print$1}') 2>/dev/null
 	del_srv_host
+	/etc/init.d/vlmcsd disable
 }

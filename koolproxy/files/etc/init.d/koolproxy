@@ -322,6 +322,7 @@ start() {
 	dns_takeover
 	add_koolproxy_cru
 	write_reboot_job
+	/etc/init.d/koolproxy enable
 	rm -f "$LOCK_FILE"
 	return 0
 }
@@ -337,5 +338,6 @@ stop() {
 	ipset -X adblock >/dev/null 2>&1 &
 	rm -f $LOGFILE
 	kill -9 $(ps|grep '/usr/share/koolproxy/koolproxy'|grep -v 'grep'|awk '{print$1}') >/dev/null 2>&1
+	/etc/init.d/koolproxy disable
 	stop_dnsmasq && restart_dnsmasq
 }

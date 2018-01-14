@@ -70,6 +70,7 @@ start()
 	mod=`lsmod |grep -w tun`
 	[ -z "$mod" ] && modprobe tun
 	/usr/bin/env LANG=en_US.UTF-8 /usr/share/softethervpn/vpnserver start >/dev/null 2>&1
+	/etc/init.d/softethervpn enable
 	i=900
 	until [ ! -z "$tap" ]
 	do
@@ -90,4 +91,5 @@ stop()
 {
 	/usr/bin/env LANG=en_US.UTF-8 /usr/share/softethervpn/vpnserver stop >/dev/null 2>&1
 	del_rule
+	/etc/init.d/softethervpn disable
 }
