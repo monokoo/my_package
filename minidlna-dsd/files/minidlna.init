@@ -89,11 +89,9 @@ start() {
 
 	mkdir -m 0755 -p $db_dir
 	mkdir -m 0755 -p $log_dir
-	/etc/init.d/minidlna enable
 	service_start /usr/bin/minidlna -f "$MINIDLNA_CONFIG_FILE"
 }
 
 stop() {
 	service_stop /usr/bin/minidlna
-	/etc/init.d/minidlna disable
 }

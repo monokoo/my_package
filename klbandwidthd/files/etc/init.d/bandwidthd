@@ -72,7 +72,6 @@ start() {
 	[ -e /www/bandwidthd ] || ln -s /etc/bandwidthd /www/bandwidthd
 	rm -f /etc/bandwidthd.conf
 	touch /etc/bandwidthd.conf
-	/etc/init.d/bandwidthd enable
 	
 	get_lan
 	config_load bandwidthd
@@ -98,6 +97,5 @@ start() {
 }
 
 stop() {
-	/etc/init.d/bandwidthd disable
 	service_stop /usr/sbin/bandwidthd
 }

@@ -48,7 +48,6 @@ start() {
 	[ "$enable" -ne 1 ] && exit 0
 	[ -z "$token" ] && exit 0
 	service_start /usr/bin/easyexplorer -u $token -share $folder >/dev/null 2>&1 &
-	/etc/init.d/easyexplorer enable
 	logger -t EasyExplorer 'Start easyexplorer service'
 }
 
@@ -60,7 +59,6 @@ stop() {
 			kill -9 $pid >/dev/null 2>&1 &
 		done
 	}
-	/etc/init.d/easyexplorer disable
 	logger -t EasyExplorer 'Stop easyexplorer service'
 }
 

@@ -77,12 +77,10 @@ start(){
 	iptables -t filter -N WEBURL
 	iptables -t filter -I FORWARD -m comment --comment "Rule For Control" -j WEBURL
   add_rule
-  /etc/init.d/weburl enable
 }
 stop(){
   iptables -t filter -D FORWARD -m comment --comment "Rule For Control" -j WEBURL
   iptables -t filter -F WEBURL
   iptables -t filter -X WEBURL
-  /etc/init.d/weburl disable
 }
 

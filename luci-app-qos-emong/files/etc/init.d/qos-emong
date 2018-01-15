@@ -5,12 +5,10 @@ START=99
 
 start(){
 /usr/bin/qos-emong start
-/etc/init.d/qos-emong enable
 }
 
 stop(){
 /usr/bin/qos-emong stop
-/etc/init.d/qos-emong disable
 }
 restart(){
 /usr/bin/qos-emong stop

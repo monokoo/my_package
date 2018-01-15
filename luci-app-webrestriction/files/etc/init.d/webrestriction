@@ -116,7 +116,6 @@ start(){
 	fi
 	#确保添加到FORWARD ACCEPT规则之后
 	iptables -t filter -I FORWARD $FA_INDEX -m comment --comment "Rule For Control" -j WEB_RESTRICTION
-	/etc/init.d/webrestriction enable
 
 }
 stop(){
@@ -127,5 +126,4 @@ stop(){
 		[ "`iptables -t nat -L PREROUTING |grep SHADOWSOCKS 2>/dev/null |wc -l`" -gt 0 ] && del_rule SHADOWSOCKS
 		[ "`iptables -t nat -L PREROUTING |grep KOOLPROXY 2>/dev/null |wc -l`" -gt 0 ] && del_rule KOOLPROXY
 	}
-	/etc/init.d/webrestriction disable
 }

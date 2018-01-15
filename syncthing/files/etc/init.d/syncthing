@@ -51,7 +51,6 @@ start() {
 	
 	/usr/sbin/syncthingready $wan_enable $syncthing_port $CONPATH $LOGFILE $sharepath
 	service_start /usr/share/syncthing/syncthing -home $CONPATH -logfile $LOGFILE >/dev/null 2>&1 &
-	/etc/init.d/syncthing enable
 	logger -t syncthing 'Start syncthing service'
 }
 
@@ -60,6 +59,5 @@ stop() {
 	[ -f "/usr/share/syncthing/syncthing.old" ] && rm -f /usr/share/syncthing/syncthing.old
 	service_stop /usr/share/syncthing/syncthing >/dev/null 2>&1 &
 	logger -t syncthing 'Stop syncthing service'
-	/etc/init.d/syncthing disable
 }
 

@@ -7,10 +7,8 @@ start() {
 	/usr/sbin/vsftpd_prepare
 	service_start /usr/sbin/vsftpd_wrapper ipv4
 	service_start /usr/sbin/vsftpd_wrapper ipv6
-	/etc/init.d/vsftpd enable
 }
 
 stop() {
 	service_stop /usr/sbin/vsftpd
-	/etc/init.d/vsftpd disable
 }

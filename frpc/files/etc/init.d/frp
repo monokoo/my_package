@@ -198,8 +198,8 @@ start() {
 		service_start /usr/bin/frpc -c $tmpconf
 
 	[ "$time" -gt 0 ] && frp_add_cru $time
-	/etc/init.d/frp enable
 	[ -z "$(pgrep /usr/bin/frpc)" ] && echo_date "frp服务启动失败，请检查服务端 “TCP多路复用(tcp_mux)”设置，确保与客户端完全一致！"
+
 	return 0
 }
 
@@ -210,6 +210,5 @@ stop() {
 		service_stop /usr/bin/frpc
 		Reduce_Log $LOGFILE
 	fi
-	/etc/init.d/frp disable
 	return 0
 }

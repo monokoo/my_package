@@ -66,11 +66,9 @@ start(){
 	iptables -t filter -N PROTOCOL_FILTER
 	iptables -I FORWARD -m comment --comment "Rule For Control" -j PROTOCOL_FILTER
   add_rule
-  /etc/init.d/protocolfiltering enable
 }
 stop(){
   iptables -D FORWARD -m comment --comment "Rule For Control" -j PROTOCOL_FILTER
   iptables -t filter -F PROTOCOL_FILTER
   iptables -t filter -X PROTOCOL_FILTER
-  /etc/init.d/protocolfiltering disable
 }
