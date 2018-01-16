@@ -43,12 +43,12 @@ fi
 remoteresolve2ip() {
 	#remoteresolve2ip cloudxnsdomain<string>
 	cloudxnsdomain=$1
-	tmp_ip=`drill @lv3ns1.ffdns.net $cloudxnsdomain 2>/dev/null |grep 'IN'|awk -F ' ' '{print $5}'|grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}"|head -n1`
+	tmp_ip=`drill @lv3ns1.ffdns.net $cloudxnsdomain 2>/dev/null |grep 'IN'|awk '{print $5}'|grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}"|head -n1`
 	if [ "Z$tmp_ip" == "Z" ]; then
-		tmp_ip=`drill @lv3ns2.ffdns.net $cloudxnsdomain 2>/dev/null |grep 'IN'|awk -F ' ' '{print $5}'|grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}"|head -n1`
+		tmp_ip=`drill @lv3ns2.ffdns.net $cloudxnsdomain 2>/dev/null |grep 'IN'|awk '{print $5}'|grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}"|head -n1`
 	fi
 	if [ "Z$tmp_ip" == "Z" ]; then
-		tmp_ip=`dig @114.114.115.115 $cloudxnsdomain 2>/dev/null |grep 'IN'|awk -F ' ' '{print $5}'|grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}"|head -n1`
+		tmp_ip=`dig @114.114.115.115 $cloudxnsdomain 2>/dev/null |grep 'IN'|awk '{print $5}'|grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}"|head -n1`
 	fi
 	echo -n $tmp_ip
 }
@@ -56,12 +56,12 @@ remoteresolve2ip() {
 resolve2ip() {
 	#resolve2ip cloudxnsdomain<string>
 	cloudxnsdomain=$1
-	localtmp_ip=`nslookup $cloudxnsdomain lv3ns1.ffdns.net 2>/dev/null | sed -n 's/Address 1: \([0-9.]*\)/\1/p' | sed -n '2p' | awk -F' ' '{print $1}'`
+	localtmp_ip=`nslookup $cloudxnsdomain lv3ns1.ffdns.net 2>/dev/null | sed -n 's/Address 1: \([0-9.]*\)/\1/p'| awk '{print $1}'|tail -1`
 	if [ "Z$localtmp_ip" == "Z" ]; then
-		localtmp_ip=`nslookup $cloudxnsdomain 1.2.4.8 2>/dev/null | sed -n 's/Address 1: \([0-9.]*\)/\1/p' | sed -n '2p' | awk -F' ' '{print $1}'`
+		localtmp_ip=`nslookup $cloudxnsdomain 223.5.5.5 2>/dev/null | sed -n 's/Address 1: \([0-9.]*\)/\1/p'| awk '{print $1}'|tail -1`
 	fi
 	if [ "Z$localtmp_ip" == "Z" ]; then
-		localtmp_ip=`nslookup $cloudxnsdomain 114.114.115.115 2>/dev/null | sed -n 's/Address 1: \([0-9.]*\)/\1/p' | sed -n '2p' | awk -F' ' '{print $1}'`
+		localtmp_ip=`nslookup $cloudxnsdomain 114.114.115.115 2>/dev/null | sed -n 's/Address 1: \([0-9.]*\)/\1/p'| awk '{print $1}'|tail -1`
 	fi
 	echo -n $localtmp_ip
 }

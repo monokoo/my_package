@@ -62,12 +62,12 @@ remoteresolve2ip() {
 resolve2ip() {
 	#resolve2ip alidomain<string>
 	alidomain=$1
-	localtmp_ip=`nslookup $alidomain ns1.alidns.com 2>/dev/null | sed -n 's/Address 1: \([0-9.]*\)/\1/p' | sed -n '2p' | awk -F' ' '{print $1}'`
+	localtmp_ip=`nslookup $alidomain 2>/dev/null | sed -n 's/Address 1: \([0-9.]*\)/\1/p' | awk -F' ' '{print $1}'`
 	if [ "Z$localtmp_ip" == "Z" ]; then
-		localtmp_ip=`nslookup $alidomain ns2.alidns.com 2>/dev/null | sed -n 's/Address 1: \([0-9.]*\)/\1/p' | sed -n '2p' | awk -F' ' '{print $1}'`
+		localtmp_ip=`nslookup $alidomain ns2.alidns.com 2>/dev/null | sed -n 's/Address 1: \([0-9.]*\)/\1/p' | awk '{print $1}'|tail -1`
 	fi
 	if [ "Z$localtmp_ip" == "Z" ]; then
-		localtmp_ip=`nslookup $alidomain 223.5.5.5 2>/dev/null | sed -n 's/Address 1: \([0-9.]*\)/\1/p' | sed -n '2p' | awk -F' ' '{print $1}'`
+		localtmp_ip=`nslookup $alidomain 223.5.5.5 2>/dev/null | sed -n 's/Address 1: \([0-9.]*\)/\1/p'| awk '{print $1}'|tail -1`
 	fi
 	echo -n $localtmp_ip
 }

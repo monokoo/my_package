@@ -69,12 +69,12 @@ remoteresolve2ip() {
 resolve2ip() {
 	#resolve2ip dnspoddomain<string>
 	dnspoddomain=$1
-	localtmp_ip=`nslookup $dnspoddomain f1g1ns1.dnspod.net 2>/dev/null | sed -n 's/Address 1: \([0-9.]*\)/\1/p' | sed -n '2p' | awk -F' ' '{print $1}'`
+	localtmp_ip=`nslookup $dnspoddomain f1g1ns1.dnspod.net 2>/dev/null | sed -n 's/Address 1: \([0-9.]*\)/\1/p'| awk '{print $1}'|tail -1`
 	if [ "Z$localtmp_ip" == "Z" ]; then
-		localtmp_ip=`nslookup $dnspoddomain 119.29.29.29 2>/dev/null | sed -n 's/Address 1: \([0-9.]*\)/\1/p' | sed -n '2p' | awk -F' ' '{print $1}'`
+		localtmp_ip=`nslookup $dnspoddomain 119.29.29.29 2>/dev/null | sed -n 's/Address 1: \([0-9.]*\)/\1/p'| awk '{print $1}'|tail -1`
 	fi
 	if [ "Z$localtmp_ip" == "Z" ]; then
-		localtmp_ip=`nslookup $dnspoddomain 114.114.115.115 2>/dev/null | sed -n 's/Address 1: \([0-9.]*\)/\1/p' | sed -n '2p' | awk -F' ' '{print $1}'`
+		localtmp_ip=`nslookup $dnspoddomain 114.114.115.115 2>/dev/null | sed -n 's/Address 1: \([0-9.]*\)/\1/p'| awk'{print $1}'|tail -1`
 	fi
 	echo -n $localtmp_ip
 }
