@@ -83,12 +83,15 @@ del_cru(){
 }
 
 add_cru(){
-	local time=$(uci get koolddns.@global[0].time)
-	local cmd="*/$time * * * * /etc/init.d/koolddns update"
-	if [ ! -f "/etc/crontabs/root" ] || [ $(cat /etc/crontabs/root | grep "$cmd" | wc -l) -eq 0 ]; then
-		sed -i '/koolddns update/d' /etc/crontabs/root >/dev/null 2>&1
-		echo "$cmd" >> /etc/crontabs/root
-	fi
+	local time=$(uci -q get koolddns.@global[0].time)
+	[ -z "$time" ] && time=0
+	[ "$time" -gt 0 ] && {
+		local cmd="*/$time * * * * /etc/init.d/koolddns update"
+		if [ ! -f "/etc/crontabs/root" ] || [ $(cat /etc/crontabs/root | grep "$cmd" | wc -l) -eq 0 ]; then
+			sed -i '/koolddns update/d' /etc/crontabs/root >/dev/null 2>&1
+			echo "$cmd" >> /etc/crontabs/root
+		fi
+	}
 }
 
 start() {
