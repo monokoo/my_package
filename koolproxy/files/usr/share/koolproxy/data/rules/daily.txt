@@ -1,6 +1,7 @@
 !x  -----------------------------------------------------------------------------------------------------------------
-!x  -----[KoolProxy Plus 3.6.3]
-!x  -----update[rules]: 2018-1-3 23:03
+!x  -----[KoolProxy Plus 3.7.0]
+!x  -----update[rules]: 2018-1-17 15:02
+!x  -----QQ group: 595300867<1-group> 203726739<2-group> 369773525<3-group>
 !x  -----Thanks: From KP Rule Group -- <houzi-> <today2004> <a-len> <xiaoxia> <leo> <Carseason>
 !x  -----Thanks for help: <CJX> <yiclear> <xwhyz> 
 !x  -----Tip: Welcome to rule group,Please Send mail to <wojiaolinmu008@gmail.com>
@@ -9,8 +10,10 @@
 ||dnvod.tv/w
 ||jb51.net/jslib/jquery/
 ||jb51.net/js/beitou.js
-jb51.net##.logom.fl,#txtlink,.logor.fr,.blank6,.topimg
-www.jb51.net##img[src^="http://files.jb51.net/image"]
+||jb51.net##.logom.fl,#txtlink,.logor.fr,.blank6,.topimg
+|http://www.jb51.net##img[src^="http://files.jb51.net/image"]
+|http:/*/fans/ad.php|
+||web.users.51.la
 !x  -----------------------------------------------------------------------------------------------------------------
 !|https://live.bilibili.com/*$r@/^https:\/\/(.*)/(\d*)/@http://$1/$2@
 !|https://www.bilibili.com/*$r@/^https:\/\/(.*)/(\d*)/@http://$1/$2@
@@ -21,6 +24,31 @@ www.jb51.net##img[src^="http://files.jb51.net/image"]
 |http://hot.cnbeta.com/assets/js/pages/article.js?v=$s@var CheckBlock=function(options)@@
 !||static.youku.com/$r@http://static.youku.com/*/v/swf/upsplayer/player_yknpsv.swf@http://koolshare.b0.upaiyun.com/kp/swf/dszw/youku.swf@
 !||static.youku.com/$r@http://static.youku.com/*/v/swf/upsplayer/loader.swf@http://koolshare.b0.upaiyun.com/kp/swf/dszw/youku.swf@
+!|https://www.feng.com##img[src^="http://bbs.feng.com/aodoo3/view.php?what=zone:"],div.left_light
+!|https://bbs.feng.com/$s@<div><script type="text/javascript">*<!-- header start -->@<!-- header start -->@
+!|https://www.feng.com##img[src^="http://bbs.feng.com/aodoo3/view.php?what=zone:"],div.left_light
+!||https://feng.com##DIV.wea_d_960_80,DIV[class^="wep_e_"][class$="0"],DIV.wep_e_wrap.clearfix,div.header_treasure,div.wea_d_panel_980.a_t,DIV.wrap.bbs_treasure > DIV.inner > UL[style],img[src^="http://bbs.feng.com/aodoo3/view.php?what=zone:"],div.left_light,div[class^="ad_90-"],img[src^="http://yes1.feng.com/view.php?what=zone:1"],img[src^="http://yes1.feng.com/view.php?what=zone:4"],img[src^="/images_new/ad-"],div.ad_1000,div.dd305,.a_pt,.store_products_wrap,.new_showyes
+!|https://bbs.feng.com##div.wp_show,A[href^="http://we.tm/"],[href="http://www.tutuapp.com/"]
+||addic7ed.com###M103396ScriptRootC132912
+|https://yes1.feng.com/js.php?n=
+|https://yes1.feng.com/x.js
+
+|https://share.acgnx.se##img[src="/images/gDqF4N4b.png"],img[src="/images/cjTQH5PQ.png"]
+|https://share.acgnx.se/images/gDqF4N4b.png
+|https://share.acgnx.se/images/cjTQH5PQ.png
+
+|https://wap.baquge.tw/files/article/html/*.html$s@<script type="text/javascript" src="/js/common.js"></script>@@
+||https://baquge.tw##.con_ad
+|https://sp*.baidu.com^*.gif?
+|https://code.zantainet.com^$script
+
+|http://t66y.com/htm_data$s@<br><img src='http://kk.51688.cc*style='cursor:pointer'>&nbsp;<br>@@
+|http://t66y.com/htm_data$s@<b><span class="f24">*</a></span></b><br>@@
+|http://t66y.com/htm_data$s@<b><span class="f14">*</a></span></b><br>@@
+|http://t66y.com/htm_data$s@<a href='http://www.viidii.info/?http* WIDTH="100%" HEIGHT=500></iframe><br><br>@@
+|http://t66y.com/htm_data$s@<br /><div class="tpc_content do_not_catch">*</span></span></a><br></blockquote><br><br><br>@<br /><div class="tpc_content do_not_catch">@
+|http://t66y.com/htm_data$s@<br /><div class="tpc_content do_not_catch"><img src='http*.gif' onclick="window.open('*;" style='cursor:pointer'>&nbsp;<br>@<br /><div class="tpc_content do_not_catch">@
+|http://t66y.com/htm_data$s@<br><img src='http*.gif' onclick="window.open('*;" style='cursor:pointer'>&nbsp;<br>@@
 !x  -----------------------------------------------------------------------------------------------------------------
 !|https://api.bilibili.com/x/web-show/res/loc?pf=0&id=160
 @@|http://music.163.com/eapi/ad/get?_nmclfl=1
@@ -33,6 +61,40 @@ www.jb51.net##img[src^="http://files.jb51.net/image"]
 |https://promotion.aliyun.com/promotion/adv/getAliyunAdv.
 |https://alimama.alicdn.com/
 ||https://mediav.com
+|https://jsjs.nthyn.com/
+|http://*/cpv/*.ashx?
+||https://jointreport-switch.com^
+||discuz.gtimg.cn/cloud/scripts/discuz_tips.js
+||ctsywy.com^
+|http://www.zimuku.cn/images/v2/js/bn.js
+|http://iyes.youku.com/adv?
+|https://ads.youtube.com
+||https://azabu-u.ac.jp
+||https://couchcoaster.jp
+||https://crt.comodoca.com
+||https://delivery.dmkt-sp.jp
+||https://ehg-youtube.hitbox.com
+||https://m-78.jp
+||https://nichibenren.or.jp
+||https://nicorette.co.kr
+||https://ssl-youtube.2cnt.net
+||https://youtube.112.2o7.net
+||https://youtube.2cnt.net
+|https://m.youtube.com/_get_ads
+|https://hudong.pl.youku.com/interact/player/get/plugins?
+|https://hudong.pl.youku.com/interact/web/get/timeLinePlugin?
+|https://hudong.pl.youku.com/jsapi/interact/playerPlugins.js
+|https://hudong.pl.youku.com/n/interact/player/get/plugins?
+|https://mp.weixin.qq.com/mp/ad_video_report?
+|http://wbapp.uve.weibo.com/wbapplua/
+|https://adimg.uve.weibo.com/public/
+|https://sdkconfig.ad.xiaomi.com/
+@@||cdn-thumb.fds.api.xiaomi.com/b2c-bbs
+|https://scss-prod-ue1-notif-22.adobesc.com/
+||https://17ce.com/118/
+|http://ark.letv.com//adx?adzone=
+@@|http://image.box.xiaomi.com/mfsv2/
+!|https://hm.baidu.com/h
 !x  -----------------------------------------------------------------------------------------------------------------
 
 !x  -----------------------------------------------------------------------------------------------------------------
