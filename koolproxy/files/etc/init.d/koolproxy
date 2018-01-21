@@ -51,28 +51,8 @@ load_acl(){
 	fi
 }
 
-get_rule()
-{
-  local enabled
-  local kp_desc
-  local kp_url
-	config_get enabled $1 enabled
-	config_get kp_desc $1 kp_desc
-	config_get kp_url $1 kp_url
-	if [ $enabled -eq 1 ] && [ -n "kp_desc" ] && [ -n "kp_url" ]; then
-    kpupdate "$kp_desc" "$kp_url" >> $LOGFILE
-  else
-    echo_date ================== 规则更新 =================>>$LOGFILE
-    echo_date >>$LOGFILE
-    echo_date ① 检测【$kp_desc】未启用，跳过更新！>> $LOGFILE
-    echo_date >>$LOGFILE
-  fi
-}
-
 update(){
 	rm -f $LOGFILE
-	#config_load koolproxy
-	#config_foreach get_rule source
 	hoston=$(config_t_get global adblock 0)
 	[ $hoston -eq 1 ] && /usr/sbin/adblockplus >>$LOGFILE 2>&1 &
 }
