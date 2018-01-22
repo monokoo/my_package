@@ -15,12 +15,20 @@ t:tab("other",translate("Other Settings"))
 t:tab("log",translate("Client Log"))
 e=t:taboption("base",Flag, "enabled", translate("Enabled"))
 e.rmempty=false
-e=t:taboption("base",Value, "server_addr", translate("Server"))
+e=t:taboption("base",Value, "server_addr", translate("Server Address"))
 e.optional=false
 e.rmempty=false
-e=t:taboption("base",Value, "server_port", translate("Port"))
+e=t:taboption("base",Value, "server_port", translate("Server Port"))
 e.datatype = "port"
 e.optional=false
+e.rmempty=false
+local sys_hostname=luci.sys.hostname()
+e=t:taboption("base",Value, "proxy_user", translate("Frpc Proxy Name"))
+e.default = sys_hostname
+e.optional=false
+e:value(sys_hostname)
+e=t:taboption("base",Flag, "tcp_mux", translate("TCP Stream Multiplexing"), translate("Default is Ture. <font color=\"red\">This feature in frps.ini and frpc.ini must be the same.</font>"))
+e.default = "1"
 e.rmempty=false
 e=t:taboption("base",Value, "privilege_token", translate("Privilege Token"), translate("Time duration between server of frpc and frps mustn't exceed 15 minutes."))
 e.optional=false
@@ -35,13 +43,30 @@ e.rmempty=false
 e=t:taboption("other",Flag, "login_fail_exit", translate("Exit program when first login failed"),translate("decide if exit program when first login failed, otherwise continuous relogin to frps."))
 e.default = "1"
 e.rmempty=false
-e=t:taboption("other",Flag, "tcp_mux", translate("TCP Stream Multiplexing"), translate("Default is Ture. This feature in frps.ini and frpc.ini must be same."))
-e.default = "1"
-e.rmempty=false
 e=t:taboption("other",ListValue, "protocol", translate("Protocol Type"),translate("Frp support kcp protocol since v0.12.0"))
 e.default = "tcp"
 e:value("tcp",translate("TCP Protocol"))
 e:value("kcp",translate("KCP Protocol"))
+e=t:taboption("other",Value, "admin_addr", translate("Admin Address"))
+e.default = "127.0.0.1"
+e.optional=false
+e.rmempty=false
+e=t:taboption("other",Value, "admin_port", translate("Admin Port"))
+e.datatype = "port"
+e.default = "7400"
+e.optional=false
+e.rmempty=false
+e=t:taboption("other",Flag, "enable_admin_user", translate("Enabled Admin User"))
+e.default = "0"
+e.rmempty=false
+e=t:taboption("other",Value, "admin_user", translate("Admin UserName"))
+e.default = "admin"
+e.optional=false
+e:depends("enable_admin_user",1)
+e=t:taboption("other",Value, "admin_pwd", translate("Admin Password"))
+e.default = "admin"
+e.optional=false
+e:depends("enable_admin_user",1)
 e=t:taboption("other",Flag, "enable_http_proxy", translate("Connect frps by HTTP PROXY"), translate("frpc can connect frps using HTTP PROXY"))
 e.default = "0"
 e.rmempty=false

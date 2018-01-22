@@ -21,6 +21,24 @@ msgstr "HTTP穿透服务端口"
 msgid "Vhost HTTPS Port"
 msgstr "HTTPS穿透服务端口"
 
+msgid "Frpc Proxy Name"
+msgstr "Frpc 代理名称"
+
+msgid "Admin Address"
+msgstr "Admin 地址"
+
+msgid "Admin Port"
+msgstr "Admin 端口"
+
+msgid "Enabled Admin User"
+msgstr "启用 Admin 访问用户"
+
+msgid "Admin UserName"
+msgstr "Admin 用户名"
+
+msgid "Admin Password"
+msgstr "Admin 密码"
+
 msgid "Protocol Type"
 msgstr "协议类型"
 
@@ -66,8 +84,8 @@ msgstr "frpc 所在机器和 frps 所在机器的时间相差不能超过 15 分
 msgid "TCP Stream Multiplexing"
 msgstr "TCP 多路复用"
 
-msgid "Default is Ture. This feature in frps.ini and frpc.ini must be same."
-msgstr "该功能默认启用，该配置项在服务端和客户端必须保持一致。"
+msgid "Default is Ture. <font color=\"red\">This feature in frps.ini and frpc.ini must be the same.</font>"
+msgstr "该功能默认启用，<font color=\"red\">请确保服务端和客户端配置一致。</font>"
 
 msgid "Enable Connection Pool"
 msgstr "启用连接池功能"

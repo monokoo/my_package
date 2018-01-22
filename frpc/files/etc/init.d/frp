@@ -149,8 +149,8 @@ boot() {
 start() {
 
 	config_load "frp"
-	local enabled server_addr server_port time privilege_token tcp_mux enable_cpool 
-	local pool_count log_level log_max_days login_fail_exit http_proxy protocol
+	local enabled server_addr server_port time privilege_token tcp_mux enable_cpool proxy_user admin_user admin_pwd
+	local pool_count log_level log_max_days login_fail_exit http_proxy protocol admin_addr admin_port
 
 	config_get_bool enabled common enabled 1
 
@@ -165,7 +165,12 @@ start() {
 	config_get log_max_days common log_max_days
 	config_get http_proxy common http_proxy
 	config_get protocol common protocol
-	config_get time common time
+	config_get proxy_user common proxy_user
+	config_get admin_addr common admin_addr "127.0.0.1"
+	config_get admin_port common admin_port "7400"
+	config_get admin_user common admin_user
+	config_get admin_pwd common admin_pwd
+	config_get time common time 0
 
 	mkdir -p /var/etc/frp
 	[ ! -f "$LOGFILE" ] && touch $LOGFILE
@@ -179,11 +184,18 @@ start() {
 	echo "[common]" >$tmpconf
 	echo "server_addr=${server_addr}" >>$tmpconf
 	echo "server_port=${server_port}" >>$tmpconf
+	[ -n "$proxy_user" ] && echo "user=${proxy_user}" >>$tmpconf
 	echo "privilege_token=${privilege_token}" >>$tmpconf
 	echo "log_level=${log_level}" >>$tmpconf
 	echo "log_max_days=${log_max_days}" >>$tmpconf
 	echo "protocol=${protocol}" >>$tmpconf
 	echo "log_file=$LOGFILE" >>$tmpconf
+	
+	
+	echo "admin_addr=${admin_addr}" >>$tmpconf
+	echo "admin_port=${admin_port}" >>$tmpconf
+	[ -n "$admin_user" ] && echo "admin_user=${admin_user}" >>$tmpconf
+	[ -n "$admin_pwd" ] && echo "admin_pwd=${admin_pwd}" >>$tmpconf
 	[ -n "$http_proxy" ] && echo "http_proxy=$http_proxy" >>$tmpconf
 	[ -n "$pool_count" ] && echo "pool_count=$pool_count" >>$tmpconf
 
@@ -198,7 +210,7 @@ start() {
 		service_start /usr/bin/frpc -c $tmpconf
 
 	[ "$time" -gt 0 ] && frp_add_cru $time
-	[ -z "$(pgrep /usr/bin/frpc)" ] && echo_date "frp服务启动失败，请检查服务端 “TCP多路复用(tcp_mux)”设置，确保与客户端完全一致！"
+	[ -z "$(pgrep /usr/bin/frpc)" ] && echo_date "frp服务启动失败，请检查服务端 “TCP多路复用(tcp_mux)”设置，确保与客户端完全一致！如无异常请忽略本信息！"
 
 	return 0
 }
