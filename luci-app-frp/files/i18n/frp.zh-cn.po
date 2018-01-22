@@ -30,7 +30,13 @@ msgstr "Admin 地址"
 msgid "Admin Port"
 msgstr "Admin 端口"
 
-msgid "Enabled Admin User"
+msgid "Proxy Status"
+msgstr "查看代理状态"
+
+msgid "Click to See"
+msgstr "点击查看"
+
+msgid "Enable Admin User"
 msgstr "启用 Admin 访问用户"
 
 msgid "Admin UserName"

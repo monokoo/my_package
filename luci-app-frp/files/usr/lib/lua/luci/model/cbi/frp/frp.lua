@@ -40,6 +40,10 @@ e.rmempty=false
 e=t:taboption("base",Value, "vhost_https_port", translate("Vhost HTTPS Port"))
 e.datatype = "port"
 e.rmempty=false
+e=t:taboption("base",Value,"time",translate("Service registration interval"),translate("0 means disable this feature, unit: min"))
+e.datatype="range(0,59)"
+e.default=30
+e.rmempty=false
 e=t:taboption("other",Flag, "login_fail_exit", translate("Exit program when first login failed"),translate("decide if exit program when first login failed, otherwise continuous relogin to frps."))
 e.default = "1"
 e.rmempty=false
@@ -47,16 +51,29 @@ e=t:taboption("other",ListValue, "protocol", translate("Protocol Type"),translat
 e.default = "tcp"
 e:value("tcp",translate("TCP Protocol"))
 e:value("kcp",translate("KCP Protocol"))
-e=t:taboption("other",Value, "admin_addr", translate("Admin Address"))
+local lan_ip=uci.get("network","lan","ipaddr")
+e=t:taboption("other",ListValue, "admin_addr", translate("Admin Address"))
 e.default = "127.0.0.1"
 e.optional=false
 e.rmempty=false
+e:value("127.0.0.1")
+e:value(lan_ip)
 e=t:taboption("other",Value, "admin_port", translate("Admin Port"))
 e.datatype = "port"
 e.default = "7400"
 e.optional=false
 e.rmempty=false
-e=t:taboption("other",Flag, "enable_admin_user", translate("Enabled Admin User"))
+if(luci.sys.call("pgrep -l /usr/bin/frpc >/dev/null")==0)then
+e=t:taboption("other",Button,"_pstatus",translate("Proxy Status"))
+e.inputtitle=translate("Click to See")
+e.inputstyle="apply"
+function e.write(e,e)
+local admin_port=uci.get("frp","common","admin_port")
+--luci.sys.exec("frpc status -c /var/etc/frp/frpc.conf >>/var/etc/frp/frpc.log")
+luci.http.redirect("http://"..lan_ip..":"..admin_port.."/api/status")
+end
+end
+e=t:taboption("other",Flag, "enable_admin_user", translate("Enable Admin User"))
 e.default = "0"
 e.rmempty=false
 e=t:taboption("other",Value, "admin_user", translate("Admin UserName"))
@@ -83,10 +100,6 @@ e.datatype="uinteger"
 e.default = "1"
 e:depends("enable_cpool",1)
 e.optional=false
-e=t:taboption("base",Value,"time",translate("Service registration interval"),translate("0 means disable this feature, unit: min"))
-e.datatype="range(0,59)"
-e.default=30
-e.rmempty=false
 e=t:taboption("other",ListValue, "log_level", translate("Log Level"))
 e.default = "warn"
 e:value("trace",translate("Trace"))
