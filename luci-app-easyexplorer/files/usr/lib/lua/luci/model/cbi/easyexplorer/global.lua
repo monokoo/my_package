@@ -31,7 +31,7 @@ end
 if(luci.sys.call("pgrep /usr/bin/easyexplorer >/dev/null")==0)then
 local n=uci.get("network","lan","ipaddr")
 e=t:option(Button,"Configuration",translate("WEB控制台"))
-e.inputtitle=translate("打开网站")
+e.inputtitle=translate("点击访问")
 e.inputstyle="reload"
 e.write=function()
 luci.http.redirect("http://"..n..":8899")
