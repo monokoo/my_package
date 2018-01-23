@@ -20,7 +20,7 @@
  				);
  
 +			if (e = document.getElementById('temperature'))
-+				e.innerHTML = String.format('%s\℃' ,info.temperature / 1000);
++				e.innerHTML = String.format('%.2f\℃' ,info.temperature / 1000);
 +
  			if (e = document.getElementById('memtotal'))
  				e.innerHTML = progressbar(
