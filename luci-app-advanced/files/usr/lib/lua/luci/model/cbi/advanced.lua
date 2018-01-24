@@ -16,7 +16,7 @@ o:value("none",translate("Current Mode"))
 o:value("apmode",translate("AP Mode"))
 o:value("dhcpmode",translate("Router Mode"))
 
-if(luci.sys.call("cat /etc/os-release | grep LEDE_BOARD | grep -w bcm53xx >/dev/null")==0)then
+if(luci.sys.call("cat /etc/openwrt_release | grep DISTRIB_TARGET | grep -w bcm53xx >/dev/null")==0)then
 o=s:taboption("base",ListValue, "lan2wan", translate("LAN2WAN"), translate("Choose which lan port to be setted to another WAN port for Multi-ISP"))
 o:value("none",translate("Current Mode"))
 o:value("1",translate("LAN1"))
