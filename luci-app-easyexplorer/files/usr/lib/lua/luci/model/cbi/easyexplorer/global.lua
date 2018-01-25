@@ -2,12 +2,7 @@ local e=require"nixio.fs"
 local e=luci.http
 local a,t,e
 a=Map("easyexplorer",translate("EasyExplorer"),translate("EasyExplorer是koolshare小宝开发的，支持跨设备、点对点文件传输同步工具。</br>你需要先到 https://ddns.to 注册，然后在本插件内填入Token和设置本地同步文件夹"))
-a.template="easyexplorer/index"
-t=a:section(TypedSection,"easyexplorer",translate("Running Status"))
-t.anonymous=true
-e=t:option(DummyValue,"_status",translate("Running Status"))
-e.template="easyexplorer/dvalue"
-e.value=translate("Collecting data...")
+a:section(SimpleSection).template="easyexplorer/easyexplorer_status"
 t=a:section(TypedSection,"easyexplorer",translate("全局设置"),translate("设置教程:</font><a style=\"color: #ff0000;\" onclick=\"window.open('http://koolshare.cn/thread-129199-1-1.html')\">点击跳转到论坛教程</a>"))
 t.anonymous=true
 t.addremove=false
@@ -27,14 +22,5 @@ e=t:option(Value,"folder",translate('本地同步文件夹'))
 e.rmempty=false
 for i, dev in ipairs(devices) do
         e:value(dev.."/easyexplorer")
-end
-if(luci.sys.call("pgrep /usr/bin/easyexplorer >/dev/null")==0)then
-local n=uci.get("network","lan","ipaddr")
-e=t:option(Button,"Configuration",translate("WEB控制台"))
-e.inputtitle=translate("点击访问")
-e.inputstyle="reload"
-e.write=function()
-luci.http.redirect("http://"..n..":8899")
-end
 end
 return a
