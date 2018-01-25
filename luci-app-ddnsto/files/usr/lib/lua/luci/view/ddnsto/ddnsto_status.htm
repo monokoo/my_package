@@ -1,0 +1,32 @@
+<%#
+ Copyright 2016 Chen RuiWei <crwbak@gmail.com>
+ Licensed to the public under the Apache License 2.0.
+-%>
+
+<% include("cbi/map") %>
+<script type="text/javascript">//<![CDATA[
+	XHR.poll(2, '<%=luci.dispatcher.build_url("admin", "services", "ddnsto", "status")%>', null,
+		function(x, data)
+		{
+		var tb = document.getElementById('ddnsto_status');
+		if (data && tb) {
+			if (data.ddnsto) {
+				var links = '<b><font color=green><%=translate("RUNNING")%></font></b>';
+				tb.innerHTML = links;
+			} else {
+				tb.innerHTML = '<b><font color=red><%=translate("NOT RUNNING")%></font></b>';
+			}
+		}
+		}
+	);
+
+//]]>
+</script>
+
+<style>.mar-10 {margin-left: 50px; margin-right: 10px;}</style>
+<fieldset class="cbi-section">
+	<legend><%:Running Status%></legend>
+	<p id="ddnsto_status">
+		<em><%:Collecting data...%></em>
+	</p>
+</fieldset>
