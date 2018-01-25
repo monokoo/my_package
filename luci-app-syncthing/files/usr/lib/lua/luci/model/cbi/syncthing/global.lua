@@ -3,12 +3,7 @@ local util = require "nixio.util"
 local e=luci.http
 local a,t,e
 a=Map("syncthing",translate("Syncthing"),translate("Syncthing replaces proprietary sync and cloud services with something open"))
-a.template="syncthing/index"
-t=a:section(TypedSection,"syncthing",translate("Running Status"))
-t.anonymous=true
-e=t:option(DummyValue,"_status",translate("Running Status"))
-e.template="syncthing/dvalue"
-e.value=translate("Collecting data...")
+a:section(SimpleSection).template="syncthing/syncthing_status"
 t=a:section(TypedSection,"syncthing",translate("Global Setting"))
 t.anonymous=true
 t.addremove=false
@@ -28,16 +23,6 @@ e.rmempty=false
 e=t:option(Value,"port",translate('Port'))
 e.default="8383"
 e.rmempty=false
-local i=uci.get("syncthing","global","port")
-local n=uci.get("network","lan","ipaddr")
-if nixio.fs.access("/usr/share/syncthing/config")then
-e=t:option(Button,"Configuration",translate("Configuration"))
-e.inputtitle=translate("Program Configuration")
-e.inputstyle="reload"
-e.write=function()
-luci.http.redirect("http://"..n..":"..i)
-end
-end
 t=a:section(TypedSection,"syncthing",translate("Log View"))
 t.anonymous=true
 t.addremove=false

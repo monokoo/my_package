@@ -1,0 +1,43 @@
+<%#
+ Copyright 2016 Chen RuiWei <crwbak@gmail.com>
+ Licensed to the public under the Apache License 2.0.
+-%>
+
+<% include("cbi/map") %>
+<script type="text/javascript">//<![CDATA[
+	XHR.poll(2, '<%=luci.dispatcher.build_url("admin", "services", "syncthing", "status")%>', null,
+		function(x, data)
+		{
+		var tb = document.getElementById('syncthing_status');
+		if (data && tb) {
+			if (data.syncthing) {
+				var links = '<b><font color=green><%=translate("RUNNING")%></font></b>';
+				links += '<input class="cbi-button mar-10" type="button" value="<%:WEB控制台%>" onclick="openWebUI();" />';
+				tb.innerHTML = links;
+			} else {
+				tb.innerHTML = '<b><font color=red><%=translate("NOT RUNNING")%></font></b>';
+			}
+		}
+		}
+	);
+	
+function openWebUI() {
+        var curWwwPath = window.document.location.href;
+        var pathName = window.document.location.pathname;
+        var pos = curWwwPath.indexOf(pathName);
+        var localhostPath = curWwwPath.substring(0, pos);
+
+        var port = document.getElementById('cbid.syncthing.global.port').value;
+        var url = "http:" + localhostPath.substring(window.location.protocol.length) + ":" + port;
+        window.open(url)
+};
+//]]>
+</script>
+
+<style>.mar-10 {margin-left: 50px; margin-right: 10px;}</style>
+<fieldset class="cbi-section">
+	<legend><%:Running Status%></legend>
+	<p id="syncthing_status">
+		<em><%:Collecting data...%></em>
+	</p>
+</fieldset>
