@@ -63,16 +63,6 @@ e.datatype = "port"
 e.default = "7400"
 e.optional=false
 e.rmempty=false
-if(luci.sys.call("pgrep -l /usr/bin/frpc >/dev/null")==0)then
-e=t:taboption("other",Button,"_pstatus",translate("Proxy Status"))
-e.inputtitle=translate("Click to See")
-e.inputstyle="apply"
-function e.write(e,e)
-local admin_port=uci.get("frp","common","admin_port")
---luci.sys.exec("frpc status -c /var/etc/frp/frpc.conf >>/var/etc/frp/frpc.log")
-luci.http.redirect("http://"..lan_ip..":"..admin_port.."/api/status")
-end
-end
 e=t:taboption("other",Flag, "enable_admin_user", translate("Enable Admin User"))
 e.default = "0"
 e.rmempty=false
