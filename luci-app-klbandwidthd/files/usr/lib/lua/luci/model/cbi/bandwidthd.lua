@@ -1,9 +1,6 @@
 --Alex<1886090@gmail.com>
 
 
-local state_msg = "" 
-local bandwidthd_on = (luci.sys.call("pgrep /usr/sbin/bandwidthd > /dev/null") == 0)
-
 m=Map("bandwidthd",translate("Bandwidthd"),translate("通过Bandwidthd可以通过图形界面观察某一网段所有IP的流量状况，并且可以绘制图形<br>"))
 m:section(SimpleSection).template  = "bandwidthd/bandwidthd_status"
 s=m:section(TypedSection,"bandwidthd","")
@@ -12,14 +9,6 @@ s.anonymous=true
 
 	view_enable = s:option(Flag,"enabled",translate("Enable"))
 	view_enable.default=0
-	if bandwidthd_on then
-	e=s:option(Button,"Configuration",translate("web观察页面"))
-	e.inputtitle=translate("打开统计页面")
-	e.inputstyle="reload"
-	e.write=function()
-	e.template  = "bandwidthd/bandwidthd_url"
-	end
-	end
 	view_dev = s:option(ListValue,"dev",translate("dev"))
 	view_dev:value("br-lan","br-lan")
 	view_dev:value("eth0","eth0")
