@@ -93,14 +93,18 @@ $INTERFACE 接口IP: $wanip
 elif [ "$TYPE" == "dhcp" ]; then
 	[ -z "$PARAM3" ] || [ -z "$PARAM4" ] || [ "$ACTION" == "remove" ] && exit 0
 	[ -z "$PARAM5" ] && PARAM5="未知客户端"
+	nowtime=`date '+%Y-%m-%d %H:%M:%S'`
+	now_date=`date '+%a %b %d %H:%M:%S %Y'`
 	[ "$ACTION" == "update" ] && {
-		is_newonline=`logread -l 30 | grep "DHCPACK(br-lan)" | grep -w "$PARAM3"`
-		[ -z "$is_newonline" ] && exit 0
+		log_time=`expr $(date -d "$nowtime" +%s) - 1`
+		log_date=`date -d @$log_time "+%a %b %d %H:%M:%S %Y"`
+		is_newonline=`logread -l 30 | grep -w "$now_date" | grep "DHCPACK(br-lan)" | grep -w "$PARAM3"`
+		is_newonline2=`logread -l 30 | grep -w "$log_date" | grep "DHCPACK(br-lan)" | grep -w "$PARAM3"`
+		[ -z "$is_newonline" -a -z "$is_newonline2" ] && exit 0
 	}
 	check_network
 	t_client_up=`uci -q get serverchan.trigger_message.t_client_up`
 	[ "$t_client_up" == "disable" ] && exit 0
-	nowtime=`date '+%Y-%m-%d %H:%M:%S'`
 	t_client_up_type=`uci -q get serverchan.trigger_message.t_client_up_type`
 	upper_PARAM3=`echo $PARAM3 | tr '[a-z]' '[A-Z]'`
 	is_inwlist=`uci -q get serverchan.trigger_message.t_client_up_whitelist | grep -c "$upper_PARAM3"`
