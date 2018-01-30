@@ -79,8 +79,8 @@ start(){
   add_rule
 }
 stop(){
-  iptables -t filter -D FORWARD -m comment --comment "Rule For Control" -j WEBURL
-  iptables -t filter -F WEBURL
-  iptables -t filter -X WEBURL
+  iptables -t filter -D FORWARD -m comment --comment "Rule For Control" -j WEBURL 2>/dev/null
+  iptables -t filter -F WEBURL 2>/dev/null
+  iptables -t filter -X WEBURL 2>/dev/null
 }
 

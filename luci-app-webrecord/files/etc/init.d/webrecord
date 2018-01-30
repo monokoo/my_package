@@ -46,8 +46,8 @@ start(){
   add_rule
 }
 stop(){
-  iptables -t filter -D FORWARD -m comment --comment "Rule For Control" -j WEB_MONITOR
-  iptables -t filter -F WEB_MONITOR
-  iptables -t filter -X WEB_MONITOR
+  iptables -t filter -D FORWARD -m comment --comment "Rule For Control" -j WEB_MONITOR 2>/dev/null
+  iptables -t filter -F WEB_MONITOR 2>/dev/null
+  iptables -t filter -X WEB_MONITOR 2>/dev/null
 }
 

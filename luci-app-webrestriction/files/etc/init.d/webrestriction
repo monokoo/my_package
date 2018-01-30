@@ -120,9 +120,9 @@ start(){
 }
 stop(){
 	[ "`iptables -t filter -L | grep -c WEB_RESTRICTION`" -gt 0 ] && {
-		iptables -t filter -D FORWARD -m comment --comment "Rule For Control" -j WEB_RESTRICTION
-		iptables -t filter -F WEB_RESTRICTION
-		iptables -t filter -X WEB_RESTRICTION
+		iptables -t filter -D FORWARD -m comment --comment "Rule For Control" -j WEB_RESTRICTION 2>/dev/null
+		iptables -t filter -F WEB_RESTRICTION 2>/dev/null
+		iptables -t filter -X WEB_RESTRICTION 2>/dev/null
 		[ "`iptables -t nat -L PREROUTING |grep SHADOWSOCKS 2>/dev/null |wc -l`" -gt 0 ] && del_rule SHADOWSOCKS
 		[ "`iptables -t nat -L PREROUTING |grep KOOLPROXY 2>/dev/null |wc -l`" -gt 0 ] && del_rule KOOLPROXY
 	}

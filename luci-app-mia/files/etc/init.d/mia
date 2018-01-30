@@ -121,9 +121,9 @@ start(){
 	[ "$(uci show ucitrack.@shadowsocks[0].affects |grep -c mia)" -eq 0 ] && uci add_list ucitrack.@shadowsocks[0].affects=mia && uci commit ucitrack
 }
 stop(){
-	iptables -t filter -D FORWARD -m comment --comment "Rule For Control" -j MIA
-	iptables -t filter -F MIA
-	iptables -t filter -X MIA
+	iptables -t filter -D FORWARD -m comment --comment "Rule For Control" -j MIA 2>/dev/null
+	iptables -t filter -F MIA 2>/dev/null
+	iptables -t filter -X MIA 2>/dev/null
 	[ "`iptables -t nat -L PREROUTING |grep SHADOWSOCKS 2>/dev/null |wc -l`" -gt 0 ] && del_rule SHADOWSOCKS
 	[ "`iptables -t nat -L PREROUTING |grep KOOLPROXY 2>/dev/null |wc -l`" -gt 0 ] && del_rule KOOLPROXY
 }
