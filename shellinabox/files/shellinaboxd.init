@@ -17,7 +17,7 @@ start_service() {
         procd_open_instance
 		if [ "$WEBSHELL" == "ttyd" ]; then
 			logger -t WebShell "Starting ttyd service"
-			procd_set_param command $BIN -p 4200 -u root -s SIGKILL -d 3 login
+			procd_set_param command $BIN -i br-lan -p 4200 -u root -s SIGKILL -d 3 login
 		else
 			logger -t WebShell "Starting shellinaboxd service"
 			procd_set_param command $BIN -u root -c /usr/share/shellinabox \
