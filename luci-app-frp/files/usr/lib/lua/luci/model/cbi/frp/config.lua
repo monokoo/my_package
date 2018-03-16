@@ -68,6 +68,10 @@ e:depends("type","udp")
 e:depends("type","http")
 e:depends("type","https")
 e:depends("enable_plugin",0)
+e = t:taboption("base",Flag, "range_ports", translate("Range Ports Mapping"), translate("Support multiple ports, like 6000-6005,6007"))
+e.default = "0"
+e:depends("type","tcp")
+e:depends("type","udp")
 e = t:taboption("base",Value, "stcp_secretkey", translate("STCP Screct Key"))
 e.default = "abcdefg"
 e:depends("type","stcp")
@@ -89,19 +93,28 @@ e = t:taboption("other",ListValue, "plugin", translate("Choose Plugin"))
 e:value("http_proxy",translate("http_proxy"))
 e:value("socks5",translate("socks5"))
 e:value("unix_domain_socket",translate("unix_domain_socket"))
+e:value("static_file",translate("static_file"))
 e:depends("enable_plugin",1)
-e = t:taboption("other",Flag, "enable_plugin_httpuserpw", translate("Proxy Authentication"),translate("Other PCs could access the Internet through frpc's network by using http_proxy plugin."))
+e = t:taboption("other",Flag, "enable_plugin_httpuserpw", translate("Plugin Authentication"))
 e.default = "0"
 e:depends("plugin","http_proxy")
-e = t:taboption("other",Value, "plugin_http_user", translate("HTTP Proxy UserName"))
+e:depends("plugin","socks5")
+e:depends("plugin","static_file")
+e = t:taboption("other",Value, "plugin_http_user", translate("Plugin UserName"))
 e.default = "abc"
 e:depends("enable_plugin_httpuserpw",1)
-e = t:taboption("other",Value, "plugin_http_passwd", translate("HTTP Proxy Password"))
+e = t:taboption("other",Value, "plugin_http_passwd", translate("Plugin Password"))
 e.default = "abc"
 e:depends("enable_plugin_httpuserpw",1)
 e = t:taboption("other",Value, "plugin_unix_path", translate("Plugin Unix Sock Path"))
 e.default = "/var/run/docker.sock"
 e:depends("plugin","unix_domain_socket")
+e = t:taboption("other",Value, "plugin_local_path", translate("Local Path of Static File"))
+e.default = "/tmp/file"
+e:depends("plugin","static_file")
+e = t:taboption("other",Value, "plugin_strip_prefix", translate("Url Prefix"))
+e.default = "static"
+e:depends("plugin","static_file")
 e = t:taboption("other",Flag, "enable_http_auth", translate("Password protecting your web service"), translate("Http username and password are safety certification for http protocol."))
 e.default = "0"
 e:depends("type","http")

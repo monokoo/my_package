@@ -204,20 +204,29 @@ msgstr "关闭"
 msgid "Choose Plugin"
 msgstr "选择插件"
 
-msgid "Proxy Authentication"
-msgstr "HTTP代理身份验证"
+msgid "Plugin Authentication"
+msgstr "插件身份验证"
 
-msgid "Other PCs could access the Internet through frpc's network by using http_proxy plugin."
-msgstr "http proxy 插件，可以使其他机器通过 frpc 的网络访问互联网；开启身份验证之后需要用户名、密码才能连接到 HTTP 代理。"
+msgid "Plugin UserName"
+msgstr "插件用户名"
 
-msgid "HTTP Proxy UserName"
-msgstr "HTTP代理用户名"
-
-msgid "HTTP Proxy Password"
-msgstr "HTTP代理密码"
+msgid "Plugin Password"
+msgstr "插件密码"
 
 msgid "Plugin Unix Sock Path"
 msgstr "Unix Sock 插件路径"
+
+msgid "Local Path of Static File"
+msgstr "文件目录路径"
+
+msgid "Url Prefix"
+msgstr "URL 前缀"
+
+msgid "Range Ports Mapping"
+msgstr "端口范围映射"
+
+msgid "Support multiple ports, like 6000-6005,6007"
+msgstr "只有启用本选项，才可同时映射多个端口、端口范围，支持端口格式如下：6000-6005,6007"
 
 msgid "Password protecting your web service"
 msgstr "使用密码访问web服务"
