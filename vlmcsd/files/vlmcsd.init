@@ -33,9 +33,17 @@ start()
 	if [ $use_conf_file -ne 1 ]; then
 		/usr/bin/vlmcsd -d -P $port -l /var/log/vlmcsd.log
 	else
-		hostname=$(uci get system.@system[0].hostname)
+		hostname=$(uci -q get system.@system[0].hostname)
+		domain=$(uci -q get dhcp.@dnsmasq[0].domain)
+		[ -z "$hostname" ] && hostname=`uname -n`
+		if [ -z "$domain" ]; then
+			lan_ip=`uci -q get network.lan.ipaddr`
+			srv_name=$lan_ip
+		else
+			srv_name=$hostname.$domain
+		fi
 		[ ! -d "/tmp/dnsmasq.d" ] && mkdir /tmp/dnsmasq.d
-		echo srv-host=_vlmcs._tcp.lan,$hostname.lan,1688,0,100 > /tmp/dnsmasq.d/vlmcsd.conf
+		echo srv-host=_vlmcs._tcp.lan,$srv_name,1688,0,100 > /tmp/dnsmasq.d/vlmcsd.conf
 		/usr/bin/vlmcsd -i /usr/share/vlmcsd/vlmcsd.ini
 	fi
 	[ "$enable_web" -eq 1 ] && {
