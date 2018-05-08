@@ -1,3 +1,29 @@
 #!/bin/sh
 
+t_period=`uci -q get serverchan.trigger_message.t_period`
+[ -z "$t_period" ] && t_period=0
+[ "$t_period" -eq 0 ] && {
+	[ "$ACTION" == "update" -o "$ACTION" == "add" ] && {
+		list_file=/tmp/serverchan_clientlist
+		nowtime=`date '+%Y-%m-%d %H:%M:%S'`
+		log_time=`date -d "$nowtime" +%s`
+		
+		if [ -f "$list_file" ]; then
+			if [ -n "(cat $list_file | grep -w "$MACADDR")" ]; then
+				last_unixstamp=`cat $list_file | grep -w "$MACADDR" | awk '{print $1}'`
+		
+				log_period=`expr $log_time - $last_unixstamp`
+				if [ "$log_period" -lt 300 ]; then
+					exit 0
+				else
+					sed -i "/$MACADDR/d" $list_file && echo "$log_time $ACTION $MACADDR" >> $list_file
+				fi
+			else
+				echo "$log_time $ACTION $MACADDR" >> $list_file
+			fi
+		else
+			echo "$log_time $ACTION $MACADDR" >> $list_file
+		fi
+	}
+}
 /usr/bin/serverchan_trigger dhcp "$ACTION" "$MACADDR" "$IPADDR" "$HOSTNAME"

@@ -76,6 +76,8 @@ end
 t=a:section(NamedSection,"trigger_message","serverchan",translate("触发发送通知消息 (短消息)"))
 t.anonymous=true
 t.addremove=false
+e=t:option(Flag,"t_period",translate("短时频繁上线提醒"),translate("关闭后在5分钟内多次重复上线不再提醒，减少不必要微信推送消息。"))
+e.default=0
 e=t:option(Flag,"t_redial",translate("网络重拨时"))
 e.default=0
 e=t:option(ListValue,"t_client_up",translate("设备上线时"))
