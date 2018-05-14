@@ -8,8 +8,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mwan5
-PKG_VERSION:=3.2
-PKG_RELEASE:=5
+PKG_VERSION:=3.6.15
+PKG_RELEASE:=1
 PKG_MAINTAINER:=Florian Eckert <fe@dev.tdt.de>
 PKG_LICENSE:=GPLv2
 
@@ -19,7 +19,7 @@ define Package/$(PKG_NAME)
    SECTION:=net
    CATEGORY:=Network
    SUBMENU:=Routing and Redirection
-   DEPENDS:=+ip-full +ipset +iptables +iptables-mod-conntrack-extra +iptables-mod-ipopt
+   DEPENDS:=+ip-full +ipset +iptables +iptables-mod-conntrack-extra +iptables-mod-ipopt +jshn
    TITLE:=Multiwan hotplug script with connection tracking support
    MAINTAINER:=Florian Eckert <fe@dev.tdt.de>
    PKGARCH:=all
@@ -57,8 +57,9 @@ endef
 
 define Package/$(PKG_NAME)/install
 
-	$(INSTALL_DIR) $(1)/etc/config
+	$(INSTALL_DIR) $(1)/etc/config $(1)/etc/init.d
 	$(INSTALL_CONF) ./files/etc/config/mwan3 $(1)/etc/config/mwan3
+	$(INSTALL_BIN) ./files/etc/init.d/mwan3 $(1)/etc/init.d/mwan3
 	
 	$(INSTALL_DIR) $(1)/etc
 	$(INSTALL_CONF) ./files/etc/mwan3.user $(1)/etc/mwan3.user
@@ -76,9 +77,6 @@ define Package/$(PKG_NAME)/install
 
 	$(INSTALL_DIR) $(1)/usr/libexec/rpcd
 	$(INSTALL_BIN) ./files/usr/libexec/rpcd/* $(1)/usr/libexec/rpcd/
-	
-	$(INSTALL_DIR) $(1)/usr/share/policy
-	$(INSTALL_DATA) ./files/usr/share/policy/* $(1)/usr/share/policy/
 	
 endef
 

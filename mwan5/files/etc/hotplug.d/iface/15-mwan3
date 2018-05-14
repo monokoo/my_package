@@ -3,7 +3,6 @@
 . /lib/functions.sh
 . /lib/functions/network.sh
 . /lib/mwan3/mwan3.sh
-. /lib/mwan3/policy.sh
 . /usr/share/libubox/jshn.sh
 
 [ "$ACTION" == "ifup" -o "$ACTION" == "ifdown" ] || exit 1
@@ -13,14 +12,18 @@ if [ "$ACTION" == "ifup" ]; then
         [ -n "$DEVICE" ] || exit 3
 fi
 
-mwan3_lock
-mwan3_set_connected_iptables
-mwan3_unlock
-
 config_load mwan3
+config_get_bool enabled globals 'enabled' '0'
+[ ${enabled} -gt 0 ] || exit 0
+
 config_get enabled $INTERFACE enabled 0
 config_get initial_state $INTERFACE initial_state "online"
 [ "$enabled" == "1" ] || exit 0
+
+mwan3_lock
+mwan3_init
+mwan3_set_connected_iptables
+mwan3_unlock
 
 if [ "$ACTION" == "ifup" ]; then
 	config_get family $INTERFACE family ipv4
@@ -31,6 +34,7 @@ if [ "$ACTION" == "ifup" ]; then
 		else
 			network_get_ipaddr src_ip ${INTERFACE}
 		fi
+		[ -n "$src_ip" ] || src_ip="0.0.0.0"
 	elif [ "$family" = "ipv6" ]; then
 		ubus call network.interface.${INTERFACE}_6 status &>/dev/null
 		if [ "$?" -eq "0" ]; then
@@ -38,9 +42,8 @@ if [ "$ACTION" == "ifup" ]; then
 		else
 			network_get_ipaddr6 src_ip ${INTERFACE}
 		fi
+		[ -n "$src_ip" ] || src_ip="::"
 	fi
-
-	[ -n "$src_ip" ] || exit 9
 fi
 
 if [ "$initial_state" = "offline" ]; then
@@ -59,7 +62,6 @@ $LOG notice "Execute "$ACTION" event on interface $INTERFACE (${DEVICE:-unknown}
 
 case "$ACTION" in
 	ifup)
-		
 		mwan3_set_general_rules
 		mwan3_set_general_iptables
 		mwan3_create_iface_iptables $INTERFACE $DEVICE
@@ -72,8 +74,6 @@ case "$ACTION" in
 			mwan3_set_policies_iptables
 			mwan3_set_user_rules
 			mwan3_flush_conntrack $INTERFACE $DEVICE "ifup"
-			mwan3_policy_iface_start
-			mwan3_policy_iptables_start
 		else
 			$LOG notice "Starting tracker on interface $INTERFACE (${DEVICE:-unknown})"
 			mwan3_set_iface_hotplug_state $INTERFACE "offline"

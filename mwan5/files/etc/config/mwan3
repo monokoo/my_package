@@ -1,4 +1,8 @@
 
+config globals 'globals'
+	option mmx_mask '0x3F00'
+	option local_source 'lan'
+
 config rule 'default_rule'
 	option dest_ip '0.0.0.0/0'
 	option proto 'all'
