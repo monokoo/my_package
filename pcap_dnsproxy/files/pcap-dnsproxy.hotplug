@@ -4,10 +4,13 @@
 
 # get config entity via UCI
 enabled=$(uci -q get shadowsocks.@global[0].dns_mode)
-[ "pcap-dnsproxy" = "$enabled" ] || exit 0
+ss_server=$(uci -q get shadowsocks.@global[0].global_server)
+[ "pcap-dnsproxy" = "$enabled" -a "$ss_server" != "nil" ] || exit 0
+
+[ "$INTERFACE" = wan ] || exit 0
 
 # We only handle 'ifup' and 'ifdown' events
-[ "$ACTION" = ifup -o "$ACTION" = ifdown ] || exit 1
+[ "$ACTION" = ifup ] || [ "$ACTION" = ifdown ] || exit 1
 # Exit if we don't have logger, this should not happen
 [ -x /usr/bin/logger ] || exit 2
 
