@@ -56,7 +56,7 @@ export_string() {
 }
 
 get_lan() {
-	lanip=$(uci show network.lan.ipaddr|cut -d'=' -f 2|sed -e "s/'//g")
+	lanip=`ifconfig br-lan 2>/dev/null | grep "inet addr:" | grep -E -o "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"|head -1` || lanip=$(uci -q get network.lan.ipaddr|cut -d'=' -f 2|sed -e "s/'//g")
 	uci set bandwidthd.@bandwidthd[0].subnets=${lanip%.*}.0/24
 	uci commit
 }
