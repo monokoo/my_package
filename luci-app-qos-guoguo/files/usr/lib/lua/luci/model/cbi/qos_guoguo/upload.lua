@@ -47,8 +47,8 @@ sip.datatype="and(ipaddr)"
 dip=s:option(Value,"destination",translate("Destination IP"))
 t.cbi_add_knownips(dip)
 dip.datatype="and(ipaddr)"
-s:option(Value,"dstport",translate("Destination Port")).datatype="and(uinteger,max(65536),min(1))"
-s:option(Value,"srcport",translate("Source Port")).datatype="and(uinteger,max(65536),min(1))"
+s:option(Value,"dstport",translate("Destination Port")).datatype="portrange"
+s:option(Value,"srcport",translate("Source Port")).datatype="portrange"
 min_pkt_size=s:option(Value,"min_pkt_size",translate("Minimum Packet Length"))
 min_pkt_size.datatype="and(uinteger,min(1))"
 max_pkt_size=s:option(Value,"max_pkt_size",translate("Maximum Packet Length"))
