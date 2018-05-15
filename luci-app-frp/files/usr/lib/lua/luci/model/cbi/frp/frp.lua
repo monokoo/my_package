@@ -30,7 +30,7 @@ e:value(sys_hostname)
 e=t:taboption("base",Flag, "tcp_mux", translate("TCP Stream Multiplexing"), translate("Default is Ture. <font color=\"red\">This feature in frps.ini and frpc.ini must be the same.</font>"))
 e.default = "1"
 e.rmempty=false
-e=t:taboption("base",Value, "privilege_token", translate("Privilege Token"), translate("Time duration between server of frpc and frps mustn't exceed 15 minutes."))
+e=t:taboption("base",Value, "privilege_token", translate("Token"), translate("Time duration between server of frpc and frps mustn't exceed 15 minutes."))
 e.optional=false
 e.password=true
 e.rmempty=false
@@ -51,8 +51,14 @@ e=t:taboption("other",ListValue, "protocol", translate("Protocol Type"),translat
 e.default = "tcp"
 e:value("tcp",translate("TCP Protocol"))
 e:value("kcp",translate("KCP Protocol"))
+e=t:taboption("other",Value, "dns_server", translate("DNS Server"), translate("Specify a dns server, so frpc will use this instead of default one"))
+e.datatype = "ip4addr"
+e.placeholder = "8.8.8.8"
+e.optional=false
+e.rmempty=false
 local lan_ip=uci.get("network","lan","ipaddr")
 e=t:taboption("other",ListValue, "admin_addr", translate("Admin Address"))
+e.datatype = "ip4addr"
 e.default = "127.0.0.1"
 e.optional=false
 e.rmempty=false

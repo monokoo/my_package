@@ -159,8 +159,8 @@ boot() {
 start() {
 
 	config_load "frp"
-	local enabled server_addr server_port time privilege_token tcp_mux enable_cpool proxy_user admin_user admin_pwd
-	local pool_count log_level log_max_days login_fail_exit http_proxy protocol admin_addr admin_port
+	local enabled server_addr server_port time token tcp_mux enable_cpool proxy_user admin_user admin_pwd
+	local pool_count log_level log_max_days login_fail_exit http_proxy protocol admin_addr admin_port dns_server
 
 	config_get_bool enabled common enabled 1
 
@@ -168,7 +168,7 @@ start() {
 
 	config_get server_addr common server_addr
 	config_get server_port common server_port
-	config_get privilege_token common privilege_token
+	config_get token common privilege_token
 	config_get enable_cpool common enable_cpool
 	config_get pool_count common pool_count
 	config_get log_level common log_level
@@ -180,6 +180,7 @@ start() {
 	config_get admin_port common admin_port "7400"
 	config_get admin_user common admin_user
 	config_get admin_pwd common admin_pwd
+	config_get dns_server common dns_server
 	config_get time common time 0
 
 	mkdir -p /var/etc/frp
@@ -195,7 +196,7 @@ start() {
 	echo "server_addr=${server_addr}" >>$tmpconf
 	echo "server_port=${server_port}" >>$tmpconf
 	[ -n "$proxy_user" ] && echo "user=${proxy_user}" >>$tmpconf
-	echo "privilege_token=${privilege_token}" >>$tmpconf
+	echo "token=${token}" >>$tmpconf
 	echo "log_level=${log_level}" >>$tmpconf
 	echo "log_max_days=${log_max_days}" >>$tmpconf
 	echo "protocol=${protocol}" >>$tmpconf
@@ -204,6 +205,7 @@ start() {
 	
 	echo "admin_addr=${admin_addr}" >>$tmpconf
 	echo "admin_port=${admin_port}" >>$tmpconf
+	[ -n "$dns_server" ] && echo "dns_server=${dns_server}" >>$tmpconf
 	[ -n "$admin_user" ] && echo "admin_user=${admin_user}" >>$tmpconf
 	[ -n "$admin_pwd" ] && echo "admin_pwd=${admin_pwd}" >>$tmpconf
 	[ -n "$http_proxy" ] && echo "http_proxy=$http_proxy" >>$tmpconf
