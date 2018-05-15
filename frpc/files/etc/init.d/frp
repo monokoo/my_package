@@ -66,7 +66,7 @@ conf_proxy_add() {
 	[ -n "$remark" ] && [ -n "$type" ] || return 1
 	
 	echo "" >>$tmpconf
-	if[ -n "$range_ports" ]; then
+	if [ -n "$range_ports" ]; then
 		echo "[range:$remark]" >>$tmpconf
 	else
 		echo "[$remark]" >>$tmpconf

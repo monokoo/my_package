@@ -55,7 +55,6 @@ e=t:taboption("other",Value, "dns_server", translate("DNS Server"), translate("S
 e.datatype = "ip4addr"
 e.placeholder = "8.8.8.8"
 e.optional=false
-e.rmempty=false
 local lan_ip=uci.get("network","lan","ipaddr")
 e=t:taboption("other",ListValue, "admin_addr", translate("Admin Address"))
 e.datatype = "ip4addr"

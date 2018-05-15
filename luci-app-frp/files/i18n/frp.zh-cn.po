@@ -48,6 +48,12 @@ msgstr "Admin 密码"
 msgid "Protocol Type"
 msgstr "协议类型"
 
+msgid "DNS Server"
+msgstr "DNS服务器"
+
+msgid "Specify a dns server, so frpc will use this instead of default one"
+msgstr "指定dns服务器，留空则使用系统默认"
+
 msgid "TCP Protocol"
 msgstr "TCP 协议"
 
