@@ -17,6 +17,9 @@ msgid "subnets"
 msgstr "被监控网段"
 
 msgid "skip_intervals"
+msgstr "跳过间隔"
+
+msgid "meta_refresh"
 msgstr "刷新间隔"
 
 msgid "graph_cutoff"
