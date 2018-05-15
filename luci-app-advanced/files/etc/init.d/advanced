@@ -17,6 +17,7 @@ start() {
 	if [ "$ROUTER_MODE" == "apmode" ]; then
 		uci set network.lan.proto='dhcp'
 		uci set network.lan.ifname="eth0.1 eth0.2"
+		uci del network.lan.ipaddr
 		uci set network.wan.proto=none
 		uci set dhcp.lan.dynamicdhcp='0'
 		uci set advanced.base.route_mode='none'

@@ -35,7 +35,13 @@ get_wan_info() {
 	for iface in $all_interfaces
 	do
 		devname=`cat /var/state/network 2>/dev/null | grep -w "network.$iface.ifname" |awk -F"'" '{print $2}'`
-		[ -z "$devname" ] && devname=`ifstatus $iface 2>/dev/null| grep l3_device |awk -F'"' '{print $4}'`
+		[ -z "$devname" ] && {
+			if [ "`uci -q get network.wan.proto`" != "none" ]; then
+				devname=`ifstatus $iface 2>/dev/null| grep l3_device |awk -F'"' '{print $4}'`
+			else
+				devname="br-lan"
+			fi
+		}
 		if [ -n "$devname" ]; then
 			publicip=`curl -s --interface $devname http://members.3322.org/dyndns/getip 2>/dev/null` || publicip=`curl -s --interface $devname http://1212.ip138.com/ic.asp 2>/dev/null | grep -Eo '([0-9]+\.){3}[0-9]+'`
 			[ -z "$publicip" ] && publicip="无法获取"
@@ -78,7 +84,7 @@ get_router_status(){
 	loadavg=`cat /proc/loadavg |awk '{print $1,$2,$3}' | sed 's/ /,/g'`
 	sum_mem=$((`cat /proc/meminfo |grep "MemTotal"| awk '{print $2}'`/1024))
 	free_mem=$((`cat /proc/meminfo |grep "MemFree"| awk '{print $2}'`/1024))
-	lan_ip=`uci -q get network.lan.ipaddr` || lan_ip=`ifconfig br-lan 2>/dev/null | grep "inet addr:" | grep -E -o "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"|head -1`
+	lan_ip=`ifconfig br-lan 2>/dev/null | grep "inet addr:" | grep -E -o "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"|head -1` || lan_ip=`uci -q get network.lan.ipaddr`
 	
 	router_status="
 ****
