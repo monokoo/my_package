@@ -16,7 +16,7 @@ PKG_REV:=56393f4
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_URL:=https://github.com/betolj/ndpi-netfilter
+PKG_SOURCE_URL:=https://github.com/vel21ripn/nDPI.git
 PKG_SOURCE_VERSION:=$(PKG_REV)
 
 PKG_BUILD_DIR:=$(KERNEL_BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
@@ -37,29 +37,36 @@ define Package/iptables-mod-ndpi/description
   nDPI is a ntop-maintained superset of the popular OpenDPI library
 endef
 
-define Build/Prepare 
-	$(call Build/Prepare/Default) 
-	tar -zxvf $(PKG_BUILD_DIR)/nDPI.tar.gz -C $(PKG_BUILD_DIR) 
-endef 
+CONFIGURE_CMD=./autogen.sh
+CONFIGURE_ARGS += --with-pic
+
+MAKE_PATH:=ndpi-netfilter
 
 MAKE_FLAGS += \
 	KERNEL_DIR="$(LINUX_DIR)" \
-	ARCH="$(LINUX_KARCH)" \
-	NDPI_PATH=$(PKG_BUILD_DIR)/nDPI \
-	CROSS_COMPILE="$(TARGET_CROSS)" \
-	all
+	MODULES_DIR="$(TARGET_MODULES_DIR)" \
+	NDPI_PATH=$(PKG_BUILD_DIR)/ndpi-netfilter
+
+define Build/Compile
+	(cd $(PKG_BUILD_DIR)/src/lib &&\
+		gcc -I../../src/include/ -I../../src/lib/third_party/include/ ndpi_network_list_compile.c -o ndpi_network_list_compile &&\
+		./ndpi_network_list_compile -o ndpi_network_list.c.inc ndpi_network_list_std.yaml ndpi_network_list_tor.yaml)
+	make $(MAKE_FLAGS) -C $(PKG_BUILD_DIR)/ndpi-netfilter
+endef
 
 define Package/iptables-mod-ndpi/install
 	$(INSTALL_DIR) $(1)/usr/lib/iptables
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/ipt/libxt_ndpi.so $(1)/usr/lib/iptables
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/ndpi-netfilter/ipt/libxt_ndpi.so $(1)/usr/lib/iptables
 endef
 
 define KernelPackage/ipt-ndpi
   SUBMENU:=Netfilter Extensions
   TITLE:= nDPI net netfilter module
   DEPENDS:=+kmod-nf-conntrack +kmod-nf-conntrack-netlink +kmod-ipt-compat-xtables
+  KCONFIG:=CONFIG_NF_CONNTRACK_LABELS \
+	  CONFIG_NETFILTER_XT_MATCH_CONNLABEL=y
   FILES:= \
-	$(PKG_BUILD_DIR)/src/xt_ndpi.ko
+	$(PKG_BUILD_DIR)/ndpi-netfilter/src/xt_ndpi.ko
   AUTOLOAD:=$(call AutoProbe,xt_ndpi)
 endef
 
