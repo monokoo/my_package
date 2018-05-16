@@ -66,10 +66,10 @@
 //after then and define dump_filter and talk accordingly.
 #ifdef RTNL_FAMILY_MAX
 #define dump_filter(a,b,c) rtnl_dump_filter(a,b,c)
-#define talk(a,b,c,d,e) rtnl_talk(a,b,c,d,e)
+#define talk(a,b,c) rtnl_talk(a,b,c)
 #else
 #define dump_filter(a,b,c) rtnl_dump_filter(a,b,c,NULL,NULL)
-#define talk(a,b,c,d,e) rtnl_talk(a,b,c,d,e,NULL,NULL)
+#define talk(a,b,c) rtnl_talk(a,b,c,NULL,NULL)
 #endif
 
 
@@ -628,7 +628,7 @@ int tc_class_modify(__u32 rate)
     }
 
 
-    if (rtnl_talk(&rth, &req.n, NULL, 0) < 0)
+    if (rtnl_talk(&rth, &req.n, NULL) < 0)
         return 2;
 
     return 0;
