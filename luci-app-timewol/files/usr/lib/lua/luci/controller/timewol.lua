@@ -8,7 +8,7 @@ entry({"admin","control","timewol","status"},call("status")).leaf=true
 end
 function status()
 local e={}
-e.timewol=luci.sys.call("cat /etc/crontabs/root |grep etherwake >/dev/null")==0
+e.timewol=luci.sys.call("cat /etc/crontabs/root 2>/dev/null|grep etherwake >/dev/null")==0
 luci.http.prepare_content("application/json")
 luci.http.write_json(e)
 end
