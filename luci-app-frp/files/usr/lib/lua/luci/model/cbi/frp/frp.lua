@@ -1,7 +1,7 @@
 local o=require"luci.dispatcher"
 local e=require("luci.model.ipkg")
 local s=require"nixio.fs"
-local e=luci.model.uci.cursor()
+local UCI=(require "luci.model.uci").cursor()
 local i="frp"
 local a,t,e
 local n={}
@@ -55,7 +55,7 @@ e=t:taboption("other",Value, "dns_server", translate("DNS Server"), translate("S
 e.datatype = "ip4addr"
 e.placeholder = "8.8.8.8"
 e.optional=false
-local lan_ip=uci.get("network","lan","ipaddr")
+local lan_ip=UCI.get("network","lan","ipaddr")
 e=t:taboption("other",ListValue, "admin_addr", translate("Admin Address"))
 e.datatype = "ip4addr"
 e.default = "127.0.0.1"

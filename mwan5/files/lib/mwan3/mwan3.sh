@@ -496,8 +496,9 @@ mwan3_track_signal()
 	local pid
 
 	pid="$(pgrep -f "mwan3track $1 $2")"
-	 [ "${pid}" != "" ] && {
+	[ "${pid}" != "" ] && {
 		kill -USR1 "${pid}"
+	}
 }
 
 mwan3_set_policy()
