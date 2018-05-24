@@ -65,7 +65,7 @@ for i in $(seq 0 100)
         iptables -t filter -I WEBURL $settime -m string --string "$keyword" --algo $(get_algo_mode $algos) -j DROP
       else
         iptables -t filter -I WEBURL $settime -m mac --mac-source $macaddr -m string --string "$keyword" --algo $(get_algo_mode $algos) -j DROP
-        unset "$macaddr"
+        unset macaddr
       fi
      fi
 done
