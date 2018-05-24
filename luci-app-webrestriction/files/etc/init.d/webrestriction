@@ -55,7 +55,7 @@ add_rule(){
 				[ "$ss_enabled" -eq 1 ] && iptables -t nat -I SHADOWSOCKS $((i+1)) -m mac ! --mac-source $macaddr -j RETURN
 				[ "$kp_enabled" -eq 1 ] && iptables -t nat -I KOOLPROXY $((i+1)) -m mac ! --mac-source $macaddr -j RETURN
 			fi
-			unset "$macaddr"
+			unset macaddr
 			
 		fi
 	done
