@@ -96,7 +96,7 @@ elif [ "$TYPE" == "dhcp" ]; then
 	nowtime=`date '+%Y-%m-%d %H:%M:%S'`
 	now_date=`date '+%a %b %d %H:%M:%S %Y'`
 	[ "$ACTION" == "update" ] && {
-		log_time=`expr $(date -d "$nowtime" +%s) - 1`
+		log_time=`expr $(date -d "$nowtime" +%s) - 1 2>/dev/null`
 		log_date=`date -d @$log_time "+%a %b %d %H:%M:%S %Y"`
 		is_newonline=`logread -l 30 | grep -w "$now_date" | grep "DHCPACK(br-lan)" | grep -w "$PARAM3"`
 		is_newonline2=`logread -l 30 | grep -w "$log_date" | grep "DHCPACK(br-lan)" | grep -w "$PARAM3"`
