@@ -4,17 +4,6 @@ PKG_NAME:=dnsc
 PKG_VERSION:=1.0.0
 PKG_RELEASE:=4
 
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=https://github.com/fangdingjun/dnsproxy
-PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_VERSION:=9f4b250ede408979126db26ed6d0f5ce8773a025
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
-
-PKG_INSTALL:=1
-PKG_FIXUP:=autoreconf
-PKG_USE_MIPS16:=0
-PKG_BUILD_PARALLEL:=1
-
 include $(INCLUDE_DIR)/package.mk
 
 define Package/dnsc
@@ -24,10 +13,29 @@ define Package/dnsc
         URL:=https://github.com/fangdingjun/dnsproxy
 endef
 
+define Build/Prepare
+endef
+
+define Build/Configure
+endef
+
+define Build/Compile
+endef
+
+define Package/dnsc/description
+A simple DNS proxy server
+endef
+
 define Package/dnsc/install
 	$(INSTALL_DIR) $(1)/usr/bin $(1)/etc/dnsc
 	$(INSTALL_DATA) ./files/iplist.txt $(1)/etc/dnsc/
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/dnsproxy $(1)/usr/bin/dnsc
+ifeq ($(MODEL),Netgear Nighthawk X4S R7800)
+	$(INSTALL_BIN) ./files/dnsc-r7800 $(1)/usr/bin/dnsc
+endif
+ifeq ($(MODEL),PHICOMM K3)
+	$(INSTALL_BIN) ./files/dnsc-k3 $(1)/usr/bin/dnsc
+endif
+
 endef
 
 $(eval $(call BuildPackage,dnsc))
