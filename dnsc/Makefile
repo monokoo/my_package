@@ -29,10 +29,10 @@ endef
 define Package/dnsc/install
 	$(INSTALL_DIR) $(1)/usr/bin $(1)/etc/dnsc
 	$(INSTALL_DATA) ./files/iplist.txt $(1)/etc/dnsc/
-ifeq ($(MODEL),Netgear Nighthawk X4S R7800)
+ifeq ($(BUILD_DIR),/home/lede/lede-source/build_dir/target-arm_cortex-a15+neon-vfpv4_musl_eabi)
 	$(INSTALL_BIN) ./files/dnsc-r7800 $(1)/usr/bin/dnsc
 endif
-ifeq ($(MODEL),PHICOMM K3)
+ifeq ($(BUILD_DIR),/home/lede/lede-source/build_dir/target-arm_cortex-a9_musl_eabi)
 	$(INSTALL_BIN) ./files/dnsc-k3 $(1)/usr/bin/dnsc
 endif
 
