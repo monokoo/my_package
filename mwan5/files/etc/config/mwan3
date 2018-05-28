@@ -21,7 +21,7 @@ config member 'wan_m1_w1'
 
 config interface 'wan'
 	option enabled '1'
-	option count '1'
+	option count '2'
 	option timeout '2'
 	option interval '5'
 	option up '1'
