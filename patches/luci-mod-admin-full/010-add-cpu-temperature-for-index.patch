@@ -15,7 +15,7 @@
  			leases     = stat.dhcp_leases(),
  			leases6    = stat.dhcp6_leases(),
  			wifinets   = stat.wifi_networks()
-@@ -637,6 +638,9 @@
+@@ -593,6 +594,9 @@
  					info.loadavg[2] / 65535.0
  				);
  
@@ -25,11 +25,11 @@
  			if (e = document.getElementById('memtotal'))
  				e.innerHTML = progressbar(
  					((info.memory.free + info.memory.buffered) / 1024) + " <%:kB%>",
-@@ -687,6 +691,7 @@
+@@ -644,6 +648,7 @@
  			<%=pcdata(ver.luciname)%> (<%=pcdata(ver.luciversion)%>)
- 		</td></tr>
- 		<tr><td width="33%"><%:Kernel Version%></td><td><%=unameinfo.release or "?"%></td></tr>
-+		<tr><td width="33%"><%:CPU Temperature%></td><td id="temperature">-</td></tr>
- 		<tr><td width="33%"><%:Local Time%></td><td id="localtime">-</td></tr>
- 		<tr><td width="33%"><%:Uptime%></td><td id="uptime">-</td></tr>
- 		<tr><td width="33%"><%:Load Average%></td><td id="loadavg">-</td></tr>
+ 		</div></div>
+ 		<div class="tr"><div class="td left" width="33%"><%:Kernel Version%></div><div class="td left"><%=unameinfo.release or "?"%></div></div>
++		<div class="tr"><div class="td left" width="33%"><%:CPU Temperature%></div><div class="td left" id="temperature">-</div></div>
+		<div class="tr"><div class="td left" width="33%"><%:Local Time%></div><div class="td left" id="localtime">-</div></div>
+		<div class="tr"><div class="td left" width="33%"><%:Uptime%></div><div class="td left" id="uptime">-</div></div>
+		<div class="tr"><div class="td left" width="33%"><%:Load Average%></div><div class="td left" id="loadavg">-</div></div>
