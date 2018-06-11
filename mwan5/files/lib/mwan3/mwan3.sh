@@ -201,6 +201,14 @@ mwan3_set_general_iptables()
 			lanip=$(uci get network.lan.ipaddr)
 			ip_prefix_hex=$(echo $lanip | awk -F "." '{printf ("0x%02x", $1)} {printf ("%02x", $2)} {printf ("%02x", $3)} {printf ("00/0xffffff00")}')
 			$IPT -N mwan3_hook
+			# do not mangle ipv6 ra service
+			if [ "$IPT" = "$IPT6" ]; then
+				$IPT6 -A mwan3_hook -p ipv6-icmp -m icmp6 --icmpv6-type 133 -j RETURN
+				$IPT6 -A mwan3_hook -p ipv6-icmp -m icmp6 --icmpv6-type 134 -j RETURN
+				$IPT6 -A mwan3_hook -p ipv6-icmp -m icmp6 --icmpv6-type 135 -j RETURN
+				$IPT6 -A mwan3_hook -p ipv6-icmp -m icmp6 --icmpv6-type 136 -j RETURN
+				$IPT6 -A mwan3_hook -p ipv6-icmp -m icmp6 --icmpv6-type 137 -j RETURN
+			fi
 			$IPT -I mwan3_hook 1 -m mark --mark $ip_prefix_hex -j RETURN
 			$IPT -A mwan3_hook -j CONNMARK --restore-mark --nfmask $MMX_MASK --ctmask $MMX_MASK
 			$IPT -A mwan3_hook -m mark --mark 0x0/$MMX_MASK -j mwan3_ifaces_in
