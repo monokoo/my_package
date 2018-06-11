@@ -29,7 +29,7 @@
                 </div>
                 <footer class="mobile-hide" style="text-align:center">
                     <a href="https://github.com/openwrt/luci">Powered by <%= ver.luciname %> (<%= ver.luciversion %>)</a> /
-                    <a href="https://www.lede-project.org/"><%= ver.distversion %></a> /
+                    <%= ver.distversion %> /
 					<a href="mailto:tracemouse@163.com">Tracemouse(theme)</a>
                     <% if #categories > 1 then %>
                     <ul class="breadcrumb pull-right" id="modemenu">
@@ -46,7 +46,7 @@
         // thanks for Jo-Philipp Wich <jow@openwrt.org>
         var luciLocation = <%= luci.http.write_json(luci.dispatcher.context.path) %>;
     </script>
-    <script src="<%=media%>/js/jquery.min.js?v=git-17.016.25656-a85807d"></script>
-    <script src="<%=media%>/js/script.js?v=git-17.016.25656-a85807d"></script>
+    <script src="<%=media%>/js/jquery.min.js"></script>
+    <script src="<%=media%>/js/script.js"></script>
 </body>
 </html>
