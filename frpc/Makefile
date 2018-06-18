@@ -60,7 +60,7 @@ define Package/frpc/postinst
 endef
 
 define Package/frpc/conffiles
-/etc/config/frpc
+/etc/config/frp
 endef
 
 define Package/frpc/install
