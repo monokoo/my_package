@@ -2,8 +2,34 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=frpc
-PKG_VERSION:=0.15.1
+PKG_VERSION:=0.20.0
 PKG_RELEASE:=1
+
+ifeq ($(ARCH),mipsel)
+	FRPC_ARCH:=mipsle
+endif
+ifeq ($(ARCH),mips)
+	FRPC_ARCH:=mips
+endif
+ifeq ($(ARCH),i386)
+	FRPC_ARCH:=386
+endif
+ifeq ($(ARCH),x86_64)
+	FRPC_ARCH:=amd64
+endif
+ifeq ($(ARCH),arm)
+	FRPC_ARCH:=arm
+endif
+ifeq ($(ARCH),arm64)
+	FRPC_ARCH:=arm64
+endif
+
+PKG_LICENSE:=Apache-2.0
+
+PKG_SOURCE_URL:=https://github.com/fatedier/frp/releases/download/v$(PKG_VERSION)
+PKG_SOURCE:=frp_$(PKG_VERSION)_linux_$(FRPC_ARCH).tar.gz
+PKG_BUILD_DIR:=$(BUILD_DIR)/frp_$(PKG_VERSION)_linux_$(FRPC_ARCH)
+PKG_HASH:=skip
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -16,6 +42,7 @@ define Package/frpc
 endef
 
 define Build/Prepare
+	$(PKG_UNPACK)
 endef
 
 define Build/Configure
@@ -45,21 +72,8 @@ define Package/frpc/install
 	$(INSTALL_CONF) ./files/etc/config/* $(1)/etc/config/
 	
 	$(INSTALL_DIR) $(1)/usr/bin
-ifeq ($(ARCH),mipsel)
-	$(INSTALL_BIN) ./files/bin/frpc_mipsle $(1)/usr/bin/frpc
-endif
-ifeq ($(ARCH),mips)
-	$(INSTALL_BIN) ./files/bin/frpc_mips $(1)/usr/bin/frpc
-endif
-ifeq ($(ARCH),i386)
-	$(INSTALL_BIN) ./files/bin/frpc_386 $(1)/usr/bin/frpc
-endif
-ifeq ($(ARCH),arm)
-	$(INSTALL_BIN) ./files/bin/frpc_arm7 $(1)/usr/bin/frpc
-endif
-ifeq ($(ARCH),x86_64)
-	$(INSTALL_BIN) ./files/bin/frpc_x86_64 $(1)/usr/bin/frpc
-endif
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/frpc $(1)/usr/bin/frpc
+
 	
 endef
 
