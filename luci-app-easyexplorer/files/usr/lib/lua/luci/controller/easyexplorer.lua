@@ -3,7 +3,7 @@ function index()
 if not nixio.fs.access("/etc/config/easyexplorer")then
 return
 end
-entry({"admin","services","easyexplorer"},cbi("easyexplorer/global"),_("EasyExplorer"),5).dependent=true
+entry({"admin","services","easyexplorer"},cbi("easyexplorer/global"),_("EasyExplorer"),7).dependent=true
 entry({"admin","services","easyexplorer","status"},call("act_status")).leaf=true
 end
 function act_status()
