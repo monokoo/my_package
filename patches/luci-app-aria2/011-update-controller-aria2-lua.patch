@@ -5,7 +5,7 @@
  	end
  
 -	local page = entry({"admin", "services", "aria2"}, cbi("aria2"), _("Aria2 Settings"))
-+	local page = entry({"admin", "services", "aria2"}, cbi("aria2"), _("Aria2 Settings"),7)
++	local page = entry({"admin", "services", "aria2"}, cbi("aria2"), _("Aria2 Settings"),9)
  	page.dependent = true
  
  	entry({"admin", "services", "aria2", "status"}, call("status")).leaf = true
