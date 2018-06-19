@@ -3,7 +3,6 @@ local SYS  = require "luci.sys"
 
 m = Map("vlmcsd")
 m.title	= translate("KMS服务器")
-m.description = translate(Status)
 m:section(SimpleSection).template="vlmcsd/vlmcsd_status"
 
 s = m:section(TypedSection, "vlmcsd")
