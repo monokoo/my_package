@@ -9,6 +9,9 @@
 
 START=99
 STOP=10
+SERVICE_USE_PID=1
+SERVICE_WRITE_PID=1
+SERVICE_DAEMONIZE=1
 
 get_config()
 {
@@ -31,7 +34,7 @@ start()
 	[ $enable -ne 1 ] && exit 0
 
 	if [ $use_conf_file -ne 1 ]; then
-		/usr/bin/vlmcsd -d -P $port -l /var/log/vlmcsd.log
+		service_start /usr/bin/vlmcsd -d -P $port -l /var/log/vlmcsd.log
 	else
 		hostname=$(uci -q get system.@system[0].hostname)
 		domain=$(uci -q get dhcp.@dnsmasq[0].domain)
@@ -49,7 +52,7 @@ start()
 		fi
 		[ ! -d "/tmp/dnsmasq.d" ] && mkdir /tmp/dnsmasq.d
 		echo srv-host=_vlmcs._tcp$srv_name,1688,0,100 > /tmp/dnsmasq.d/vlmcsd.conf
-		/usr/bin/vlmcsd -i /usr/share/vlmcsd/vlmcsd.ini
+		service_start /usr/bin/vlmcsd -i /usr/share/vlmcsd/vlmcsd.ini
 	fi
 	[ "$enable_web" -eq 1 ] && {
 		del_web_port
@@ -64,7 +67,8 @@ stop()
 	kill -9 $(ps|grep '/usr/bin/vlmcsd'|grep -v 'grep'|awk '{print$1}') 2>/dev/null
 	[ -f "/tmp/dnsmasq.d/vlmcsd.conf" ] && {
 		rm -f /tmp/dnsmasq.d/vlmcsd.conf
-		/etc/init.d/dnsmasq restart
+		enabled=$(uci -q get vlmcsd.@vlmcsd[0].enable)
+		[ "$enabled" -eq 0 ] && /etc/init.d/dnsmasq restart
 	}
 	
 }
