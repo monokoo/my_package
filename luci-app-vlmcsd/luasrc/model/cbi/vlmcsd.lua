@@ -1,15 +1,10 @@
 local NXFS = require "nixio.fs"
 local SYS  = require "luci.sys"
 
-if SYS.call("pidof vlmcsd >/dev/null") == 0 then
-	Status = "<font color=\"green\">免配置自动激活密钥管理服务 运行中</font>"
-else
-	Status = "<font color=\"red\">免配置自动激活密钥管理服务 未运行</font>"
-end
-
 m = Map("vlmcsd")
 m.title	= translate("KMS服务器")
 m.description = translate(Status)
+m:section(SimpleSection).template="vlmcsd/vlmcsd_status"
 
 s = m:section(TypedSection, "vlmcsd")
 s.anonymous=true

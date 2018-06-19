@@ -1,0 +1,28 @@
+
+<% include("cbi/map") %>
+<script type="text/javascript">//<![CDATA[
+	XHR.poll(2, '<%=luci.dispatcher.build_url("admin", "services", "vlmcsd", "status")%>', null,
+		function(x, data)
+		{
+		var tb = document.getElementById('vlmcsd_status');
+		if (data && tb) {
+			if (data.vlmcsd) {
+				var links = '<b><font color=green><%=translate("RUNNING")%></font></b>';
+				tb.innerHTML = links;
+			} else {
+				tb.innerHTML = '<b><font color=red><%=translate("NOT RUNNING")%></font></b>';
+			}
+		}
+		}
+	);
+
+//]]>
+</script>
+
+<style>.mar-10 {margin-left: 50px; margin-right: 10px;}</style>
+<fieldset class="cbi-section">
+	<legend><%:Running Status%></legend>
+	<div width="100%" id="vlmcsd_status">
+		<div class="td left"><em><%:Collecting data...%></em></div>
+	</div>
+</fieldset>
