@@ -20,15 +20,21 @@ reload() {
 }
 
 boot() {
+	. /lib/config/uci.sh
+	uci_toggle_state mwan3 globals enabled "1"
 	config_t_set mwan3 globals enabled "1"
 }
 
 start() {
+	. /lib/config/uci.sh
+	uci_toggle_state mwan3 globals enabled "1"
 	config_t_set mwan3 globals enabled "1"
 	mwan3 start
 }
 
 stop() {
+	. /lib/config/uci.sh
+	uci_toggle_state mwan3 globals enabled "0"
 	config_t_set mwan3 globals enabled "0"
 	mwan3 stop
 }
