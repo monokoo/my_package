@@ -29,7 +29,7 @@ define Package/GoQuiet/Default
 	SECTION:=net
 	CATEGORY:=Network
 	TITLE:=GoQuiet
-	DEPENDS:=:=+libc +libpthread
+	DEPENDS:=+libc +libpthread
 	URL:=https://github.com/cbeuw/GoQuiet/
 endef
 
@@ -42,8 +42,6 @@ endef
 
 Package/GoQuiet-client/description = $(Package/GoQuiet/description)
 Package/GoQuiet-server/description = $(Package/GoQuiet/description)
-
-CONFIGURE_ARGS += --disable-ssp --disable-documentation --disable-assert
 
 define Package/GoQuiet-client/install
 	$(INSTALL_DIR) $(1)/usr/bin
