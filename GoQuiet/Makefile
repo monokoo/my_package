@@ -45,12 +45,12 @@ CONFIGURE_ARGS += --disable-ssp --disable-documentation --disable-assert
 
 define Package/GoQuiet-client/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/build/GoQuiet-client $(1)/usr/bin/gq-client
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/build/gq-client $(1)/usr/bin/gq-client
 endef
 
 define Package/GoQuiet-server/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/build/GoQuiet-server $(1)/usr/bin/gq-server
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/build/gq-server $(1)/usr/bin/gq-server
 endef
 
 $(eval $(call BuildPackage,GoQuiet-client))
