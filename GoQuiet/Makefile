@@ -23,11 +23,6 @@ PKG_MAINTAINER:=Andrea Muratori <andrea.m4niac@gmail.com>
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)/$(PKG_SOURCE_SUBDIR)
 
-PKG_INSTALL:=1
-PKG_FIXUP:=autoreconf
-PKG_USE_MIPS16:=0
-PKG_BUILD_PARALLEL:=1
-
 include $(INCLUDE_DIR)/package.mk
 
 define Package/GoQuiet/Default
@@ -50,12 +45,12 @@ CONFIGURE_ARGS += --disable-ssp --disable-documentation --disable-assert
 
 define Package/GoQuiet-client/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/GoQuiet-client $(1)/usr/bin/gq-client
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/build/GoQuiet-client $(1)/usr/bin/gq-client
 endef
 
 define Package/GoQuiet-server/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/GoQuiet-server $(1)/usr/bin/gq-server
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/build/GoQuiet-server $(1)/usr/bin/gq-server
 endef
 
 $(eval $(call BuildPackage,GoQuiet-client))
