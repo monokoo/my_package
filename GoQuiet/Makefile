@@ -29,17 +29,19 @@ define Package/GoQuiet/Default
 	SECTION:=net
 	CATEGORY:=Network
 	TITLE:=GoQuiet
+	DEPENDS:=:=+libc +libpthread
 	URL:=https://github.com/cbeuw/GoQuiet/
 endef
 
 Package/GoQuiet-client = $(call Package/GoQuiet/Default)
 Package/GoQuiet-server = $(call Package/GoQuiet/Default)
 
-define Package/GoQuiet-client/description
-A shadowsocks plugin that obfuscates the traffic as normal HTTPS traffic and disguises the proxy server as a normal webserver.
+define Package/GoQuiet/description
+	A shadowsocks plugin that obfuscates the traffic as normal HTTPS traffic and disguises the proxy server as a normal webserver.
 endef
 
-Package/GoQuiet-server/description = $(Package/GoQuiet-client/description)
+Package/GoQuiet-client/description = $(Package/GoQuiet/description)
+Package/GoQuiet-server/description = $(Package/GoQuiet/description)
 
 CONFIGURE_ARGS += --disable-ssp --disable-documentation --disable-assert
 
