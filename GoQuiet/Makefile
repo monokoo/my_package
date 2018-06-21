@@ -42,8 +42,9 @@ Package/GoQuiet-server = $(call Package/GoQuiet/Default)
 
 define Package/GoQuiet-client/description
 A shadowsocks plugin that obfuscates the traffic as normal HTTPS traffic and disguises the proxy server as a normal webserver.
+endef
 
-Package/GoQuiet-server/description = $(Package/simple-obfs/description)
+Package/GoQuiet-server/description = $(Package/GoQuiet-client/description)
 
 CONFIGURE_ARGS += --disable-ssp --disable-documentation --disable-assert
 
