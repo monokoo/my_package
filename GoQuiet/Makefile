@@ -1,59 +1,53 @@
-#
-# Copyright (C) 2018 Andrea Muratori <andrea.m4niac@gmail.com>
-#
-# This is free software, licensed under the GNU General Public License v3.
-# See /LICENSE for more information.
-#
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=GoQuiet
-PKG_VERSION:=1.0.0
-PKG_RELEASE:=2
+PKG_NAME:=gq-client
+PKG_VERSION:=1.1.2
+PKG_RELEASE:=1
 
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=https://github.com/cbeuw/GoQuiet.git
+ifeq ($(ARCH),i386)
+	GQ_ARCH:=32
+endif
+ifeq ($(ARCH),x86_64)
+	GQ_ARCH:=64
+endif
+ifeq ($(ARCH),arm)
+	GQ_ARCH:=arm
+endif
+ifeq ($(ARCH),arm64)
+	GQ_ARCH:=arm
+endif
+
+PKG_SOURCE_URL:=https://github.com/cbeuw/GoQuiet/releases/download/v$(PKG_VERSION)
+PKG_SOURCE:=$(PKG_NAME)-linux$(GQ_ARCH)-$(PKG_VERSION)
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE)
-PKG_SOURCE_VERSION:=a86ad43241e303ef4cc13abc6975b210d8a33ea2
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
-
-PKG_LICENSE:=GPLv3
-PKG_LICENSE_FILES:=LICENSE
-PKG_MAINTAINER:=Andrea Muratori <andrea.m4niac@gmail.com>
+PKG_HASH:=skip
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)/$(PKG_SOURCE_SUBDIR)
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/GoQuiet/Default
+define Build/Prepare
+	$(CP) $(TOPDIR)/dl/$(PKG_SOURCE) $(PKG_BUILD_DIR)/
+endef
+
+define Build/Compile
+endef
+
+define Package/$(PKG_NAME)
 	SECTION:=net
 	CATEGORY:=Network
-	TITLE:=GoQuiet
-	DEPENDS:=:=+libc +libpthread
+	TITLE:=GoQuiet Client
 	URL:=https://github.com/cbeuw/GoQuiet/
 endef
 
-Package/GoQuiet-client = $(call Package/GoQuiet/Default)
-Package/GoQuiet-server = $(call Package/GoQuiet/Default)
-
-define Package/GoQuiet/description
-	A shadowsocks plugin that obfuscates the traffic as normal HTTPS traffic and disguises the proxy server as a normal webserver.
+define Package/$(PKG_NAME)/description
+	A shadowsocks plugin client that obfuscates the traffic as normal HTTPS traffic and disguises the proxy server as a normal webserver.
 endef
 
-Package/GoQuiet-client/description = $(Package/GoQuiet/description)
-Package/GoQuiet-server/description = $(Package/GoQuiet/description)
-
-CONFIGURE_ARGS += --disable-ssp --disable-documentation --disable-assert
-
-define Package/GoQuiet-client/install
+define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/build/gq-client $(1)/usr/bin/gq-client
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(PKG_SOURCE) $(1)/usr/bin/gq-client
 endef
 
-define Package/GoQuiet-server/install
-	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/build/gq-server $(1)/usr/bin/gq-server
-endef
-
-$(eval $(call BuildPackage,GoQuiet-client))
-$(eval $(call BuildPackage,GoQuiet-server))
+$(eval $(call BuildPackage,$(PKG_NAME)))
