@@ -17,7 +17,7 @@ run_reboot()
 		fi
 		[ "$week" = 0 ] && week="*"
 		sed -i '/reboot/d' /etc/crontabs/root >/dev/null 2>&1
-		echo "$minute $hour * * $week reboot" >> /etc/crontabs/root
+		echo "$minute $hour * * $week /sbin/reboot &" >> /etc/crontabs/root
 		logger -t AutoReboot "AutoReboot has been enabled."
 	else
 		sed -i '/reboot/d' /etc/crontabs/root >/dev/null 2>&1
