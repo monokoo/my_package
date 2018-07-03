@@ -1528,6 +1528,10 @@ width:50px !important;
     padding: 0.5rem;
 }
 
+.cbi-section-actions {
+    text-align: right;
+}
+
 div.cbi-value var, div.td.cbi-value-field var, td.cbi-value-field var {
     font-style: italic;
     color: #0069D6;
@@ -1854,6 +1858,14 @@ body.lang_pl.node-main-login .cbi-value-title {
     width: 12rem;
 }
 
+@media screen and (max-width: 1350px) {
+	#wifi_assoclist_table { 
+		display: -webkit-inline-box;
+		position: relative; 
+		white-space: nowrap;
+		overflow-x: auto;
+	}
+}
 
 @media screen and (max-width: 1600px) {
     .main-left {
@@ -2031,7 +2043,8 @@ body.lang_pl.node-main-login .cbi-value-title {
         overflow-x: auto;
     }
 
-    .cbi-section {
+    .cbi-section,
+    .cbi-section-node {
         padding: 1rem;
         margin: 1rem 0 0 0;
         overflow-x: auto;
