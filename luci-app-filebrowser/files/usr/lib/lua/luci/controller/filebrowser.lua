@@ -85,13 +85,13 @@ list_response(t,true)
 end
 function scandir(i)
 local e,n,t=0,{},io.popen
-local o=t("ls -lh \""..i.."\" | egrep '^d' ; ls -lh \""..i.."\" | egrep -v '^d|^l'")
+local o=t("ls -lh \""..i.."\" | egrep '^d' ; ls -lh \""..i.."\" | egrep -v '^d|^l' | grep -v 'total'")
 for t in o:lines()do
 e=e+1
 n[e]=t
 end
 o:close()
-o=t("ls -lh \""..i.."\" | egrep '^l' ;")
+o=t("ls -lh \""..i.."\" | egrep '^l'| grep -v 'total';")
 for a in o:lines()do
 e=e+1
 linkindex,_,linkpath=string.find(a,"->%s+(.+)$")
