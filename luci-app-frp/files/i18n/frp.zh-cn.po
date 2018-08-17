@@ -60,6 +60,9 @@ msgstr "TCP 协议"
 msgid "KCP Protocol"
 msgstr "KCP 协议"
 
+msgid "WebSocket Protocol"
+msgstr "WebSocket 协议"
+
 msgid "Frp support kcp protocol since v0.12.0"
 msgstr "从 v0.12.0 版本开始，底层通信协议支持选择 kcp 协议加速。"
 
