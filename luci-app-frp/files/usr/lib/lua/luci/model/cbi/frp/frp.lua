@@ -51,6 +51,7 @@ e=t:taboption("other",ListValue, "protocol", translate("Protocol Type"),translat
 e.default = "tcp"
 e:value("tcp",translate("TCP Protocol"))
 e:value("kcp",translate("KCP Protocol"))
+e:value("websocket",translate("WebSocket Protocol"))
 e=t:taboption("other",Value, "dns_server", translate("DNS Server"), translate("Specify a dns server, so frpc will use this instead of default one"))
 e.datatype = "ip4addr"
 e.placeholder = "8.8.8.8"
