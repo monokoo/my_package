@@ -72,7 +72,8 @@ if [ "$TYPE" == "iface" -a "$ACTION" == "ifup" ]; then
 	[ "$t_redial" -eq 1 ] || exit 0
 	check_network
 	nowtime=`date '+%Y-%m-%d %H:%M:%S'`
-	publicip=`curl -s --interface $DEVICE http://members.3322.org/dyndns/getip 2>/dev/null` || publicip=`curl -s --interface $DEVICE http://nstool.netease.com  2>/dev/null| awk -F'/' '{print $5}' | awk -F'.' '{print $1}' |awk -F'-' '{print $3"."$4"."$5"."$6}'`
+	publicip=`curl -s --interface $DEVICE http://members.3322.org/dyndns/getip 2>/dev/null`
+	[ -z "$publicip" ] && publicip=`curl -s --interface $DEVICE http://nstool.netease.com  2>/dev/null| awk -F'/' '{print $5}' | awk -F'.' '{print $1}' |awk -F'-' '{print $3"."$4"."$5"."$6}'`
 	[ -z "$publicip" ] && publicip=`curl -s --interface $DEVICE http://whatismyip.akamai.com 2>/dev/null`
 	[ -z "$publicip" ] && publicip="暂时无法获取公网IP"
 	wanip=$(ifconfig $DEVICE 2>/dev/null | grep "inet addr:" | grep -E -o "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"|head -1)
@@ -111,7 +112,8 @@ elif [ "$TYPE" == "dhcp" ]; then
 	is_inblist=`uci -q get serverchan.trigger_message.t_client_up_blacklist | grep -c "$upper_PARAM3"`
 	if [ "$t_client_up_type" == "whitelist" -a "$is_inwlist" -eq 0 ] ||  [ "$t_client_up_type" == "blacklist" -a "$is_inblist" -gt 0 ]; then
 		temp_lease_time_remaining=`cat /tmp/dhcp.leases 2>/dev/null | grep -E "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" | grep -w "$PARAM3" |awk '{print $1}'`
-		lease_time_remaining=`date -d @$temp_lease_time_remaining  "+%Y-%m-%d %H:%M:%S" 2>/dev/null` || lease_time_remaining="暂时无法获取"
+		lease_time_remaining=`date -d @$temp_lease_time_remaining  "+%Y-%m-%d %H:%M:%S" 2>/dev/null`
+		[ -z "$lease_time_remaining" ] && lease_time_remaining="暂时无法获取"
 		if [ "$t_client_up" == "all" ]; then
 			desp_header="
 **有新的客户端加入$(uname -n)网络，信息如下：**  

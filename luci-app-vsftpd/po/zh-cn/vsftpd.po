@@ -72,6 +72,12 @@ msgstr "启用 IPv6"
 msgid "Enable PASV mode"
 msgstr "启用 PASV 模式"
 
+msgid "PASV Address"
+msgstr "PASV主机地址"
+
+msgid "Resolve PASV Address"
+msgstr "解析PASV主机地址"
+
 msgid "Enable PORT mode"
 msgstr "启用 PORT 模式"
 

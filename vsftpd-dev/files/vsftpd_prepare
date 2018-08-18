@@ -126,7 +126,8 @@ rm -rf $VUSER_CONF_DIR $CHROOT_DIR
 mkdir -m 0755 -p $VAR
 mkdir -p $VUSER_CONF_DIR
 mkdir -p $CHROOT_DIR
-
+lan_ip=`ifconfig br-lan 2>/dev/null | grep "inet addr:" | grep -E -o "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"|head -1`
+[ -z "$lan_ip" ] && lan_ip=`uci -q get network.lan.ipaddr`
 config_load vsftpd
 
 # listen
@@ -153,6 +154,7 @@ output_field global dirmsgfile "message_file" ".message"
 # connection
 output_bool connection portmode "port_enable" 1
 output_bool connection pasvmode "pasv_enable" 1
+output_bool connection pasv_addr_resolve "pasv_addr_resolve" 1
 
 ascii_download_enable=NO
 ascii_upload_enable=NO
@@ -173,6 +175,7 @@ output_const "ascii_upload_enable" $ascii_upload_enable
 output_field connection idletimeout "idle_session_timeout" 1800
 output_field connection conntimeout "connect_timeout" 120
 output_field connection dataconntimeout "data_connection_timeout" 120
+output_field connection pasv_address "pasv_address" $lan_ip
 output_field connection pasv_min_port "pasv_min_port" 5000
 output_field connection pasv_max_port "pasv_max_port" 5003
 output_field connection maxclient "max_clients" 0

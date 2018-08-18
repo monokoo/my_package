@@ -21,6 +21,10 @@ o.default = 1
 o = sc:option(Flag, "pasvmode", translate("Enable PASV mode"))
 o.default = 1
 
+o = sc:option(Value, "pasv_address", translate("PASV Address"))
+o:depends("pasvmode",1)
+o = sc:option(Flag, "pasv_addr_resolve", translate("Resolve PASV Address"))
+o:depends("pasvmode",1)
 o = sc:option(Value, "pasv_min_port", translate("Min PASV Port"))
 o.datatype="range(1025,65535)"
 o.default = "5000"

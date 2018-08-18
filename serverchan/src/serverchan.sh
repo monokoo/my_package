@@ -43,7 +43,8 @@ get_wan_info() {
 			fi
 		}
 		if [ -n "$devname" ]; then
-			publicip=`curl -s --interface $devname http://members.3322.org/dyndns/getip 2>/dev/null` || publicip=`curl -s --interface $devname http://1212.ip138.com/ic.asp 2>/dev/null | grep -Eo '([0-9]+\.){3}[0-9]+'`
+			publicip=`curl -s --interface $devname http://members.3322.org/dyndns/getip 2>/dev/null`
+			[ -z "$publicip" ] && publicip=`curl -s --interface $devname http://1212.ip138.com/ic.asp 2>/dev/null | grep -Eo '([0-9]+\.){3}[0-9]+'`
 			[ -z "$publicip" ] && publicip="无法获取"
 			devinfo=$(ifconfig $devname 2>/dev/null)
 			wanip=$(echo $devinfo | grep "inet addr:" | grep -E -o "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"|head -1)
@@ -84,7 +85,8 @@ get_router_status(){
 	loadavg=`cat /proc/loadavg |awk '{print $1,$2,$3}' | sed 's/ /,/g'`
 	sum_mem=$((`cat /proc/meminfo |grep "MemTotal"| awk '{print $2}'`/1024))
 	free_mem=$((`cat /proc/meminfo |grep "MemFree"| awk '{print $2}'`/1024))
-	lan_ip=`ifconfig br-lan 2>/dev/null | grep "inet addr:" | grep -E -o "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"|head -1` || lan_ip=`uci -q get network.lan.ipaddr`
+	lan_ip=`ifconfig br-lan 2>/dev/null | grep "inet addr:" | grep -E -o "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"|head -1`
+	[ -z "$lan_ip" ] && lan_ip=`uci -q get network.lan.ipaddr`
 	
 	router_status="
 ****
