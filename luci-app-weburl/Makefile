@@ -15,7 +15,7 @@ define Package/$(PKG_NAME)
 	SUBMENU:=3. Applications
 	PKGARCH:=all
 	TITLE:=luci for weburl
-        DEPENDS:=+libc
+        DEPENDS:=+libc +iptables-mod-weburl
 endef
 
 define Package/$(PKG_NAME)/description
