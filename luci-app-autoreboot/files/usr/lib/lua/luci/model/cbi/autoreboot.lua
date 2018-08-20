@@ -1,5 +1,6 @@
 require("luci.sys")
 m=Map("autoreboot",translate("定时重启"),translate("配置定时重启。"))
+m.apply_on_parse=true
 s=m:section(TypedSection,"login","")
 s.addremove=false
 s.anonymous=true
