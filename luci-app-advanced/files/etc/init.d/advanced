@@ -46,6 +46,14 @@ start() {
 	elif [ "$lan_port" != "none" ]; then
 		add_vlan
 	fi
+	
+	rollbacktime=`uci get advanced.base.rollback 2>/dev/null`
+	lucitime=`uci get luci.apply.rollback 2>/dev/null`
+	[ -z "$rollbacktime" ] && rollbacktime="30"
+	if [ "$rollbacktime" != "$lucitime" ]; then
+		uci set luci.apply.rollback=$rollbacktime
+		uci commit
+	fi
 }
 
 disable_usb3() {
