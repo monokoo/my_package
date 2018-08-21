@@ -1163,7 +1163,7 @@ form.inline + form.inline,
     min-height: 20px;
 }
 
-.cbi-dropdown > ul > li .hide-open { display: initial; }
+.cbi-dropdown > ul > li .hide-open { display: block; display: initial; }
 .cbi-dropdown > ul > li .hide-close { display: none; }
 
 .cbi-dropdown > ul > li[display]:not([display="0"]) {
@@ -1230,7 +1230,7 @@ form.inline + form.inline,
 }
 
 .cbi-dropdown[open] > ul.dropdown > li .hide-open { display: none; }
-.cbi-dropdown[open] > ul.dropdown > li .hide-close { display: initial; }
+.cbi-dropdown[open] > ul.dropdown > li .hide-close { display: block; display: initial; }
 
 .cbi-dropdown[open] > ul.dropdown > li {
     border-bottom: 1px solid #ccc;
@@ -1335,7 +1335,7 @@ td > .ifacebadge,
 }
 
 .network-status-table .ifacebox-body > span {
-    flex: 10;
+    flex: 10 10 auto;
 }
 
 .network-status-table .ifacebox-body > div {
