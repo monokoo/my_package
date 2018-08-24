@@ -28,11 +28,11 @@ get_config()
 }
 
 download_binary(){
-	/usr/bin/wget --no-check-certificate --timeout=10 --tries=1 https://github.com/syncthing/syncthing/releases/download/v0.14.39/syncthing-linux-$s_arch-v0.14.39.tar.gz -O /tmp/syncthing-linux-$s_arch-v0.14.39.tar.gz
-	[ ! -s "/tmp/syncthing-linux-$s_arch-v0.14.39.tar.gz" ] && /usr/bin/wget -q --no-check-certificate --timeout=10 --tries=1 https://any.mokoo.xyz/app/syncthing-linux-$s_arch-v0.14.39.tar.gz -O /tmp/syncthing-linux-$s_arch-v0.14.39.tar.gz
-	[ -f "/tmp/syncthing-linux-$s_arch-v0.14.39.tar.gz" ] && tar -xf /tmp/syncthing-linux-$s_arch-v0.14.39.tar.gz -C /tmp && \
-		mv /tmp/syncthing-linux-$s_arch-v0.14.39/syncthing /usr/share/syncthing/syncthing
-	rm -rf /tmp/syncthing-linux-$s_arch-v0.14.39*
+	latest_version=`curl -S  https://github.com/syncthing/syncthing/releases/latest | awk -F"/tag/v" '{print $2}' | awk -F"\">" '{print $1}'`
+	get_binfile=`wget --no-check-certificate --timeout=10 --tries=1 https://github.com/syncthing/syncthing/releases/download/v$latest_version/syncthing-linux-$s_arch-v$latest_version.tar.gz -O /tmp/syncthing-linux-$s_arch-v$latest_version.tar.gz`
+	[ -f "/tmp/syncthing-linux-$s_arch-v$latest_version.tar.gz" ] && tar -xf /tmp/syncthing-linux-$s_arch-v$latest_version.tar.gz -C /tmp && \
+		mv /tmp/syncthing-linux-$s_arch-v$latest_version/syncthing /usr/share/syncthing/syncthing
+	rm -rf /tmp/syncthing-linux-$s_arch-v$latest_version*
 	[ -f "/usr/share/syncthing/syncthing" ] && chmod +x /usr/share/syncthing/syncthing
 }
 

@@ -3,6 +3,7 @@ local util = require "nixio.util"
 local e=luci.http
 local a,t,e
 a=Map("syncthing",translate("Syncthing"),translate("Syncthing replaces proprietary sync and cloud services with something open"))
+a.apply_on_parse=true
 a:section(SimpleSection).template="syncthing/syncthing_status"
 t=a:section(TypedSection,"syncthing",translate("Global Setting"))
 t.anonymous=true
