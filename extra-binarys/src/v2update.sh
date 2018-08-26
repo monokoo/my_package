@@ -35,7 +35,7 @@ elif [ "$arch" == "x86_64" ]; then
 	s_arch="64"
 	client_arch="amd64"
 fi
-		https://github.com/v2ray/v2ray-core/releases/download/v3.36/v2ray-linux-arm.zip
+
 if [ "$latest_version" != "$local_version" ]; then
 	echo_date "开始更新本地 V2Ray 客户端..."
 	mkdir -p /tmp/v2ray-linux-$s_arch
