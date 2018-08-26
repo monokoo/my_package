@@ -23,7 +23,7 @@ fi
 
 latest_version=`curl -S  https://github.com/v2ray/v2ray-core/releases/latest | awk -F"/tag/" '{print $2}' | awk -F"\">" '{print $1}'`
 if [ -n "$latest_version" ]; then
-	echo_date "服务器 V2Ray 最新版本：$latest_version"
+	echo_date "远程 V2Ray 最新版本：$latest_version"
 else
 	echo_date "未检测到远程服务器 V2Ray 客户端最新版本，请稍候重试!" && exit 0
 fi
@@ -51,11 +51,11 @@ if [ "$latest_version" != "$local_version" ]; then
 	reboot="1"
 else
 	echo_date "==================================="
-	echo_date "本地客户端已经是最新版本了，无需更新！"
+	echo_date "本地V2Ray客户端已经是最新版本了，无需更新！"
 fi
 
 if [ "$reboot" == "1" ];then
-	echo_date "自动重启shadowsocks，以应用新的客户端！请稍后！"
+	echo_date "自动重启shadowsocks，以应用新的V2Ray客户端！请稍后！"
 	/etc/init.d/shadowsocks restart
 fi
 
