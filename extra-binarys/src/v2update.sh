@@ -39,11 +39,11 @@ fi
 if [ "$latest_version" != "$local_version" ]; then
 	echo_date "开始更新本地 V2Ray 客户端..."
 	mkdir -p /tmp/v2ray-linux-$s_arch
-	/usr/bin/wget --no-check-certificate --timeout=8 -t 2 https://github.com/v2ray/v2ray-core/releases/download/$latest_version/v2ray-linux-$s_arch.tar.gz -O /tmp/v2ray-linux-$s_arch/v2ray-linux-$s_arch-$latest_version.tar.gz
-	[ ! -s "/tmp/v2ray-linux-$s_arch/v2ray-linux-$s_arch-$latest_version.tar.gz" ] && echo_date "下载失败，请稍候重试！" && exit 0
-	tar -xzf /tmp/v2ray-linux-$s_arch/v2ray-linux-$s_arch-$latest_version.tar.gz -C /tmp/v2ray-linux-$s_arch
-	mv /tmp/v2ray-linux-$s_arch/v2ctl /usr/bin/v2ctl && chmod +x /usr/bin/v2ctl
-	mv /tmp/v2ray-linux-$s_arch/v2ray /usr/bin/v2ray && chmod +x /usr/bin/v2ray && {
+	/usr/bin/wget --no-check-certificate --timeout=8 -t 2 https://github.com/v2ray/v2ray-core/releases/download/$latest_version/v2ray-linux-$s_arch.zip -O /tmp/v2ray-linux-$s_arch/v2ray-$latest_version-linux-$s_arch.zip
+	[ ! -s "/tmp/v2ray-linux-$s_arch/v2ray-$latest_version-linux-$s_arch.zip" ] && echo_date "下载失败，请稍候重试！" && exit 0
+	unzip /tmp/v2ray-linux-$s_arch/v2ray-$latest_version-linux-$s_arch.zip -d /tmp/v2ray-linux-$s_arch
+	mv /tmp/v2ray-linux-$s_arch/v2ray-$latest_version-linux-$s_arch/v2ctl /usr/bin/v2ctl && chmod +x /usr/bin/v2ctl
+	mv /tmp/v2ray-linux-$s_arch/v2ray-$latest_version-linux-$s_arch/v2ray /usr/bin/v2ray && chmod +x /usr/bin/v2ray && {
 		echo_date "==================================="
 		echo_date "本地 V2Ray 客户端更新成功"
 	}
