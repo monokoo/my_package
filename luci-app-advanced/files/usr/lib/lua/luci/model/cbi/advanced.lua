@@ -2,6 +2,7 @@ local e=require"nixio.fs"
 local t=require"luci.sys"
 local uci=luci.model.uci.cursor()
 m=Map("advanced",translate("高级设置"),translate("各类服务配置文档的直接编辑,除非你知道自己在干什么,否则请不要轻易修改这些配置文档，配置不正确可能会导致不能开机等严重错误。"))
+m.apply_on_parse=true
 s=m:section(TypedSection,"advanced")
 s.anonymous=true
 s:tab("base",translate("Basic Settings"))
