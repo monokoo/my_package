@@ -13,8 +13,6 @@
 
 config_load "smartinfo"
 
-local enable time time_step time_unit log_enabled log_path touch_enable touch_path
-
 config_get  enabled  main enabled
 config_get  time_step  main  time_step
 config_get  time_unit  main  time_unit

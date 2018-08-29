@@ -17,6 +17,10 @@ require("luci.sys")
 require("luci.util")
 
 m=Map("smartinfo",translate("S.M.A.R.T Info"),translate("This widget allow you to monitor your storage devices which support S.M.A.R.T technology."))
+m.apply_on_parse=true
+function m.on_apply(self)
+	luci.sys.call("/etc/init.d/smartinfo restart> /dev/null 2>&1")
+end
 
 s=m:section(TypedSection,"smartinfo",translate("S.M.A.R.T Report Settings"))
 s.addremove=false
@@ -29,19 +33,7 @@ s:tab("general",translate("Global"))
 
 enable=s:taboption("general",Flag,"enabled",translate("Enabled"))
 enable.rmempty=false
-function enable.cfgvalue(self,section)
-	return luci.sys.init.enabled("smartinfo") and self.enabled or self.disabled
-end
-function enable.write(self,section,value)
-	if value == "1" then
-		luci.sys.call("/etc/init.d/smartinfo stop > /dev/null")
-		luci.sys.call("/etc/init.d/smartinfo enable > /dev/null")
-		luci.sys.call("/etc/init.d/smartinfo start > /dev/null")
-	else
-		luci.sys.call("/etc/init.d/smartinfo stop > /dev/null")
-		luci.sys.call("/etc/init.d/smartinfo disable > /dev/null")
-	end
-end
+enable.default=1
 check_interval=s:taboption("general",Value,"time_step",translate("Check Interval"))
 check_interval.rmempty=false
 check_interval.placeholder="1"
