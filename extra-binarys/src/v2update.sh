@@ -55,6 +55,7 @@ else
 fi
 
 if [ "$reboot" == "1" ];then
+	[ -f "/var/lock/shadowsocks" ] && exit 0
 	echo_date "自动重启shadowsocks，以应用新的V2Ray客户端！请稍后！"
 	/etc/init.d/shadowsocks restart
 fi
