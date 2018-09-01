@@ -50,7 +50,7 @@ endef
 define Package/$(PKG_NAME)/install
 
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
-	$(INSTALL_BIN) ./files/etc/uci-defaults/33_luci-smartinfo $(1)/etc/uci-defaults/33_luci-smartinfo
+	$(INSTALL_BIN) ./files/root/etc/uci-defaults/33_luci-smartinfo $(1)/etc/uci-defaults/33_luci-smartinfo
 
 	$(INSTALL_DIR) $(1)/etc/config $(1)/etc/init.d
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/model/cbi
