@@ -4,7 +4,7 @@
 USE_PROCD=1
 START=97
 
-WEBSHELL=`uci -q get advanced.base.webshell`
+WEBSHELL=`${IPKG_INSTROOT}/sbin/uci -q get advanced.base.webshell`
 [ -z "$WEBSHELL" ] && WEBSHELL="shellinabox"
 
 if [ "$WEBSHELL" == "ttyd" ]; then

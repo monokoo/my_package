@@ -94,7 +94,7 @@ del_rule(){
 	}
 }
 
-limit_type=$(uci -q get webrestriction.@basic[0].limit_type)
+limit_type=$(${IPKG_INSTROOT}/sbin/uci -q get webrestriction.@basic[0].limit_type)
 
 start(){
 	
