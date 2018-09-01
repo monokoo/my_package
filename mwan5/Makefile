@@ -8,7 +8,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mwan5
-PKG_VERSION:=3.6.18
+PKG_VERSION:=3.7.0
 PKG_RELEASE:=1
 PKG_MAINTAINER:=Florian Eckert <fe@dev.tdt.de>
 PKG_LICENSE:=GPLv2
@@ -67,6 +67,7 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/etc/hotplug.d/iface
 	$(INSTALL_BIN) ./files/etc/hotplug.d/iface/14-mwan3 $(1)/etc/hotplug.d/iface/14-mwan3
 	$(INSTALL_BIN) ./files/etc/hotplug.d/iface/15-mwan3 $(1)/etc/hotplug.d/iface/15-mwan3
+	$(INSTALL_BIN) ./files/etc/hotplug.d/iface/16-mwan3 $(1)/etc/hotplug.d/iface/16-mwan3
 	$(INSTALL_BIN) ./files/etc/hotplug.d/iface/16-mwan3-user $(1)/etc/hotplug.d/iface/16-mwan3-user
 
 	$(INSTALL_DIR) $(1)/lib/mwan3
