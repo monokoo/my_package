@@ -59,6 +59,7 @@ else
 fi
 
 if [ "$reboot" == "1" ];then
+	[ -f "/var/lock/shadowsocks.lock" ] && exit 0
 	echo_date "自动重启shadowsocks，以应用新的KCP客户端！请稍后！"
 	/etc/init.d/shadowsocks restart
 fi
