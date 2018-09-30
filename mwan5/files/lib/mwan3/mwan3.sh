@@ -26,17 +26,17 @@ mwan3_rtmon_ipv4()
 	local idx=0
 	local ret=1
 	mkdir -p /tmp/mwan3rtmon
-	$IP4 route list table main  | grep -v ^default | sort -n >/tmp/mwan3rtmon/ipv4.main
+	($IP4 route list table main  | grep -v ^default | sort -n; echo empty fixup) >/tmp/mwan3rtmon/ipv4.main
 	while uci get mwan3.@interface[$idx] >/dev/null 2>&1 ; do
 		idx=$((idx+1))
 		tid=$idx
 		[ "$(uci get mwan3.@interface[$((idx-1))].family)" = "ipv4" ] && {
 			if $IP4 route list table $tid | grep -q ^default; then
-				$IP4 route list table $tid  | grep -v ^default | sort -n >/tmp/mwan3rtmon/ipv4.$tid
-				diff -u /tmp/mwan3rtmon/ipv4.$tid /tmp/mwan3rtmon/ipv4.main | grep ^-[^-] | sed 's/^-//' | while read line; do
+				($IP4 route list table $tid  | grep -v ^default | sort -n; echo empty fixup) >/tmp/mwan3rtmon/ipv4.$tid
+				cat /tmp/mwan3rtmon/ipv4.$tid | grep -v -x -F -f /tmp/mwan3rtmon/ipv4.main | while read line; do
 					$IP4 route del table $tid $line
 				done
-				diff -u /tmp/mwan3rtmon/ipv4.$tid /tmp/mwan3rtmon/ipv4.main | grep ^+[^+] | sed 's/^+//' | while read line; do
+				cat /tmp/mwan3rtmon/ipv4.main | grep -v -x -F -f /tmp/mwan3rtmon/ipv4.$tid | while read line; do
 					$IP4 route add table $tid $line
 				done
 			fi
@@ -251,7 +251,8 @@ mwan3_set_general_iptables()
 
 		if ! $IPT -S mwan3_hook &> /dev/null; then
 			local lanip ip_prefix_hex
-			lanip=$(uci get network.lan.ipaddr)
+			lanip=`ifconfig br-lan 2>/dev/null | grep "inet addr:" | grep -E -o "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"|head -1`
+			[ -z "$lanip" ] && lanip=`uci -q get network.lan.ipaddr`
 			ip_prefix_hex=$(echo $lanip | awk -F "." '{printf ("0x%02x", $1)} {printf ("%02x", $2)} {printf ("%02x", $3)} {printf ("00/0xffffff00")}')
 			$IPT -N mwan3_hook
 			# do not mangle ipv6 ra service
