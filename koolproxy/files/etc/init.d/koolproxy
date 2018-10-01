@@ -15,9 +15,12 @@ EXTRA_HELP="	update	Perform the update immediately"
 CONFIG=koolproxy
 LOGFILE="/var/log/koolproxy.log"
 LOCK_FILE=/var/lock/$CONFIG.lock
-TEMPPATH="/tmp/kpd"
-alias echo_date='echo $(date +%Y年%m月%d日\ %X):'
+SOURCE_LIST=/usr/share/koolproxy/data/source.list
 dnsmasq_restart=0
+
+echo_date(){
+	echo $(date +%Y年%m月%d日\ %X): $1 >>$LOGFILE
+}
 
 config_n_get() {
 	local ret=$(uci get $CONFIG.$1.$2 2>/dev/null)
@@ -51,10 +54,49 @@ load_acl(){
 	fi
 }
 
+get_kprule_status(){
+	status=`echo "$kp_third_rules" | grep -c $1`
+	echo $status
+}
+
+load_kp_rules(){
+	sed -i '1,7s/1/0/g' $SOURCE_LIST
+	kp_video_rules=$(get_kprule_status kp_video_rules)
+	kp_easylist_rules=$(get_kprule_status kp_easylist_rules)
+	kp_abx_rules=$(get_kprule_status kp_abx_rules)
+	kp_fanboy_rules=$(get_kprule_status kp_fanboy_rules)
+	
+	if [ "$kp_video_rules" == "1" -a "kp_online_rules" == "0" -a "$kp_easylist_rules" == "0" -a "$kp_abx_rules" == "0" -a "$kp_fanboy_rules" == "0" ]; then
+		echo_date 加载【视频规则】
+		sed -i '3,4s/0/1/g' $SOURCE_LIST
+	else
+		if [ "$kp_online_rules" == "1" ]; then
+			echo_date 加载【默认规则】
+			sed -i '1,2s/0/1/g;4s/0/1/g' $SOURCE_LIST
+		fi
+		if [ "$kp_video_rules" == "1" ]; then
+			echo_date 加载【视频规则】
+			sed -i '3,4s/0/1/g' $SOURCE_LIST
+		fi		
+		if [ "$kp_easylist_rules" == "1" ]; then
+			echo_date 加载【ABP规则】
+			sed -i '5s/0/1/g' $SOURCE_LIST		
+		fi
+		if [ "$kp_abx_rules" == "1" ]; then
+			echo_date 加载【乘风规则】
+			sed -i '6s/0/1/g' $SOURCE_LIST		
+		fi
+		if [ "$kp_fanboy_rules" == "1" ]; then
+			echo_date 加载【Fanboy规则】
+			sed -i '7s/0/1/g' $SOURCE_LIST
+		fi				
+	fi
+}
+
 update(){
-	rm -f $LOGFILE
-	hoston=$(config_t_get global adblock 0)
-	[ $hoston -eq 1 ] && /usr/sbin/adblockplus >>$LOGFILE 2>&1 &
+	#rm -f $LOGFILE
+	third_rule_update=$(config_t_get global third_rule_update 0)
+	[ $third_rule_update -eq 1 ] && /usr/sbin/adblockplus >>$LOGFILE 2>&1 &
 }
 
 iptables_ext() {
@@ -65,22 +107,22 @@ iptables_ext() {
 	fi
 }
 
+get_config(){
+	config_get GLOBAL_MODE $1 filter_mode adblock
+	config_get REBOOT_MODE $1 reboot_mode disable
+	config_get kp_online_rules $1 kp_online_rules 1
+	config_get kp_third_rules $1 kp_third_rules
+	config_get portEx $1 portEx
+}
 load_config() {
 	ENABLED=$(config_t_get global enabled 0)
 	[ $ENABLED -ne 1 ] && return 1
-	GLOBAL_MODE=$(config_t_get global filter_mode adblock)
-	DEFAULT_ACL_MODE=$(config_t_get global default_acl_mode http)
-	REBOOT_MODE=$(config_t_get global reboot_mode disable)
-	config_load $CONFIG
 	return 0
 }
 
 add_dnsmasq() {
-	[ "$GLOBAL_MODE" == "adblock" ] && {
-		adblockenable=$(config_t_get global adblock 0)
-		if [ "$adblockenable" == "1" ];then
-			ln -sf /etc/dnsmasq.d/dnsmasq.adblock /tmp/dnsmasq.d/dnsmasq.adblock
-		fi
+	[ "$GLOBAL_MODE" == "adblock" -o "$GLOBAL_MODE" == "adblockWithHttps" ] && {
+		ln -sf /etc/dnsmasq.d/dnsmasq.adblock /tmp/dnsmasq.d/dnsmasq.adblock
 		rm -rf /usr/share/koolproxy/adblock_tmp.conf /tmp/dnsmasq.d/adblock.conf
 		cp -r /usr/share/koolproxy/adblock.conf /usr/share/koolproxy/adblock_tmp.conf
 		[ -s "/etc/dnsmasq.d/kpadblock.conf" ] && {
@@ -101,9 +143,9 @@ gen_ca() {
 }
 
 stop_dnsmasq() {
-	adenable=$(config_t_get global adblock 0)
+	GLOBAL_MODE=$(config_t_get global filter_mode adblock)
 	ENABLED=$(config_t_get global enabled 0)
-	if [ "$adenable" -eq 0 -o "$ENABLED" -eq 0 ];then
+	if [ "$GLOBAL_MODE" != "adblock" -a "$GLOBAL_MODE" != "adblockWithHttps" -o "$ENABLED" -eq 0 ];then
 		sed -i '/koolproxy update/d' /etc/crontabs/root >/dev/null 2>&1
 		[ -L "/tmp/dnsmasq.d/dnsmasq.adblock" ] && {
 			rm -rf /tmp/dnsmasq.d/dnsmasq.adblock
@@ -125,11 +167,20 @@ get_action_chain() {
 		disable)
 			echo "RETURN"
 		;;
-		http)
+		global)
 			echo "KOOLPROXY_HTTP"
 		;;
-		global)
+		globalWithHttps)
 			echo "KOOLPROXY_HTTPS"
+		;;
+		blacklist)
+			echo "KOOLPROXY_BLACK_HTTP"
+		;;
+		blacklistWithHttps)
+			echo "KOOLPROXY_BLACK_HTTPS"
+		;;
+		fullport)
+			echo "KOOLPROXY_FULL_PORT"
 		;;
 	esac
 }
@@ -146,7 +197,7 @@ get_jump_mode(){
 }
 
 add_koolproxy_cru(){
-	[ "$GLOBAL_MODE" == "adblock" ] && {
+	[ "$GLOBAL_MODE" == "adblock" -o "$GLOBAL_MODE" == "adblockWithHttps" ] && {
 		time=$(config_t_get global time_update)
 		wirtecron=$(cat /etc/crontabs/root | grep "0 $time * * *" | grep "koolproxy update")
 		if [ -z "$wirtecron" ];then
@@ -160,11 +211,16 @@ add_rule() {
 	iptables -t nat -N KOOLPROXY 2>/dev/null
 	iptables -t nat -N KOOLPROXY_HTTP 2>/dev/null
 	iptables -t nat -N KOOLPROXY_HTTPS 2>/dev/null
+	iptables -t nat -N KOOLPROXY_BLACK_HTTP 2>/dev/null
+	iptables -t nat -N KOOLPROXY_BLACK_HTTPS 2>/dev/null
+	iptables -t nat -N KOOLPROXY_FULL_PORT 2>/dev/null
 	
 	#创建所需的ipset
 	IPSET_ADB="adblock"
 	ipset -! create $IPSET_ADB iphash && ipset -! add $IPSET_ADB 110.110.110.110 2>/dev/null
 	sed -e "s/^/add $IPSET_ADB &/g" /etc/gfwlist/adblockip | awk '{print $0} END{print "COMMIT"}' | ipset -R 2>/dev/null
+	cat /usr/share/koolproxy/data/rules/koolproxy.txt /usr/share/koolproxy/data/rules/daily.txt /usr/share/koolproxy/data/rules/user.txt | grep -Eo "(.\w+\:[1-9][0-9]{1,4})/" | grep -Eo "([0-9]{1,5})" | sort -un | sed -e '$a\80' -e '$a\443' | sed -e "s/^/-A kp_full_port &/g" -e "1 i\-N kp_full_port bitmap:port range 0-65535 " | ipset -R -!
+	
 	#生成代理规则
 	#  忽略特殊IP段
 	lan_ipc=`ip address show br-lan | grep -w "inet" |awk '{print $2}'`  #当前LAN IP段
@@ -183,10 +239,21 @@ add_rule() {
 	LOCAL_PORT=3000
 	iptables_ext A KOOLPROXY_HTTP "-p tcp -m multiport --dport 80 -j REDIRECT --to-ports $LOCAL_PORT"
 	iptables_ext A KOOLPROXY_HTTPS "-p tcp -m multiport --dport 80,443 -j REDIRECT --to-ports $LOCAL_PORT"
-	#加载ACLS
+	iptables_ext A KOOLPROXY_BLACK_HTTP "-p tcp -m multiport --dport 80 -m set --match-set $IPSET_ADB dst -j REDIRECT --to-ports $LOCAL_PORT"
+	iptables_ext A KOOLPROXY_BLACK_HTTPS "-p tcp -m multiport --dport 80,443 -m set --match-set $IPSET_ADB dst -j REDIRECT --to-ports $LOCAL_PORT"
+	
+	#端口控制
+	if [ -n "$portEx" ]; then
+		echo_date 开启端口控制：并排除端口：$portEx
+		iptables_ext A KOOLPROXY_FULL_PORT "-p tcp -m multiport ! --dport $portEx -m set --match-set kp_full_port dst -j REDIRECT --to-ports $LOCAL_PORT"
+	else
+		iptables_ext A KOOLPROXY_FULL_PORT "-p tcp -m set --match-set kp_full_port dst -j REDIRECT --to-ports $LOCAL_PORT"
+	fi
+	
+	#加载局域网ACL
 	config_foreach load_acl acl_rule
 	#加载默认访问控制模式
-	iptables -t nat -A KOOLPROXY -p tcp -j $(get_action_chain $DEFAULT_ACL_MODE)
+	iptables -t nat -A KOOLPROXY -p tcp -j $(get_action_chain $GLOBAL_MODE)
 	
 	# 重定所有流量到 KOOLPROXY
 	PR_NU=`iptables -nvL PREROUTING -t nat |sed 1,2d | sed -n '/prerouting_rule/='`
@@ -196,13 +263,14 @@ add_rule() {
 		let PR_NU+=1
 	fi
 	#确保添加到prerouting_rule规则之后
-	if [ "$GLOBAL_MODE" == "adblock" ]; then
-		# ipset 黑名单模式
-		iptables -t nat -I PREROUTING $PR_NU -p tcp -m set --match-set $IPSET_ADB dst -j KOOLPROXY
-	else
-		#其他模式
-		iptables -t nat -I PREROUTING $PR_NU -p tcp -j KOOLPROXY
-	fi
+	iptables -t nat -I PREROUTING $PR_NU -p tcp -j KOOLPROXY
+	# if [ "$GLOBAL_MODE" == "adblock" ]; then
+		# # ipset 黑名单模式
+		# iptables -t nat -I PREROUTING $PR_NU -p tcp -m set --match-set $IPSET_ADB dst -j KOOLPROXY
+	# else
+		# #其他模式
+		# iptables -t nat -I PREROUTING $PR_NU -p tcp -j KOOLPROXY
+	# fi
 	
 }
 
@@ -223,6 +291,9 @@ del_rule() {
 	iptables -t nat -F KOOLPROXY 2>/dev/null && iptables -t nat -X KOOLPROXY 2>/dev/null
 	iptables -t nat -F KOOLPROXY_HTTP 2>/dev/null && iptables -t nat -X KOOLPROXY_HTTP 2>/dev/null
 	iptables -t nat -F KOOLPROXY_HTTPS 2>/dev/null && iptables -t nat -X KOOLPROXY_HTTPS 2>/dev/null
+	iptables -t nat -F KOOLPROXY_BLACK_HTTP 2>/dev/null && iptables -t nat -X KOOLPROXY_BLACK_HTTP 2>/dev/null
+	iptables -t nat -F KOOLPROXY_BLACK_HTTPS 2>/dev/null && iptables -t nat -X KOOLPROXY_BLACK_HTTPS 2>/dev/null
+	iptables -t nat -F KOOLPROXY_FULL_PORT 2>/dev/null && iptables -t nat -X KOOLPROXY_FULL_PORT 2>/dev/null
 }
 
 dns_takeover(){
@@ -232,26 +303,26 @@ dns_takeover(){
 	lan_ipaddr=`uci get network.lan.ipaddr`
 	chromecast_nu=`iptables -t nat -L PREROUTING -v -n --line-numbers|grep "dpt:53"|awk '{print $1}'`
 	is_right_lanip=`iptables -t nat -L PREROUTING -v -n --line-numbers|grep "dpt:53" |grep "$lan_ipaddr"`
-	if [ "$GLOBAL_MODE" == "adblock" ]; then
+	if [ "$GLOBAL_MODE" == "adblock" -o "$GLOBAL_MODE" == "adblockWithHttps" ]; then
 		if [ -z "$chromecast_nu" ]; then
-			echo_date 黑名单模式开启DNS劫持 >>$LOGFILE
+			echo_date 黑名单模式开启DNS劫持
 			iptables -t nat -A PREROUTING -i br-lan -p udp --dport 53 -j DNAT --to $lan_ipaddr >/dev/null 2>&1
 		else
 			if [ -z "$is_right_lanip" ]; then
-				echo_date 黑名单模式开启DNS劫持 >>$LOGFILE
+				echo_date 黑名单模式开启DNS劫持
 				iptables -t nat -D PREROUTING $chromecast_nu >/dev/null 2>&1
 				iptables -t nat -A PREROUTING -i br-lan -p udp --dport 53 -j DNAT --to $lan_ipaddr >/dev/null 2>&1
 			else
-				echo "$(date):  DNS劫持规则已经添加，跳过~" >>$LOGFILE
+				echo "$(date):  DNS劫持规则已经添加，跳过~"
 			fi
 		fi
 	else
 		if [ "$ss_chromecast" -eq 0 ] || [ "$ss_enable" -eq 0 ]; then
 			if [ -n "$chromecast_nu" ]; then
-				echo_date 全局过滤模式下删除DNS劫持 >>$LOGFILE
+				echo_date 全局过滤模式下删除DNS劫持
 				iptables -t nat -D PREROUTING $chromecast_nu >/dev/null 2>&1
-				echo_date done >>$LOGFILE
-				echo_date >>$LOGFILE
+				echo_date done
+				echo_date
 			fi
 		fi
 	fi
@@ -285,6 +356,22 @@ remove_reboot_job(){
 	[ -n "$jobexist" ] && sed -i '/koolproxy restart/d' /etc/crontabs/root >/dev/null 2>&1
 }
 
+del_ipset_rule(){
+	ipset -F adblock >/dev/null 2>&1 &
+	ipset -X adblock >/dev/null 2>&1 &
+	ipset -F kp_full_port >/dev/null 2>&1 &
+	ipset -X kp_full_port >/dev/null 2>&1 &
+}
+
+set_lock(){
+	exec 1000>"$LOCK_FILE"
+	flock -x 1000
+}
+
+unset_lock(){
+	flock -u 1000
+	rm -rf "$LOCK_FILE"
+}
 
 start() {
 	! load_config && return 1
@@ -292,31 +379,28 @@ start() {
 	gen_ca
 	#config_foreach get_rule source
 	#防止并发开启服务
-	[ -f "$LOCK_FILE" ] && return 3
-	touch "$LOCK_FILE"
-	
-	[ "$GLOBAL_MODE" == "video" ] && arg="-e" || arg=""
-
-	/usr/share/koolproxy/koolproxy $arg --mark -d
+	set_lock
+	config_load $CONFIG
+	config_foreach get_config global
+	load_kp_rules
+	/usr/share/koolproxy/koolproxy --mark -d
 	add_dnsmasq && restart_dnsmasq
 	add_rule
 	dns_takeover
 	add_koolproxy_cru
 	write_reboot_job
-	rm -f "$LOCK_FILE"
+	unset_lock
 	return 0
 }
 
 stop() {
-	while [ -f "$LOCK_FILE" ]; do
-		sleep 1s
-	done
+	set_lock
 	del_rule
 	del_dns_takeover
 	remove_reboot_job
-	ipset -F adblock >/dev/null 2>&1 &
-	ipset -X adblock >/dev/null 2>&1 &
+	del_ipset_rule
 	rm -f $LOGFILE
 	kill -9 $(ps|grep '/usr/share/koolproxy/koolproxy'|grep -v 'grep'|awk '{print$1}') >/dev/null 2>&1
 	stop_dnsmasq && restart_dnsmasq
+	unset_lock
 }

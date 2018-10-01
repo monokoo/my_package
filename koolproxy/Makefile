@@ -1,10 +1,9 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=koolproxy
-PKG_VERSION:=3.8.1
+PKG_VERSION:=3.8.3
 PKG_RELEASE:=1
 
-PKG_MAINTAINER:=fw867 <ffkykzs@gmail.com>
 PKG_LICENSE:=GPLv3
 PKG_LICENSE_FILES:=LICENSE
 
