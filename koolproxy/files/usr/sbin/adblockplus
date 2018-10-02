@@ -1,23 +1,76 @@
 #!/bin/sh
-echo "$(date "+%F %T"): 正在下载adblockplus规则..."
-wget-ssl --quiet --no-check-certificate https://easylist-downloads.adblockplus.org/easylistchina+easylist.txt -O /tmp/adlist.txt
-if [ "$?" == "0" ]; then
-	grep ^\|\|[^\*]*\^$ /tmp/adlist.txt | sed -e 's:||:address\=\/:' -e 's:\^:/0\.0\.0\.0:' > /tmp/dnsmasq.adblock
-	rm -f /tmp/adlist.txt
-	sed -i '/youku/d' /tmp/dnsmasq.adblock >/dev/null 2>&1
-	sed -i '/[1-9]\{1,3\}\.[1-9]\{1,3\}\.[1-9]\{1,3\}\.[1-9]\{1,3\}/d' /tmp/dnsmasq.adblock >/dev/null 2>&1
-	echo "$(date "+%F %T"): adblockplus规则转换完成，开始校验..."
-	if [ -f "/usr/share/koolproxy/dnsmasq.adblock" ]; then
-		diff /tmp/dnsmasq.adblock /usr/share/koolproxy/dnsmasq.adblock >/dev/null
-		[	 $? = 0 ] && echo "$(date "+%F %T"): adblockplus本地规则和服务器规则相同，无需更新!" && rm -f /tmp/dnsmasq.adblock && exit
+LOCK_FILE=/var/lock/adblockplus.lock
+kpdir="/usr/share/koolproxy/data/rules/"
+reboot="0"
+
+set_lock(){
+	exec 1000>"$LOCK_FILE"
+	flock -x 1000
+}
+
+unset_lock(){
+	flock -u 1000
+	rm -rf "$LOCK_FILE"
+}
+
+get_rule_name(){
+	case "$1" in
+		chengfeng.txt)
+			echo "乘风"
+		;;
+		daily.txt)
+			echo "每日"
+		;;
+		easylistchina.txt)
+			echo "ABP"
+		;;
+		fanboy.txt)
+			echo "Fanboy"
+		;;
+		*)
+			echo "KoolProxy"
+		;;
+	esac
+}
+set_lock
+echo "$(date "+%F %T"): 开始检测KoolProxy所有规则..."
+rules=$(ls $kpdir | grep -v user.txt)
+for local_rule in $rules
+do
+	echo "$(date "+%F %T"): ============================"
+	echo "$(date "+%F %T"): 正在下载$(get_rule_name $local_rule)规则文件$local_rule..."
+	wget-ssl --quiet --no-check-certificate https://kprule.com/$local_rule -O /tmp/$local_rule
+	if [ "$?" == "0" ]; then
+		if [ ! -s "/tmp/$local_rule" ]; then
+			echo "$(date "+%F %T"): 下载的$(get_rule_name $local_rule)规则文件$local_rule不完整!"
+			echo "$(date "+%F %T"): 本次更新$(get_rule_name $local_rule)规则文件$local_rule不成功，稍后重试"
+			continue
+		else
+			local_md5=$(md5sum $kpdir/$local_rule | sed 's/ /\n/g'| sed -n 1p)
+			remote_md5=$(md5sum /tmp/$local_rule | sed 's/ /\n/g'| sed -n 1p)
+			if [ "$remote_md5"x != "$local_md5"x ];then
+				echo "$(date "+%F %T"): 检测到$(get_rule_name $local_rule)规则$local_rule有更新，开始应用新规则！"
+				mv /tmp/$local_rule $kpdir/$local_rule
+				if [ "$?" == "0" ]; then
+					echo "$(date "+%F %T"): $(get_rule_name $local_rule)规则$local_rule更新完成！"
+					reboot="1"
+				fi
+			else
+				echo "$(date "+%F %T"): $(get_rule_name $local_rule)规则$local_rule已是最新版本，无需更新！"
+			fi
+		fi
+	else
+		echo "$(date "+%F %T"): 获取$(get_rule_name $local_rule)规则$local_rule在线版本时出现错误! "
+		[ -f /tmp/$local_rule ] && rm -f /tmp/$local_rule
 	fi
-	echo "$(date "+%F %T"): 检测到adblockplus规则有更新，开始应用新规则！"
-	mv /tmp/dnsmasq.adblock /usr/share/koolproxy/dnsmasq.adblock
-	cp -f /usr/share/koolproxy/dnsmasq.adblock /etc/dnsmasq.d/dnsmasq.adblock
-	[ -f "/etc/dnsmasq.d/dnsmasq.adblock" ] && ln -sf /etc/dnsmasq.d/dnsmasq.adblock /tmp/dnsmasq.d/dnsmasq.adblock
-	/etc/init.d/dnsmasq restart >/dev/null 2>&1
-	echo "$(date "+%F %T"): adblockplus规则更新完成！"
-else
-	echo "$(date "+%F %T"): 获取在线版本时出现错误! "
-	[ -f /tmp/adlist.txt ] && rm -f /tmp/adlist.txt
+done
+
+if [ "$reboot" == "1" ];then
+	ENABLED=$(uci -q get koolproxy.@global[0].enabled)
+	[ -z "$ENABLED" ] && ENABLED=0
+	[ "$ENABLED" -eq 1 ] && {
+		echo "$(date "+%F %T"): 自动重启KoolProxy，以应用新的规则文件！请稍后！"
+		/etc/init.d/koolproxy restart
+	}
 fi
+unset_lock

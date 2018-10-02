@@ -94,7 +94,7 @@ load_kp_rules(){
 }
 
 update(){
-	#rm -f $LOGFILE
+	rm -f $LOGFILE
 	third_rule_update=$(config_t_get global third_rule_update 0)
 	[ $third_rule_update -eq 1 ] && /usr/sbin/adblockplus >>$LOGFILE 2>&1 &
 }
