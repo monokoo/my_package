@@ -36,7 +36,7 @@ config_t_get() {
 
 clean_log() {
 logsnum=$(cat $LOGFILE 2>/dev/null | wc -l)
-if [ "$logsnum" -gt 500 ];then
+if [ "$logsnum" -gt 100 ];then
 	rm -f $LOGFILE >/dev/null 2>&1 &
 	echo_date 日志文件过长，清空处理！
 fi
