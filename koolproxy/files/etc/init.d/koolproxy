@@ -34,6 +34,14 @@ config_t_get() {
 	echo ${ret:=$3}
 }
 
+clean_log() {
+logsnum=$(cat $LOGFILE 2>/dev/null | wc -l)
+if [ "$logsnum" -gt 500 ];then
+	rm -f $LOGFILE >/dev/null 2>&1 &
+	echo_date 日志文件过长，清空处理！
+fi
+}
+
 factor(){
 if [ -z "$1" ] || [ -z "$2" ]; then
 		echo ""
@@ -94,7 +102,6 @@ load_kp_rules(){
 }
 
 update(){
-	rm -f $LOGFILE
 	/usr/sbin/adblockplus >>$LOGFILE 2>&1 &
 }
 
@@ -388,12 +395,12 @@ start() {
 }
 
 stop() {
+	clean_log
 	set_lock
 	del_rule
 	del_dns_takeover
 	remove_reboot_job
 	del_ipset_rule
-	rm -f $LOGFILE
 	kill -9 $(ps|grep '/usr/share/koolproxy/koolproxy'|grep -v 'grep'|awk '{print$1}') >/dev/null 2>&1
 	stop_dnsmasq && restart_dnsmasq
 	unset_lock

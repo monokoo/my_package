@@ -28,7 +28,7 @@ get_rule_name(){
 			echo "Fanboy"
 		;;
 		*)
-			echo "KoolProxy"
+			echo "默认"
 		;;
 	esac
 }
@@ -49,18 +49,18 @@ do
 			local_md5=$(md5sum $kpdir/$local_rule | sed 's/ /\n/g'| sed -n 1p)
 			remote_md5=$(md5sum /tmp/$local_rule | sed 's/ /\n/g'| sed -n 1p)
 			if [ "$remote_md5"x != "$local_md5"x ];then
-				echo "$(date "+%F %T"): 检测到$(get_rule_name $local_rule)规则$local_rule有更新，开始应用新规则！"
+				echo "$(date "+%F %T"): 检测到$(get_rule_name $local_rule)规则文件$local_rule有更新，开始应用新规则！"
 				mv /tmp/$local_rule $kpdir/$local_rule
 				if [ "$?" == "0" ]; then
-					echo "$(date "+%F %T"): $(get_rule_name $local_rule)规则$local_rule更新完成！"
+					echo "$(date "+%F %T"): $(get_rule_name $local_rule)规则文件$local_rule更新完成！"
 					reboot="1"
 				fi
 			else
-				echo "$(date "+%F %T"): $(get_rule_name $local_rule)规则$local_rule已是最新版本，无需更新！"
+				echo "$(date "+%F %T"): $(get_rule_name $local_rule)规则文件$local_rule已是最新版本，无需更新！"
 			fi
 		fi
 	else
-		echo "$(date "+%F %T"): 获取$(get_rule_name $local_rule)规则$local_rule在线版本时出现错误! "
+		echo "$(date "+%F %T"): 获取$(get_rule_name $local_rule)规则文件$local_rule在线版本时出现错误! "
 		[ -f /tmp/$local_rule ] && rm -f /tmp/$local_rule
 	fi
 done
