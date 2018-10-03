@@ -1,0 +1,23 @@
+#!/bin/sh /etc/rc.common
+#
+# start/stop wrtbwmon bandwidth monitor
+
+### BEGIN INIT INFO
+# Provides:           wrtbwmon
+# Required-Start:     $network $local_fs $remote_fs
+# Required-Stop:      $local_fs $remote_fs
+# Default-Start:      2 3 4 5
+# Default-Stop:       0 1 6
+# Short-Description:  iptables-based bandwidth monitor
+### END INIT INFO
+
+START=99
+
+start(){
+    local dbpath=$( uci get wrtbwmon.general.path )
+    /usr/sbin/wrtbwmon -46 -f $dbpath -p /tmp/usage.htm -u /etc/wrtbwmon.user -b >> /dev/null 2>&1 &
+}
+
+stop(){
+    /usr/sbin/wrtbwmon -k
+}
