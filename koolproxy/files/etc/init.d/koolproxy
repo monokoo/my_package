@@ -95,8 +95,7 @@ load_kp_rules(){
 
 update(){
 	rm -f $LOGFILE
-	third_rule_update=$(config_t_get global third_rule_update 0)
-	[ $third_rule_update -eq 1 ] && /usr/sbin/adblockplus >>$LOGFILE 2>&1 &
+	/usr/sbin/adblockplus >>$LOGFILE 2>&1 &
 }
 
 iptables_ext() {
@@ -113,6 +112,7 @@ get_config(){
 	config_get kp_online_rules $1 kp_online_rules 1
 	config_get kp_third_rules $1 kp_third_rules
 	config_get portEx $1 portEx
+	config_get third_rule_update $1 third_rule_update
 }
 load_config() {
 	ENABLED=$(config_t_get global enabled 0)
@@ -121,8 +121,7 @@ load_config() {
 }
 
 add_dnsmasq() {
-	[ "$GLOBAL_MODE" == "adblock" -o "$GLOBAL_MODE" == "adblockWithHttps" ] && {
-		ln -sf /etc/dnsmasq.d/dnsmasq.adblock /tmp/dnsmasq.d/dnsmasq.adblock
+	[ "$GLOBAL_MODE" == "adblock" ] && {
 		rm -rf /usr/share/koolproxy/adblock_tmp.conf /tmp/dnsmasq.d/adblock.conf
 		cp -r /usr/share/koolproxy/adblock.conf /usr/share/koolproxy/adblock_tmp.conf
 		[ -s "/etc/dnsmasq.d/kpadblock.conf" ] && {
@@ -143,14 +142,9 @@ gen_ca() {
 }
 
 stop_dnsmasq() {
-	GLOBAL_MODE=$(config_t_get global filter_mode adblock)
 	ENABLED=$(config_t_get global enabled 0)
-	if [ "$GLOBAL_MODE" != "adblock" -a "$GLOBAL_MODE" != "adblockWithHttps" -o "$ENABLED" -eq 0 ];then
+	if [ "$ENABLED" -eq 0 ];then
 		sed -i '/koolproxy update/d' /etc/crontabs/root >/dev/null 2>&1
-		[ -L "/tmp/dnsmasq.d/dnsmasq.adblock" ] && {
-			rm -rf /tmp/dnsmasq.d/dnsmasq.adblock
-			dnsmasq_restart=1
-		}
 		[ -L "/tmp/dnsmasq.d/adblock.conf" ] && {
 			rm -rf /tmp/dnsmasq.d/adblock.conf
 			dnsmasq_restart=1
@@ -197,7 +191,7 @@ get_jump_mode(){
 }
 
 add_koolproxy_cru(){
-	[ "$GLOBAL_MODE" == "adblock" -o "$GLOBAL_MODE" == "adblockWithHttps" ] && {
+	[ "$third_rule_update" -eq 1 ] && {
 		time=$(config_t_get global time_update)
 		wirtecron=$(cat /etc/crontabs/root | grep "0 $time * * *" | grep "koolproxy update")
 		if [ -z "$wirtecron" ];then
@@ -303,7 +297,7 @@ dns_takeover(){
 	lan_ipaddr=`uci get network.lan.ipaddr`
 	chromecast_nu=`iptables -t nat -L PREROUTING -v -n --line-numbers|grep "dpt:53"|awk '{print $1}'`
 	is_right_lanip=`iptables -t nat -L PREROUTING -v -n --line-numbers|grep "dpt:53" |grep "$lan_ipaddr"`
-	if [ "$GLOBAL_MODE" == "adblock" -o "$GLOBAL_MODE" == "adblockWithHttps" ]; then
+	if [ "$GLOBAL_MODE" == "adblock" ]; then
 		if [ -z "$chromecast_nu" ]; then
 			echo_date 黑名单模式开启DNS劫持
 			iptables -t nat -A PREROUTING -i br-lan -p udp --dport 53 -j DNAT --to $lan_ipaddr >/dev/null 2>&1
