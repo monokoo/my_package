@@ -19,7 +19,7 @@ SOURCE_LIST=/usr/share/koolproxy/data/source.list
 dnsmasq_restart=0
 
 echo_date(){
-	echo $(date +%Y年%m月%d日\ %X): $1 >>$LOGFILE
+	echo $(date "+%F %T"): $1 >>$LOGFILE
 }
 
 config_n_get() {
