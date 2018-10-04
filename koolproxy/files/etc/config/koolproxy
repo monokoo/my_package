@@ -1,8 +1,9 @@
 
 config global
-	option time_update '4'
-	option default_acl_mode 'http'
-	option reboot_mode 'disable'
-	option filter_mode 'adblock'
-	option adblock '1'
-	option enabled '0'
+    option reboot_mode 'disable'
+    option adblock '1'
+    option third_rule_update '0'
+    option kp_online_rules '1'
+    option filter_mode 'adblock'
+    option enabled '0'
+    option kp_third_rules 'kp_video_rules'

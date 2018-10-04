@@ -158,7 +158,8 @@ gen_ca() {
 
 stop_dnsmasq() {
 	ENABLED=$(config_t_get global enabled 0)
-	if [ "$ENABLED" -eq 0 ];then
+	GLOBAL_MODE=$(config_t_get global filter_mode adblock)
+	if [ "$GLOBAL_MODE" != "adblock" -o "$ENABLED" -eq 0 ];then
 		sed -i '/koolproxy update/d' /etc/crontabs/root >/dev/null 2>&1
 		[ -L "/tmp/dnsmasq.d/adblock.conf" ] && {
 			rm -rf /tmp/dnsmasq.d/adblock.conf
