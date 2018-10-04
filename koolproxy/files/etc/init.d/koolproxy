@@ -182,10 +182,10 @@ get_action_chain() {
 		globalWithHttps)
 			echo "KOOLPROXY_HTTPS"
 		;;
-		blacklist)
+		adblock)
 			echo "KOOLPROXY_BLACK_HTTP"
 		;;
-		blacklistWithHttps)
+		adblockWithHttps)
 			echo "KOOLPROXY_BLACK_HTTPS"
 		;;
 		fullport)
