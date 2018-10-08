@@ -5,13 +5,11 @@ t_period=`uci -q get serverchan.trigger_message.t_period`
 [ "$t_period" -eq 0 ] && {
 	[ "$ACTION" == "update" -o "$ACTION" == "add" ] && {
 		list_file=/tmp/serverchan_clientlist
-		nowtime=`date '+%Y-%m-%d %H:%M:%S'`
-		log_time=`date -d "$nowtime" +%s`
+		log_time=$(date +%s)
 		
 		if [ -f "$list_file" ]; then
-			if [ -n "(cat $list_file | grep -w "$MACADDR")" ]; then
-				last_unixstamp=`cat $list_file | grep -w "$MACADDR" | awk '{print $1}'`
-		
+			last_unixstamp=$(cat $list_file | grep -w "$MACADDR" | awk '{print $1}')
+			if [ -n "$last_unixstamp" ]; then
 				log_period=`expr $log_time - $last_unixstamp`
 				if [ "$log_period" -lt 300 ]; then
 					exit 0
