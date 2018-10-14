@@ -216,7 +216,14 @@ add_koolproxy_cru(){
 		fi
 	}
 }
-
+add_white_ip(){
+	ip_lan="0.0.0.0/8 10.0.0.0/8 100.64.0.0/10 127.0.0.0/8 169.254.0.0/16 172.16.0.0/12 192.168.0.0/16 224.0.0.0/4 240.0.0.0/4"
+	for ip in $ip_lan
+	do
+		ipset -A $IPSET_WHP $ip >/dev/null 2>&1
+	done
+}
+	
 add_rule() {
 	iptables -t nat -N KOOLPROXY 2>/dev/null
 	iptables -t nat -N KOOLPROXY_HTTP 2>/dev/null
@@ -226,38 +233,37 @@ add_rule() {
 	iptables -t nat -N KOOLPROXY_FULL_PORT 2>/dev/null
 	
 	#创建所需的ipset
+	IPSET_WHP="white_kp_list"
 	IPSET_ADB="adblock"
+	ipset -! create $IPSET_WHP nethash && add_white_ip
 	ipset -! create $IPSET_ADB iphash && ipset -! add $IPSET_ADB 110.110.110.110 2>/dev/null
 	sed -e "s/^/add $IPSET_ADB &/g" /etc/gfwlist/adblockip | awk '{print $0} END{print "COMMIT"}' | ipset -R 2>/dev/null
 	cat /usr/share/koolproxy/data/rules/koolproxy.txt /usr/share/koolproxy/data/rules/daily.txt /usr/share/koolproxy/data/rules/user.txt | grep -Eo "(.\w+\:[1-9][0-9]{1,4})/" | grep -Eo "([0-9]{1,5})" | sort -un | sed -e '$a\80' -e '$a\443' | sed -e "s/^/-A kp_full_port &/g" -e "1 i\-N kp_full_port bitmap:port range 0-65535 " | ipset -R -!
 	
 	#生成代理规则
-	#  忽略特殊IP段
+	#忽略特殊IP段及局域网地址
 	lan_ipc=`ip address show br-lan | grep -w "inet" |awk '{print $2}'`  #当前LAN IP段
 	[ -z "$lan_ipc" ] && lan_ipc=`echo $(uci get network.lan.ipaddr)/24`
-	iptables_ext A KOOLPROXY "-d 0.0.0.0/8 -j RETURN"
-	iptables_ext A KOOLPROXY "-d 10.0.0.0/8 -j RETURN"
-	iptables_ext A KOOLPROXY "-d 100.64.0.0/10 -j RETURN"
-	iptables_ext A KOOLPROXY "-d 127.0.0.0/8 -j RETURN"
-	iptables_ext A KOOLPROXY "-d 169.254.0.0/16 -j RETURN"
-	iptables_ext A KOOLPROXY "-d 172.16.0.0/12 -j RETURN"
-	iptables_ext A KOOLPROXY "-d 192.168.0.0/16 -j RETURN"
-	iptables_ext A KOOLPROXY "-d 224.0.0.0/4 -j RETURN"
-	iptables_ext A KOOLPROXY "-d 240.0.0.0/4 -j RETURN"
 	[ -n "$lan_ipc" ] && iptables_ext A KOOLPROXY "-d $lan_ipc -j RETURN"
+	iptables_ext A KOOLPROXY "-m set --match-set $IPSET_WHP dst -j RETURN"
 	#  生成对应CHAIN
 	LOCAL_PORT=3000
-	iptables_ext A KOOLPROXY_HTTP "-p tcp -m multiport --dport 80 -j REDIRECT --to-ports $LOCAL_PORT"
-	iptables_ext A KOOLPROXY_HTTPS "-p tcp -m multiport --dport 80,443 -j REDIRECT --to-ports $LOCAL_PORT"
-	iptables_ext A KOOLPROXY_BLACK_HTTP "-p tcp -m multiport --dport 80 -m set --match-set $IPSET_ADB dst -j REDIRECT --to-ports $LOCAL_PORT"
-	iptables_ext A KOOLPROXY_BLACK_HTTPS "-p tcp -m multiport --dport 80,443 -m set --match-set $IPSET_ADB dst -j REDIRECT --to-ports $LOCAL_PORT"
+	# 匹配TTL走TTL Port
+	#iptables_ext A KOOLPROXY "-p tcp -m ttl --ttl-eq 188 -j REDIRECT --to $LOCAL_PORT"
+	# 不匹配TTL走正常Port
+	#iptables_ext A KOOLPROXY "-p tcp -j REDIRECT --to $LOCAL_PORT"
+	
+	iptables_ext A KOOLPROXY_HTTP "-p tcp -m multiport --dport 80 -m ttl --ttl-eq 188 -j REDIRECT --to-ports $LOCAL_PORT"
+	iptables_ext A KOOLPROXY_HTTPS "-p tcp -m multiport --dport 80,443 -m ttl --ttl-eq 188 -j REDIRECT --to-ports $LOCAL_PORT"
+	iptables_ext A KOOLPROXY_BLACK_HTTP "-p tcp -m multiport --dport 80 -m set --match-set $IPSET_ADB dst -m ttl --ttl-eq 188 -j REDIRECT --to-ports $LOCAL_PORT"
+	iptables_ext A KOOLPROXY_BLACK_HTTPS "-p tcp -m multiport --dport 80,443 -m set --match-set $IPSET_ADB dst -m ttl --ttl-eq 188 -j REDIRECT --to-ports $LOCAL_PORT"
 	
 	#端口控制
 	if [ -n "$portEx" ]; then
 		echo_date 开启端口控制：并排除端口：$portEx
-		iptables_ext A KOOLPROXY_FULL_PORT "-p tcp -m multiport ! --dport $portEx -m set --match-set kp_full_port dst -j REDIRECT --to-ports $LOCAL_PORT"
+		iptables_ext A KOOLPROXY_FULL_PORT "-p tcp -m multiport ! --dport $portEx -m set --match-set kp_full_port dst -m ttl --ttl-eq 188 -j REDIRECT --to-ports $LOCAL_PORT"
 	else
-		iptables_ext A KOOLPROXY_FULL_PORT "-p tcp -m set --match-set kp_full_port dst -j REDIRECT --to-ports $LOCAL_PORT"
+		iptables_ext A KOOLPROXY_FULL_PORT "-p tcp -m set --match-set kp_full_port dst -m ttl --ttl-eq 188 -j REDIRECT --to-ports $LOCAL_PORT"
 	fi
 	
 	#加载局域网ACL
@@ -367,6 +373,8 @@ remove_reboot_job(){
 }
 
 del_ipset_rule(){
+	ipset -F white_kp_list >/dev/null 2>&1 &
+	ipset -X white_kp_list >/dev/null 2>&1 &
 	ipset -F adblock >/dev/null 2>&1 &
 	ipset -X adblock >/dev/null 2>&1 &
 	ipset -F kp_full_port >/dev/null 2>&1 &
@@ -393,7 +401,7 @@ start() {
 	config_load $CONFIG
 	config_foreach get_config global
 	load_kp_rules
-	/usr/share/koolproxy/koolproxy --mark -d
+	/usr/share/koolproxy/koolproxy -d --ttl 188 --ttlport 3000
 	add_dnsmasq && restart_dnsmasq
 	add_rule
 	dns_takeover
