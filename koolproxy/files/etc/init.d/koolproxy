@@ -226,6 +226,7 @@ add_white_ip(){
 	
 add_rule() {
 	iptables -t nat -N KOOLPROXY 2>/dev/null
+	iptables -t nat -N KOOLPROXY_ACT 2>/dev/null
 	iptables -t nat -N KOOLPROXY_HTTP 2>/dev/null
 	iptables -t nat -N KOOLPROXY_HTTPS 2>/dev/null
 	iptables -t nat -N KOOLPROXY_BLACK_HTTP 2>/dev/null
@@ -249,21 +250,21 @@ add_rule() {
 	#  生成对应CHAIN
 	LOCAL_PORT=3000
 	# 匹配TTL走TTL Port
-	#iptables_ext A KOOLPROXY "-p tcp -m ttl --ttl-eq 188 -j REDIRECT --to $LOCAL_PORT"
+	iptables_ext A KOOLPROXY_ACT "-p tcp -m ttl --ttl-eq 188 -j REDIRECT --to 3001"
 	# 不匹配TTL走正常Port
-	#iptables_ext A KOOLPROXY "-p tcp -j REDIRECT --to $LOCAL_PORT"
-	
-	iptables_ext A KOOLPROXY_HTTP "-p tcp -m multiport --dport 80 -m ttl --ttl-eq 188 -j REDIRECT --to-ports $LOCAL_PORT"
-	iptables_ext A KOOLPROXY_HTTPS "-p tcp -m multiport --dport 80,443 -m ttl --ttl-eq 188 -j REDIRECT --to-ports $LOCAL_PORT"
-	iptables_ext A KOOLPROXY_BLACK_HTTP "-p tcp -m multiport --dport 80 -m set --match-set $IPSET_ADB dst -m ttl --ttl-eq 188 -j REDIRECT --to-ports $LOCAL_PORT"
-	iptables_ext A KOOLPROXY_BLACK_HTTPS "-p tcp -m multiport --dport 80,443 -m set --match-set $IPSET_ADB dst -m ttl --ttl-eq 188 -j REDIRECT --to-ports $LOCAL_PORT"
+	iptables_ext A KOOLPROXY_ACT "-p tcp -j REDIRECT --to $LOCAL_PORT"
+
+	iptables_ext A KOOLPROXY_HTTP "-p tcp -m multiport --dport 80 -j KOOLPROXY_ACT"
+	iptables_ext A KOOLPROXY_HTTPS "-p tcp -m multiport --dport 80,443 -j KOOLPROXY_ACT"
+	iptables_ext A KOOLPROXY_BLACK_HTTP "-p tcp -m multiport --dport 80 -m set --match-set $IPSET_ADB dst -j KOOLPROXY_ACT"
+	iptables_ext A KOOLPROXY_BLACK_HTTPS "-p tcp -m multiport --dport 80,443 -m set --match-set $IPSET_ADB dst -j KOOLPROXY_ACT"
 	
 	#端口控制
 	if [ -n "$portEx" ]; then
 		echo_date 开启端口控制：并排除端口：$portEx
-		iptables_ext A KOOLPROXY_FULL_PORT "-p tcp -m multiport ! --dport $portEx -m set --match-set kp_full_port dst -m ttl --ttl-eq 188 -j REDIRECT --to-ports $LOCAL_PORT"
+		iptables_ext A KOOLPROXY_FULL_PORT "-p tcp -m multiport ! --dport $portEx -m set --match-set kp_full_port dst -j KOOLPROXY_ACT"
 	else
-		iptables_ext A KOOLPROXY_FULL_PORT "-p tcp -m set --match-set kp_full_port dst -m ttl --ttl-eq 188 -j REDIRECT --to-ports $LOCAL_PORT"
+		iptables_ext A KOOLPROXY_FULL_PORT "-p tcp -m set --match-set kp_full_port dst -j KOOLPROXY_ACT"
 	fi
 	
 	#加载局域网ACL
@@ -305,6 +306,7 @@ del_rule() {
 	done
 	fi
 	iptables -t nat -F KOOLPROXY 2>/dev/null && iptables -t nat -X KOOLPROXY 2>/dev/null
+	iptables -t nat -F KOOLPROXY_ACT 2>/dev/null && iptables -t nat -X KOOLPROXY_ACT 2>/dev/null
 	iptables -t nat -F KOOLPROXY_HTTP 2>/dev/null && iptables -t nat -X KOOLPROXY_HTTP 2>/dev/null
 	iptables -t nat -F KOOLPROXY_HTTPS 2>/dev/null && iptables -t nat -X KOOLPROXY_HTTPS 2>/dev/null
 	iptables -t nat -F KOOLPROXY_BLACK_HTTP 2>/dev/null && iptables -t nat -X KOOLPROXY_BLACK_HTTP 2>/dev/null
@@ -401,7 +403,7 @@ start() {
 	config_load $CONFIG
 	config_foreach get_config global
 	load_kp_rules
-	/usr/share/koolproxy/koolproxy -d --ttl 188 --ttlport 3000
+	/usr/share/koolproxy/koolproxy -d --ttl 188 --ttlport 3001
 	add_dnsmasq && restart_dnsmasq
 	add_rule
 	dns_takeover
