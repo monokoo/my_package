@@ -64,7 +64,7 @@ if [ "$latest_version" != "$local_version" ]; then
 	[ ! -s "/tmp/v2ray-linux-$s_arch/v2ray-$latest_version-linux-$s_arch.zip" ] && echo_date "下载失败，请稍候重试！" && _exit 0
 	unzip /tmp/v2ray-linux-$s_arch/v2ray-$latest_version-linux-$s_arch.zip -d /tmp/v2ray-linux-$s_arch
 	v2ctl_path=$(find /tmp/v2ray-linux-$s_arch -name v2ctl)
-	v2ray_path=$(find /tmp/v2ray-linux-$s_arch -name v2ray)
+	v2ray_path=$(find /tmp/v2ray-linux-$s_arch -name v2ray | grep -v systemv)
 	if [ -n "$v2ctl_path" ]; then
 		mv $v2ctl_path /usr/bin/v2ctl && chmod +x /usr/bin/v2ctl
 	fi
