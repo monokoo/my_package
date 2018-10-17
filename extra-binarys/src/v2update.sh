@@ -96,7 +96,7 @@ fi
 unset_lock
 
 if [ "$reboot" == "1" ];then
-	[ -f "/var/lock/shadowsocks.lock" ] && _exit 0
+	[ -f "/var/lock/shadowsocks.lock" ] && exit 0
 	echo_date "自动重启shadowsocks，以应用新的V2Ray客户端！请稍后！"
 	/etc/init.d/shadowsocks restart
 fi
