@@ -44,11 +44,27 @@ if [ "$latest_version" != "$local_version" ]; then
 		/usr/bin/wget --no-check-certificate --timeout=8 -t 2 https://github.com/v2ray/v2ray-core/releases/download/$latest_version/v2ray-linux-$s_arch.zip -O /tmp/v2ray-linux-$s_arch/v2ray-$latest_version-linux-$s_arch.zip
 	[ ! -s "/tmp/v2ray-linux-$s_arch/v2ray-$latest_version-linux-$s_arch.zip" ] && echo_date "下载失败，请稍候重试！" && exit 0
 	unzip /tmp/v2ray-linux-$s_arch/v2ray-$latest_version-linux-$s_arch.zip -d /tmp/v2ray-linux-$s_arch
-	mv /tmp/v2ray-linux-$s_arch/v2ray-$latest_version-linux-$s_arch/v2ctl /usr/bin/v2ctl && chmod +x /usr/bin/v2ctl
-	mv /tmp/v2ray-linux-$s_arch/v2ray-$latest_version-linux-$s_arch/v2ray /usr/bin/v2ray && chmod +x /usr/bin/v2ray && {
+	v2ctl_path=$(find /tmp/v2ray-linux-$s_arch -name v2ctl)
+	v2ray_path=$(find /tmp/v2ray-linux-$s_arch -name v2ray)
+	if [ -n "$v2ctl_path" ]; then
+		mv $v2ctl_path /usr/bin/v2ctl && chmod +x /usr/bin/v2ctl
+	fi
+	if [ -n "$v2ray_path" ]; then
+		mv $v2ray_path /usr/bin/v2ray && chmod +x /usr/bin/v2ray
+		if [ "$?" -eq 0 ]; then
+			echo_date "==================================="
+			echo_date "本地 V2Ray 客户端更新成功"
+		else
+			echo_date "==================================="
+			echo_date "本地 V2Ray 客户端更新失败，请稍候再试！"
+			exit 0
+		fi
+	else
 		echo_date "==================================="
-		echo_date "本地 V2Ray 客户端更新成功"
-	}
+		echo_date "本地 V2Ray 客户端更新失败，请稍候再试！"
+		exit 0
+	fi
+
 	rm -rf /tmp/v2ray-linux-$s_arch
 	reboot="1"
 else
