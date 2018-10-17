@@ -32,7 +32,7 @@ version2=$(cat /etc/openwrt_release 2>/dev/null | grep -w DISTRIB_DESCRIPTION | 
 set_lock
 echo_date "***********************************"
 echo_date "开始检测远程服务器最新版本..."
-local_version=`/usr/bin/kcpclient -v | awk '{print $3}'`
+local_version=`/usr/bin/kcpclient -v 2>/dev/null | awk '{print $3}'`
 
 if [ -n "$local_version" ]; then
 	echo_date "本地 KCP 客户端版本：v$local_version"
