@@ -110,7 +110,11 @@ get_router_status(){
 }
 
 get_router_temp(){
-	CPU_TEMP=$(awk 'BEGIN{printf "%.2f\n",'$(cat /sys/class/thermal/thermal_zone0/temp)'/1000}')"℃"
+	if [ -f "/sys/class/thermal/thermal_zone0/temp" ]; then
+		CPU_TEMP=$(awk 'BEGIN{printf "%.2f\n",'$(cat /sys/class/thermal/thermal_zone0/temp)'/1000}')"℃"
+	else
+		CPU_TEMP="未发现温度传感器"
+	fi
 	router_temp="
 
 ****
