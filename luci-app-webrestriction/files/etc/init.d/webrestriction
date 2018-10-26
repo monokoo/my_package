@@ -49,11 +49,11 @@ add_rule(){
 			iptables -t filter -A WEB_RESTRICTION -m mac --mac-source $macaddr -j $action
 			if [ "$limit_type" == "blacklist" ]; then
 				#禁止使用ss访问外网
-				[ "$ss_enabled" -eq 1 ] && iptables -t nat -I SHADOWSOCKS $((i+1)) -m mac --mac-source $macaddr -j RETURN
-				[ "$kp_enabled" -eq 1 ] && [ -z "`iptables -t nat -L KOOLPROXY | grep -w RETURN | grep -w "$macaddr"`" ] && iptables -t nat -I KOOLPROXY $((i+1)) -m mac --mac-source $macaddr -j RETURN
+				[ "$ss_enabled" -eq 1 ] && iptables -t mangle -I SHADOWSOCKS $((i+1)) -m mac --mac-source $macaddr -j RETURN
+				[ "$kp_enabled" -eq 1 ] && [ -z "`iptables -t mangle -L KOOLPROXY | grep -w RETURN | grep -w "$macaddr"`" ] && iptables -t mangle -I KOOLPROXY $((i+1)) -m mac --mac-source $macaddr -j RETURN
 			else
-				[ "$ss_enabled" -eq 1 ] && iptables -t nat -I SHADOWSOCKS $((i+1)) -m mac ! --mac-source $macaddr -j RETURN
-				[ "$kp_enabled" -eq 1 ] && iptables -t nat -I KOOLPROXY $((i+1)) -m mac ! --mac-source $macaddr -j RETURN
+				[ "$ss_enabled" -eq 1 ] && iptables -t mangle -I SHADOWSOCKS $((i+1)) -m mac ! --mac-source $macaddr -j RETURN
+				[ "$kp_enabled" -eq 1 ] && iptables -t mangle -I KOOLPROXY $((i+1)) -m mac ! --mac-source $macaddr -j RETURN
 			fi
 			unset macaddr
 			
@@ -72,8 +72,8 @@ get_disrule(){
 
 del_rule(){
 	type=$1
-	blackMacAdd=$(iptables -t nat -L $type | grep -w RETURN | grep -w "MAC" | awk '{print $7}')
-	whiteMacAdd=$(iptables -t nat -L $type | grep -w RETURN | grep -w "MAC !" | awk '{print $8}')
+	blackMacAdd=$(iptables -t mangle -L $type | grep -w RETURN | grep -w "MAC" | awk '{print $7}')
+	whiteMacAdd=$(iptables -t mangle -L $type | grep -w RETURN | grep -w "MAC !" | awk '{print $8}')
 	[ -n "$blackMacAdd" ] && {
 		for macaddrb in $blackMacAdd
 		do
@@ -83,13 +83,13 @@ del_rule(){
 				get_disrule $macaddrb proxy_mode shadowsocks
 			fi
 			[ "$is_disrule" -eq 1 ] && continue
-			iptables -t nat -D $type -m mac --mac-source $macaddrb -j RETURN
+			iptables -t mangle -D $type -m mac --mac-source $macaddrb -j RETURN
 		done
 	}
 	[ -n "$whiteMacAdd" ] && {
 		for macaddrw in $whiteMacAdd
 		do
-			iptables -t nat -D $type -m mac ! --mac-source $macaddrw -j RETURN
+			iptables -t mangle -D $type -m mac ! --mac-source $macaddrw -j RETURN
 		done
 	}
 }
