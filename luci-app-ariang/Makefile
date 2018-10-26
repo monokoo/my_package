@@ -29,12 +29,6 @@ endef
 define Package/$(PKG_NAME)/postinst
 endef
 
-define Build/Prepare
-endef
-
-define Build/Configure
-endef
-
 define Build/Compile
 endef
 
