@@ -14,4 +14,12 @@
 config_load "smartinfo"
 
 # 执行S.M.A.R.T检测
-config_list_foreach main device do_simple_smart_check
+#config_list_foreach main device do_simple_smart_check
+config_get device main device
+
+if [ -n "$device" ]; then
+	for dev in $device
+	do
+		do_simple_smart_check $dev
+	done
+fi

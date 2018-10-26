@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-smartinfo
 PKG_VERSION:=3.1
-PKG_RELEASE:=2
+PKG_RELEASE:=3
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
@@ -54,8 +54,8 @@ define Package/$(PKG_NAME)/install
 
 	$(INSTALL_DIR) $(1)/etc/config $(1)/etc/init.d
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/model/cbi
-	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/controller $(1)/usr/lib/lua/luci/view/admin_status
-	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/view/smartinfo $(1)/usr/lib/lua/luci/view/admin_status/index
+	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/controller
+	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/view/smartinfo
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n $(1)/usr/lib/smartinfo
 	
 	$(INSTALL_CONF) ./files/root/etc/config/* $(1)/etc/config/
@@ -64,8 +64,6 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_DATA) ./files/luasrc/model/cbi/* $(1)/usr/lib/lua/luci/model/cbi/
 	$(INSTALL_DATA) ./files/luasrc/controller/* $(1)/usr/lib/lua/luci/controller/
 	$(INSTALL_DATA) ./files/luasrc/view/smartinfo/* $(1)/usr/lib/lua/luci/view/smartinfo/
-	$(INSTALL_DATA) ./files/luasrc/view/admin_status/index/* $(1)/usr/lib/lua/luci/view/admin_status/index/
-	$(INSTALL_DATA) ./files/luasrc/view/admin_status/disc_status.htm $(1)/usr/lib/lua/luci/view/admin_status/disc_status.htm
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/smartinfo.zh-cn.lmo $(1)/usr/lib/lua/luci/i18n/
 
 endef

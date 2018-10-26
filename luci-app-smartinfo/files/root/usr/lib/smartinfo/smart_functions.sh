@@ -40,7 +40,7 @@ do_simple_smart_check() {
     if [ $? -eq "2" ]; then
         # 不支持S.M.A.R.T
         echo "$1:Unsupported"
-        exit 0
+        continue
     fi
     
     result=`echo $result | grep -c PASSED`
