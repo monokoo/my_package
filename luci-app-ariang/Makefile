@@ -1,11 +1,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-ariang
-PKG_VERSION:=20180525
-PKG_RELEASE:=099d6fd
+PKG_VERSION:=2018-10-24
 
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
-#PKG_USE_MIPS16:=0
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_URL:=https://github.com/mayswind/AriaNg-DailyBuild
+PKG_SOURCE_DATE:=2018-10-24
+PKG_SOURCE_VERSION:=06f79b0b9372ad341fa26539b5b0efb48d322f66
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -19,7 +20,7 @@ define Package/$(PKG_NAME)
 endef
 
 define Package/$(PKG_NAME)/description
-    A luci app for ariang, forked from koolshare Lede X64. Thanks to fw867.
+    A luci app for ariang
 endef
 
 define Package/$(PKG_NAME)/preinst
@@ -40,7 +41,13 @@ endef
 define Package/$(PKG_NAME)/install
 
 	$(INSTALL_DIR) $(1)/www/web
-	$(CP) -r ./files/www/web/* $(1)/www/web/
+	$(CP) \
+		$(PKG_BUILD_DIR)/{langs,css,js,fonts} \
+		$(PKG_BUILD_DIR)/index.html \
+		$(PKG_BUILD_DIR)/index.manifest \
+		$(PKG_BUILD_DIR)/LICENSE \
+		$(PKG_BUILD_DIR)/favicon.ico \
+		$(1)/www/web/
 
 endef
 
