@@ -62,7 +62,7 @@ do
 	fi
 	if [ "$enable" == "1" ]; then
 		iptables -t filter -I MIA  -m mac --mac-source $macaddr -m time --kerneltz --timestart $timeon --timestop $timeoff --weekdays $Z1$Z2$Z3$Z4$Z5$Z6$Z7 -j DROP
-		[ "$ss_enabled" -eq 1 ] && iptables -t nat -I SHADOWSOCKS $((i+1)) -m mac --mac-source $macaddr -m time --kerneltz --timestart $timeon --timestop $timeoff --weekdays $Z1$Z2$Z3$Z4$Z5$Z6$Z7 -j RETURN
+		[ "$ss_enabled" -eq 1 ] && iptables -t mangle -I SHADOWSOCKS $((i+1)) -m mac --mac-source $macaddr -m time --kerneltz --timestart $timeon --timestop $timeoff --weekdays $Z1$Z2$Z3$Z4$Z5$Z6$Z7 -j RETURN
 		[ "$kp_enabled" -eq 1 ] && [ -z "`iptables -t nat -L KOOLPROXY | grep -w RETURN | grep -w "$macaddr"`" ] && \
 			iptables -t nat -I KOOLPROXY $((i+1)) -m mac --mac-source $macaddr -m time --kerneltz --timestart $timeon --timestop $timeoff --weekdays $Z1$Z2$Z3$Z4$Z5$Z6$Z7 -j RETURN
 	fi
@@ -84,7 +84,12 @@ get_disrule(){
 
 del_rule(){
 	type=$1
-	blackMacAdd=$(iptables -t nat -L $type | grep -w RETURN | grep -w "MAC" | awk '{print $7}')
+	if [ "$type" == "KOOLPROXY" ]; then
+		iptables_name="nat"
+	else
+		iptables_name="mangle"
+	fi
+	blackMacAdd=$(iptables -t $iptables_name -L $type | grep -w RETURN | grep -w "MAC" | awk '{print $7}')
 	[ -n "$blackMacAdd" ] && {
 		for macaddrb in $blackMacAdd
 		do
@@ -94,14 +99,14 @@ del_rule(){
 				get_disrule $macaddrb proxy_mode shadowsocks
 			fi
 			[ "$is_disrule" -eq 1 ] && continue
-			blackMacnums=`iptables -t nat -L $type --line-num | grep -w RETURN | grep -w "MAC" | grep -w "$macaddrb" | wc -l`
+			blackMacnums=`iptables -t $iptables_name -L $type --line-num | grep -w RETURN | grep -w "MAC" | grep -w "$macaddrb" | wc -l`
 			if [ ! -z "$blackMacnums" ];then
 				until [ "$blackMacnums" = 0 ]
 				do
-					line_num=`iptables -t nat -L $type --line-num | grep -w RETURN | grep -w "MAC" | grep -w "$macaddrb" | awk '{print $1}'`
+					line_num=`iptables -t $iptables_name -L $type --line-num | grep -w RETURN | grep -w "MAC" | grep -w "$macaddrb" | awk '{print $1}'`
 					for line in $line_num
 					do
-						iptables -t nat -D $type $line
+						iptables -t $iptables_name -D $type $line
 						continue
 					done
 					blackMacnums=`expr $blackMacnums - 1`
