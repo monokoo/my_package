@@ -65,6 +65,7 @@ auto_umount(){
 
 countdev=$(ls /dev/sd* |grep -c $DEVNAME)
 alldev=$(ls /dev/sd* | wc -l)
+[ "$(uname -m)" == "x86_64" -a -n "$(echo $DEVNAME | grep sda)" ] && exit 1
 if [ "$ACTION" == "add" ]; then
 	[ "$countdev" -gt 0 ] && ([ "$alldev" == "1" ] || ([ "$alldev" -gt 1 ] && [ "$countdev" -lt "$alldev" ])) || exit 1
 fi
