@@ -16,6 +16,7 @@ PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE_VERSION:=58d35cb86fba33cf40028d07b977e9838b5aee33
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
 CMAKE_INSTALL:=1
+PKG_BUILD_PARALLEL:=1
 
 PKG_LICENSE:=GPL-2.0
 PKG_LICENSE_FILES:=LICENSE
@@ -130,7 +131,6 @@ define Package/pcap-dnsproxy/conffiles
 /etc/pcap-dnsproxy/IPFilter.conf
 /etc/pcap-dnsproxy/Routing.txt
 /etc/pcap-dnsproxy/WhiteList.txt
-/etc/pcap-dnsproxy/dnscrypt-resolvers.csv
 endef
 
 define Package/pcap-dnsproxy/postinst
@@ -138,14 +138,6 @@ endef
 
 # Stop and disable service(removing rc.d symlink) before removing
 define Package/pcap-dnsproxy/prerm
-endef
-
-
-# cmake dependency scanner workaround
-# just remove bloating headers
-define Build/Prepare
-	$(call Build/Prepare/Default)
-	rm -rf $(PKG_BUILD_DIR)/Source/Dependency
 endef
 
 define Package/pcap-dnsproxy/install
