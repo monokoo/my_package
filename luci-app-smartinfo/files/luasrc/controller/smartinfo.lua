@@ -16,8 +16,6 @@ $Id$
 module("luci.controller.smartinfo",package.seeall)
 
 function index()
-	require("luci.i18n")
-	luci.i18n.loadc("smartinfo")
 	if not nixio.fs.access("/etc/config/smartinfo") then
 		return
 	end
