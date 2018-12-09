@@ -190,4 +190,30 @@ e.remove("/tmp/Config.conf")
 end
 end
 end
+if nixio.fs.access("/etc/config/mwan3")then
+s:tab("mwan3conf",translate("配置mwan3"),translate("本页是配置/etc/config/mwan3的文档内容。编辑后点击重启按钮后生效"))
+o=s:taboption("mwan3conf",Button,"_mwan3restart")
+o.inputtitle=translate("重启mwan3")
+o.inputstyle="apply"
+function o.write(e,e)
+luci.sys.exec("/etc/init.d/mwan3 restart >/dev/null")
+end
+conf=s:taboption("mwan3conf",Value,"mwan3conf",nil,translate("开头的数字符号（＃）或分号的每一行（;）被视为注释；删除（;）启用指定选项。"))
+conf.template="cbi/tvalue"
+conf.rows=50
+conf.wrap="off"
+conf.cfgvalue=function(t,t)
+return e.readfile("/etc/config/mwan3")or""
+end
+conf.write=function(a,a,t)
+if t then
+t=t:gsub("\r\n?","\n")
+e.writefile("/tmp/mwan3",t)
+if(luci.sys.call("cmp -s /tmp/mwan3 /etc/config/mwan3")==1)then
+e.writefile("/etc/config/mwan3",t)
+end
+e.remove("/tmp/mwan3")
+end
+end
+end
 return m
