@@ -8,7 +8,9 @@ domain=$3
 name=$4
 ip=$5
 alinum=$6
-recordid=$7
+record_type=$7
+ttl_time=$8
+recordid=$9
 
 version=$(cat /etc/openwrt_release 2>/dev/null | grep -w DISTRIB_RELEASE | grep -w "By stones")
 version2=$(cat /etc/openwrt_release 2>/dev/null | grep -w DISTRIB_DESCRIPTION | grep -w Koolshare)
@@ -17,6 +19,9 @@ version2=$(cat /etc/openwrt_release 2>/dev/null | grep -w DISTRIB_DESCRIPTION | 
 enabled=$(uci -q get koolddns.@global[0].enabled)
 [ -z "$enabled" ] && enabled=0
 [ "$enabled" -eq 0 ] || [ -z "$accesskey" ] || [ -z "$signature" ] || [ -z "$domain" ] || [ -z "$name" ] || [ -z "$ip" ] && exit
+
+[ -z "$record_type" ] && record_type="A"
+[ -z "$ttl_time" ] && ttl_time=600
 
 subname=$(echo "$name" | awk -F'.' '{print $1}')
 subdomain=$(echo "$name" | awk -F'.' '{print $2}')
@@ -123,7 +128,8 @@ send_request() {
 }
 
 get_recordid() {
-	sed -n 's/.*RecordId[^0-9]*\([0-9]*\).*/\1/p'
+	#sed -n 's/.*RecordId[^0-9]*\([0-9]*\).*/\1/p'
+	jsonfilter -e '@.DomainRecords.Record[0].RecordId'
 }
 
 query_recordid() {
@@ -131,11 +137,11 @@ query_recordid() {
 }
 
 update_record() {
-	send_request "UpdateDomainRecord" "RR=$url_name&RecordId=$1&SignatureMethod=HMAC-SHA1&SignatureNonce=$timestamp&SignatureVersion=1.0&Timestamp=$timestamp&Type=A&Value=$ip"
+	send_request "UpdateDomainRecord" "RR=$url_name&RecordId=$1&SignatureMethod=HMAC-SHA1&SignatureNonce=$timestamp&SignatureVersion=1.0&Timestamp=$timestamp&Type=$record_type&Value=$ip&TTL=$ttl_time"
 }
 
 add_record() {
-	send_request "AddDomainRecord&DomainName=$domain" "RR=$url_name&SignatureMethod=HMAC-SHA1&SignatureNonce=$timestamp&SignatureVersion=1.0&Timestamp=$timestamp&Type=A&Value=$ip"
+	send_request "AddDomainRecord&DomainName=$domain" "RR=$url_name&SignatureMethod=HMAC-SHA1&SignatureNonce=$timestamp&SignatureVersion=1.0&Timestamp=$timestamp&Type=$record_type&Value=$ip&TTL=$ttl_time"
 }
 
 do_ddns_record() {
