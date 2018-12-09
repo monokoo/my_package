@@ -1,6 +1,7 @@
 #!/bin/sh
 
 timestamp=$(date -u "+%Y-%m-%dT%H%%3A%M%%3A%SZ")
+oncekey=$(/usr/bin/date "+%s%N")
 
 accesskey=$1
 signature=$2
@@ -138,15 +139,15 @@ get_response_recordid() {
 }
 
 query_recordid() {
-	send_request "DescribeSubDomainRecords" "SignatureMethod=HMAC-SHA1&SignatureNonce=$timestamp&SignatureVersion=1.0&SubDomain=$url_name.$domain&Timestamp=$timestamp"
+	send_request "DescribeSubDomainRecords" "SignatureMethod=HMAC-SHA1&SignatureNonce=$oncekey&SignatureVersion=1.0&SubDomain=$url_name.$domain&Timestamp=$timestamp"
 }
 
 update_record() {
-	send_request "UpdateDomainRecord" "RR=$url_name&RecordId=$1&SignatureMethod=HMAC-SHA1&SignatureNonce=$timestamp&SignatureVersion=1.0&TTL=$ttl_time&Timestamp=$timestamp&Type=$record_type&Value=$ip"
+	send_request "UpdateDomainRecord" "RR=$url_name&RecordId=$1&SignatureMethod=HMAC-SHA1&SignatureNonce=$oncekey&SignatureVersion=1.0&TTL=$ttl_time&Timestamp=$timestamp&Type=$record_type&Value=$ip"
 }
 
 add_record() {
-	send_request "AddDomainRecord&DomainName=$domain" "RR=$url_name&SignatureMethod=HMAC-SHA1&SignatureNonce=$timestamp&SignatureVersion=1.0&TTL=$ttl_time&Timestamp=$timestamp&Type=$record_type&Value=$ip"
+	send_request "AddDomainRecord&DomainName=$domain" "RR=$url_name&SignatureMethod=HMAC-SHA1&SignatureNonce=$oncekey&SignatureVersion=1.0&TTL=$ttl_time&Timestamp=$timestamp&Type=$record_type&Value=$ip"
 }
 
 do_ddns_record() {
@@ -156,7 +157,7 @@ do_ddns_record() {
 		doaction=1
 		echo $(date): "添加记录..."
 	else
-		update_record $recordid >/dev/null 2>&1
+		recordid=`update_record $recordid | get_response_recordid`
 		doaction=0
 		echo $(date): "更新记录..."
 	fi
@@ -175,7 +176,7 @@ do_ddns_record() {
 	fi
 }
 
-[ -x /usr/bin/openssl -a -x /usr/bin/curl -a -x /bin/sed ] ||
-	( echo $(date): "Need openssl +bind-dig +curl + sed !" && exit 1 )
+[ -x /usr/bin/openssl -a -x /usr/bin/curl -a -x /bin/sed -a -x /usr/bin/date ] ||
+	( echo $(date): "Need openssl +bind-dig +curl + sed + coreutils-date to be installed!" && exit 1 )
 
 check_aliddns || do_ddns_record
