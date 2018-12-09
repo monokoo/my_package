@@ -132,6 +132,11 @@ get_recordid() {
 	jsonfilter -e '@.DomainRecords.Record[0].RecordId'
 }
 
+get_response_recordid() {
+	#sed -n 's/.*RecordId[^0-9]*\([0-9]*\).*/\1/p'
+	jsonfilter -e '@.RecordId'
+}
+
 query_recordid() {
 	send_request "DescribeSubDomainRecords" "SignatureMethod=HMAC-SHA1&SignatureNonce=$timestamp&SignatureVersion=1.0&SubDomain=$url_name.$domain&Timestamp=$timestamp"
 }
@@ -147,7 +152,7 @@ add_record() {
 do_ddns_record() {
 	recordid=`query_recordid | get_recordid`
 	if [ "Z$recordid" == "Z" ]; then
-		recordid=`add_record | get_recordid`
+		recordid=`add_record | get_response_recordid`
 		doaction=1
 		echo $(date): "添加记录..."
 	else
