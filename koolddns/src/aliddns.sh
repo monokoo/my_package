@@ -142,11 +142,11 @@ query_recordid() {
 }
 
 update_record() {
-	send_request "UpdateDomainRecord" "RR=$url_name&RecordId=$1&SignatureMethod=HMAC-SHA1&SignatureNonce=$timestamp&SignatureVersion=1.0&Timestamp=$timestamp&Type=$record_type&Value=$ip&TTL=$ttl_time"
+	send_request "UpdateDomainRecord" "RR=$url_name&RecordId=$1&SignatureMethod=HMAC-SHA1&SignatureNonce=$timestamp&SignatureVersion=1.0&TTL=$ttl_time&Timestamp=$timestamp&Type=$record_type&Value=$ip"
 }
 
 add_record() {
-	send_request "AddDomainRecord&DomainName=$domain" "RR=$url_name&SignatureMethod=HMAC-SHA1&SignatureNonce=$timestamp&SignatureVersion=1.0&Timestamp=$timestamp&Type=$record_type&Value=$ip&TTL=$ttl_time"
+	send_request "AddDomainRecord&DomainName=$domain" "RR=$url_name&SignatureMethod=HMAC-SHA1&SignatureNonce=$timestamp&SignatureVersion=1.0&TTL=$ttl_time&Timestamp=$timestamp&Type=$record_type&Value=$ip"
 }
 
 do_ddns_record() {
