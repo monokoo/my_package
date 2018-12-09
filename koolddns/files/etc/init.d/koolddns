@@ -6,6 +6,24 @@ STOP=10
 EXTRA_COMMANDS="update"
 EXTRA_HELP="	update	Perform the update immediately"
 LOGFILE=/var/log/koolddns.log
+LOCK_FILE=/var/lock/koolddns.lock
+
+set_lock(){
+	exec 1000>"$LOCK_FILE"
+	flock -x 1000
+}
+
+unset_lock(){
+	flock -u 1000
+	rm -rf "$LOCK_FILE"
+}
+
+_exit()
+{
+    local rc=$1
+    unset_lock
+    exit ${rc}
+}
 
 Reduce_Log(){
 	local log=$1
@@ -26,7 +44,7 @@ get_config()
 	config_get domain $1 domain
 	config_get name $1 name
 	config_get interface $1 interface
-	[ $enable -eq 0 ] || [ -z "$service" ] || [ -z "$domain" ] || [ -z "$name" ] || [ -z "$interface" ] && return
+	[ $enable -eq 0 ] || [ -z "$service" ] || [ -z "$domain" ] || [ -z "$name" ] || [ -z "$interface" ] && _exit
 	echo $(date): -------------------------------------------------- >>$LOGFILE
 	echo $(date): 目标域名: $name.$domain >>$LOGFILE
 	if [ "$interface" = "url" ]; then
@@ -36,13 +54,13 @@ get_config()
 		[ -z "$urlif" ] && urlif=`ifstatus $urlinterface 2>/dev/null| grep l3_device |awk -F'"' '{print $4}'`
 		[ -n "$urlif" ] && urlface="--interface $urlif"
 		ip=$(curl $urlface -s $ipurl 2>&1)
-			[ -z $(echo $ip|grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}") ] && echo $(date): "通过URL获取公网IP出错" >>$LOGFILE && echo >>$LOGFILE && return    
+			[ -z $(echo $ip|grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}") ] && echo $(date): "通过URL获取公网IP出错" >>$LOGFILE && echo >>$LOGFILE && _exit    
 	else
 		ifname=`cat /var/state/network 2>/dev/null | grep -w "network.$interface.ifname" |awk -F"'" '{print $2}'`
 		[ -z "$ifname" ] && ifname=`ifstatus $interface 2>/dev/null| grep l3_device |awk -F'"' '{print $4}'`
-		[ -z "$ifname" ] && echo $(date): "获取网络 $interface 信息出错" >>$LOGFILE && echo >>$LOGFILE && return
+		[ -z "$ifname" ] && echo $(date): "获取网络 $interface 信息出错" >>$LOGFILE && echo >>$LOGFILE && _exit
 		ip=$(ifconfig $ifname 2>/dev/null | grep 'inet addr' | awk '{print $2}' | cut -d: -f2 2>/dev/null)
-		[ -z "$ip" ] && echo $(date): "获取网络 $interface 接口 $ifname 信息出错" >>$LOGFILE && echo >>$LOGFILE && return    
+		[ -z "$ip" ] && echo $(date): "获取网络 $interface 接口 $ifname 信息出错" >>$LOGFILE && echo >>$LOGFILE && _exit   
 	fi
 	if [ "$service" = "aliddns" ]; then
 		config_get accesskey $1 accesskey
@@ -67,9 +85,11 @@ get_config()
 update(){
 	local enabled=$(uci get koolddns.@global[0].enabled)
 	[ "$enabled" -eq 0 ] && exit
+	set_lock
 	Reduce_Log $LOGFILE
 	config_load koolddns
 	config_foreach get_config koolddns
+	unset_lock
 }
 
 reload(){
