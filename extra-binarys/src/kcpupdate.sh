@@ -63,7 +63,9 @@ fi
 if [ "$latest_version" != "$local_version" ]; then
 	echo_date "开始更新本地 KCP 客户端..."
 	mkdir -p /tmp/kcptun-linux-$s_arch
-	/usr/bin/wget --no-check-certificate --timeout=8 -t 2 https://github.com/xtaci/kcptun/releases/download/v$latest_version/kcptun-linux-$s_arch-$latest_version.tar.gz -O /tmp/kcptun-linux-$s_arch/kcptun-linux-$s_arch-$latest_version.tar.gz
+	/usr/bin/wget --no-check-certificate --timeout=8 -t 1 https://code.aliyun.com/repobackup/kcptun/raw/master/v$latest_version/kcptun-linux-$s_arch-$latest_version.tar.gz -O /tmp/kcptun-linux-$s_arch/kcptun-linux-$s_arch-$latest_version.tar.gz
+	[ ! -s "/tmp/kcptun-linux-$s_arch/kcptun-linux-$s_arch-$latest_version.tar.gz" ] && \
+		/usr/bin/wget --no-check-certificate --timeout=8 -t 2 https://github.com/xtaci/kcptun/releases/download/v$latest_version/kcptun-linux-$s_arch-$latest_version.tar.gz -O /tmp/kcptun-linux-$s_arch/kcptun-linux-$s_arch-$latest_version.tar.gz
 	[ ! -s "/tmp/kcptun-linux-$s_arch/kcptun-linux-$s_arch-$latest_version.tar.gz" ] && echo_date "下载失败，请稍候重试！" && _exit 0
 	tar -xzf /tmp/kcptun-linux-$s_arch/kcptun-linux-$s_arch-$latest_version.tar.gz -C /tmp/kcptun-linux-$s_arch
 	mv /tmp/kcptun-linux-$s_arch/client_linux_$client_arch /usr/bin/kcpclient && chmod +x /usr/bin/kcpclient
