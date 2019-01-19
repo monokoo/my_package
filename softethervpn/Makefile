@@ -16,8 +16,8 @@ PKG_SOURCE:=softether-vpn-src-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/SoftEtherVPN/SoftEtherVPN/releases/download/$(PKG_VERSION)
 PKG_HASH:=c99142c5e55fae055955332964c56d29aba10bec9764ab961aebabf6c3ee1462
 
-PKG_BUILD_DIR:=$(BUILD_DIR)/v$(PKG_VERSION)
-HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/v$(PKG_VERSION)
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/$(PKG_NAME)-$(PKG_VERSION)
 
 PKG_LICENSE:=GPL-2.0
 PKG_LICENSE_FILES:=COPYING
@@ -30,6 +30,7 @@ include $(INCLUDE_DIR)/nls.mk
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/host-build.mk
 
+TAR_CMD=$(HOST_TAR) -C $(1) $(TAR_OPTIONS)
 
 # Override CC to add fake libreadline to linker search path
 HOSTCC += -L./src/readline
