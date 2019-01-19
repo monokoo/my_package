@@ -9,14 +9,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=softethervpn
-PKG_VERSION:=4.27-9668
-PKG_VERREL:=beta
-PKG_VERDATE:=2018.05.29
-PKG_RELEASE:=1
+PKG_VERSION:=5.01.9667
+PKG_RELEASE:=2
 
-PKG_SOURCE:=softether-src-v$(PKG_VERSION)-$(PKG_VERREL).tar.gz
-PKG_SOURCE_URL:=http://www.softether-download.com/files/softether/v$(PKG_VERSION)-$(PKG_VERREL)-$(PKG_VERDATE)-tree/Source_Code/
-PKG_MD5SUM:=939266c82757273aa19c94b4601fce02
+PKG_SOURCE:=softether-vpn-src-$(PKG_VERSION).tar.gz
+PKG_SOURCE_URL:=https://github.com/SoftEtherVPN/SoftEtherVPN/releases/download/$(PKG_VERSION)
+PKG_HASH:=c99142c5e55fae055955332964c56d29aba10bec9764ab961aebabf6c3ee1462
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/v$(PKG_VERSION)
 HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/v$(PKG_VERSION)
