@@ -78,37 +78,6 @@ resolve2ip() {
 	echo -n $localtmp_ip
 }
 
-check_aliddns() {
-	current_ip=$(resolve2ip $alidomain)
-	remotecurrent_ip=$(remoteresolve2ip $alidomain)
-	
-	echo $(date): "本地接口IP :" ${ip}
-	if [ "Z$remotecurrent_ip" == "Z" ]; then
-		echo $(date): "远程解析IP : 暂无解析记录！"
-		recordid='' # NO Remote Resolve IP Means new Record_ID
-	else
-		if [ "Z$current_ip" == "Z" ]; then
-			echo $(date): "本地解析IP : 本地解析尚未生效！"
-			echo $(date): "远程解析IP :" ${remotecurrent_ip}
-		else
-			if [ "Z$current_ip" != "Z$remotecurrent_ip" ]; then
-				echo $(date): "本地解析IP : 本地解析尚未生效！"
-				echo $(date): "远程解析IP :" ${remotecurrent_ip}
-			else
-				echo $(date): "本地解析IP :" ${current_ip}
-				echo $(date): "远程解析IP :" ${remotecurrent_ip}
-			fi
-		fi
-	fi
-	if [ "Z$ip" == "Z$remotecurrent_ip" ]; then
-		echo $(date): "解析地址一致，无需更新"
-		return 0
-	else
-		echo $(date): "正在检查阿里云解析配置..."
-		return 1
-	fi
-}
-
 urlencode() {
 	# urlencode url<string>
 	out=''
@@ -130,7 +99,7 @@ send_request() {
 
 get_recordid() {
 	#sed -n 's/.*RecordId[^0-9]*\([0-9]*\).*/\1/p'
-	jsonfilter -e '@.DomainRecords.Record[0].RecordId'
+	jsonfilter -e '@.DomainRecords.Record[*].RecordId'
 }
 
 get_response_recordid() {
@@ -138,8 +107,16 @@ get_response_recordid() {
 	jsonfilter -e '@.RecordId'
 }
 
+get_response_message() {
+	jsonfilter -e '@.Message'
+}
+
 query_recordid() {
 	send_request "DescribeSubDomainRecords" "SignatureMethod=HMAC-SHA1&SignatureNonce=$oncekey&SignatureVersion=1.0&SubDomain=$url_name.$domain&Timestamp=$timestamp"
+}
+
+get_recordinfo() {
+	send_request "DescribeDomainRecordInfo" "SignatureMethod=HMAC-SHA1&SignatureNonce=$oncekey&SignatureVersion=1.0&RecordId=$1&Timestamp=$timestamp"
 }
 
 update_record() {
@@ -150,20 +127,76 @@ add_record() {
 	send_request "AddDomainRecord&DomainName=$domain" "RR=$url_name&SignatureMethod=HMAC-SHA1&SignatureNonce=$oncekey&SignatureVersion=1.0&TTL=$ttl_time&Timestamp=$timestamp&Type=$record_type&Value=$ip"
 }
 
+# check_aliddns() {
+	# current_ip=$(resolve2ip $alidomain)
+	# remotecurrent_ip=$(remoteresolve2ip $alidomain)
+	
+	# echo $(date): "本地接口IP :" ${ip}
+	# if [ "Z$remotecurrent_ip" == "Z" ]; then
+		# echo $(date): "远程解析IP : 暂无解析记录！"
+		# recordid='' # NO Remote Resolve IP Means new Record_ID
+	# else
+		# if [ "Z$current_ip" == "Z" ]; then
+			# echo $(date): "本地解析IP : 本地解析尚未生效！"
+			# echo $(date): "远程解析IP :" ${remotecurrent_ip}
+		# else
+			# if [ "Z$current_ip" != "Z$remotecurrent_ip" ]; then
+				# echo $(date): "本地解析IP : 本地解析尚未生效！"
+				# echo $(date): "远程解析IP :" ${remotecurrent_ip}
+			# else
+				# echo $(date): "本地解析IP :" ${current_ip}
+				# echo $(date): "远程解析IP :" ${remotecurrent_ip}
+			# fi
+		# fi
+	# fi
+	# if [ "Z$ip" == "Z$remotecurrent_ip" ]; then
+		# echo $(date): "解析地址一致，无需更新"
+		# return 0
+	# else
+		# echo $(date): "正在检查阿里云解析配置..."
+		# return 1
+	# fi
+# }
+
+check_aliddns() {
+    local isrecorded
+    echo $(date): "本地接口IP :" ${ip}
+    recordvalue=$(query_recordid | jsonfilter -e '@.DomainRecords.Record[*].Value')
+    for recordip in $recordvalue
+    do
+        if [ "Z$recordip" == "Z$ip" ]; then
+            isrecorded=1
+        fi
+        echo $(date): "远程解析IP: $recordip"
+    done
+    if [ $isrecorded -eq 1 ]; then
+		echo $(date): "远程已有该IP记录，无需更新"
+		return 0
+	else
+		echo $(date): "正在检查阿里云解析配置..."
+		return 1
+	fi
+    
+
+}
+
 do_ddns_record() {
-	recordid=`query_recordid | get_recordid`
-	if [ "Z$recordid" == "Z" ]; then
-		recordid=`add_record | get_response_recordid`
+	#recordid=`query_recordid | get_recordid`
+    local respbody
+	if [ "Z$recordid" == "Z" ]; then 
+        respbody=$(add_record)
 		doaction=1
 		echo $(date): "添加记录..."
 	else
-		recordid=`update_record $recordid | get_response_recordid`
+        respbody=$(update_record $recordid)
 		doaction=0
 		echo $(date): "更新记录..."
 	fi
+    recordid=$(echo "$respbody" | get_response_recordid)
 	if [ "Z$recordid" == "Z" ]; then
 		# failed
-		echo $(date): "更新失败，请检查配置文件！"
+        recordmsg=$(echo "$respbody" | get_response_message)
+		echo $(date): "更新失败：$recordmsg"
 	else
 		# save recordid
 		uci set koolddns.$alinum.recordid=$recordid
