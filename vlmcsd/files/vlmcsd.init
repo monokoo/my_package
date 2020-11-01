@@ -37,21 +37,21 @@ start()
 		service_start /usr/bin/vlmcsd -d -P $port -l /var/log/vlmcsd.log
 	else
 		hostname=$(uci -q get system.@system[0].hostname)
-		domain=$(uci -q get dhcp.@dnsmasq[0].domain)
 		[ -z "$hostname" ] && hostname=`uname -n`
+		domain=$(uci -q get dhcp.@dnsmasq[0].domain)
 		if [ -z "$domain" ]; then
-			lan_ip=`uci -q get network.lan.ipaddr`
-			srv_name=",$lan_ip"
-		else
-			srv_name=".$domain,$hostname.$domain"
 			local_domain=`uci -q get dhcp.@dnsmasq[0].local |awk -F'/' '{print $2}'`
-			[ "$domain" != "$local_domain" ] && {
-				uci set dhcp.@dnsmasq[0].local="/$domain/"
-				uci commit dhcp
-			}
+			if [ -z "$local_domain" ]; then
+				domain="lan"
+			else
+				domain="$local_domain"
+			fi
+			uci set dhcp.@dnsmasq[0].domain="$domain"
 		fi
+		srv_name="_vlmcs._tcp.$domain"
+		srv_target="$hostname.$domain"
 		[ ! -d "/tmp/dnsmasq.d" ] && mkdir /tmp/dnsmasq.d
-		echo srv-host=_vlmcs._tcp$srv_name,1688,0,100 > /tmp/dnsmasq.d/vlmcsd.conf
+		echo srv-host=$srv_name,$srv_target,1688,0,100 > /tmp/dnsmasq.d/vlmcsd.conf
 		service_start /usr/bin/vlmcsd -i /usr/share/vlmcsd/vlmcsd.ini
 	fi
 	[ "$enable_web" -eq 1 ] && {
