@@ -26,6 +26,8 @@ define Build/Prepare
 endef
 
 define Package/extra-binarys/install
+	$(INSTALL_DIR) $(1)/etc/uci-defaults
+	$(INSTALL_BIN) ./files/optimization-settings $(1)/etc/uci-defaults/99-optimization-settings
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_DIR) $(1)/usr/share/shadowsocks
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/kcpupdate $(1)/usr/share/shadowsocks/kcpupdate
