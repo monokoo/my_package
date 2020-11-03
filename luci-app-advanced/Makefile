@@ -1,64 +1,17 @@
+# Copyright (C) 2019  sirpdboy <https://github.com/sirpdboy/luci-app-advanced/>
+# 
+#
+#
+# This is free software, licensed under the Apache License, Version 2.0 .
+# 
+
 include $(TOPDIR)/rules.mk
 
+LUCI_TITLE:=LuCI Support for advanced
+LUCI_DEPENDS:=
 PKG_NAME:=luci-app-advanced
-PKG_VERSION:=20171024
-PKG_RELEASE:=1
+PKG_VERSION:=1.6
 
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
-#PKG_USE_MIPS16:=0
+include $(TOPDIR)/feeds/luci/luci.mk
 
-include $(INCLUDE_DIR)/package.mk
-
-define Package/$(PKG_NAME)
-	SECTION:=luci
-	CATEGORY:=LuCI
-	SUBMENU:=3. Applications
-	PKGARCH:=all
-	TITLE:=luci for advanced settings
-endef
-
-define Package/$(PKG_NAME)/description
-    A luci app for advanced settings, forked from koolshare Lede X64. Thanks to fw867.
-endef
-
-define Package/$(PKG_NAME)/preinst
-endef
-
-define Package/$(PKG_NAME)/postinst
-#!/bin/sh
-if [ -z "$${IPKG_INSTROOT}" ]; then
-	if [ -f /etc/uci-defaults/35_luci-advanced ]; then
-		( . /etc/uci-defaults/35_luci-advanced ) && rm -f /etc/uci-defaults/35_luci-advanced
-	fi
-	rm -rf /tmp/luci-indexcache /tmp/luci-modulecache
-fi
-exit 0
-endef
-
-define Build/Prepare
-endef
-
-define Build/Configure
-endef
-
-define Build/Compile
-endef
-
-define Package/$(PKG_NAME)/install
-
-	$(INSTALL_DIR) $(1)/etc/uci-defaults
-	$(INSTALL_BIN) ./files/etc/uci-defaults/35_luci-advanced $(1)/etc/uci-defaults/35_luci-advanced
-
-	$(INSTALL_DIR)  $(1)/etc/config $(1)/etc/init.d
-	$(INSTALL_CONF) ./files/etc/config/advanced $(1)/etc/config/
-	$(INSTALL_BIN) ./files/etc/init.d/advanced $(1)/etc/init.d/
-	
-	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/controller
-	$(INSTALL_DATA) ./files/usr/lib/lua/luci/controller/*.lua $(1)/usr/lib/lua/luci/controller/
-
-	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/model/cbi
-	$(INSTALL_DATA) ./files/usr/lib/lua/luci/model/cbi/advanced.lua $(1)/usr/lib/lua/luci/model/cbi/
-
-endef
-
-$(eval $(call BuildPackage,$(PKG_NAME)))
+# call BuildPackage - OpenWrt buildroot signature

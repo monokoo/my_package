@@ -1,5 +1,0 @@
-config advanced 'base'
-	option enabled '1'
-	option usb3_disable '0'
-	option webshell 'shellinabox'
-	option route_mode 'none'
