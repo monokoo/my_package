@@ -38,9 +38,13 @@ sed -i 's/cbi.submit\"] = true/cbi.submit\"] = \"1\"/g' /usr/lib/lua/luci/dispat
 
 
 #for vim-full
-[ -f "/usr/share/vim/vim81/defaults.vim" ] && {
-	rownum=$(sed -n -e "/if has('mouse')/=" /usr/share/vim/vim81/defaults.vim)
-	sed -i "$rownum,$(($rownum + 2))d" /usr/share/vim/vim81/defaults.vim
+[ -n "$(ls /usr/share/vim/vim*/defaults.vim 2>/dev/null)" ] && {
+	rownum=$(sed -n -e "/if has('mouse')/=" /usr/share/vim/vim*/defaults.vim)
+	if [ -n "$(grep mouse=nvi /usr/share/vim/vim*/defaults.vim)" ]; then
+		sed -i "$rownum,$(($rownum + 2))d" /usr/share/vim/vim*/defaults.vim
+	else
+		sed -i "$rownum,$(($rownum + 6))d" /usr/share/vim/vim*/defaults.vim
+	fi
 }
 
 #for diskman
