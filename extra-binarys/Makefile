@@ -25,6 +25,17 @@ define Build/Prepare
 	$(CP) ./src/* $(PKG_BUILD_DIR)/
 endef
 
+define Package/$(PKG_NAME)/postinst
+#!/bin/sh
+if [ -z "$${IPKG_INSTROOT}" ]; then
+        if [ -f /etc/uci-defaults/99-optimization-settings ]; then
+                ( . /etc/uci-defaults/99-optimization-settings ) && rm -f /etc/uci-defaults/99-optimization-settings
+        fi
+        rm -rf /tmp/luci-indexcache
+fi
+exit 0
+endef
+
 define Package/extra-binarys/install
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
 	$(INSTALL_BIN) ./files/optimization-settings $(1)/etc/uci-defaults/99-optimization-settings
