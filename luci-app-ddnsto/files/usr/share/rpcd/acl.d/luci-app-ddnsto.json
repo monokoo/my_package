@@ -1,0 +1,11 @@
+{
+    "luci-app-ddnsto": {
+        "description": "Luci interface for the ddnsto",
+        "read": {
+            "uci": [ "ddnsto" ]
+        },
+        "write": {
+            "uci": [ "ddnsto" ]
+        }
+    }
+}
