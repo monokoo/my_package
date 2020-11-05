@@ -47,6 +47,10 @@ sed -i 's/cbi.submit\"] = true/cbi.submit\"] = \"1\"/g' /usr/lib/lua/luci/dispat
 	fi
 }
 
+[ -f "/etc/init.d/iptvhelper" ] && {
+	chmod +x /etc/init.d/iptvhelper
+}
+
 #for diskman
 sed -i 's/\"system\"/\"nas\"/g' /usr/lib/lua/luci/controller/diskman.lua
 sed -i 's/system/nas/g' /usr/lib/lua/luci/view/diskman/*.htm
