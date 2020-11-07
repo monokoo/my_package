@@ -5,6 +5,11 @@ uci commit luci
 
 uci set system.@system[0].timezone=CST-8
 uci set system.@system[0].zonename=Asia/Shanghai
+uci delete system.ntp
+uci add_list system.ntp.server='0.openwrt.pool.ntp.org'
+uci add_list system.ntp.server='ntp1.aliyun.com'
+uci add_list system.ntp.server='cn.pool.ntp.org'
+uci add_list system.ntp.server='time1.cloud.tencent.com'
 uci commit system
 
 uci set fstab.@global[0].anon_mount=1
