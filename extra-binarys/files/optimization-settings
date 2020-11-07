@@ -73,6 +73,11 @@ sed -i 's/services/vpn/g' /usr/lib/lua/luci/view/passwall/*/*.htm
 	chmod +x /etc/init.d/iptvhelper
 }
 
+#for AdGuardHome
+[ -f "/etc/init.d/AdGuardHome" ] && {
+	chmod +x /etc/init.d/AdGuardHome
+}
+
 #for diskman
 sed -i 's/\"system\"/\"nas\"/g' /usr/lib/lua/luci/controller/diskman.lua
 sed -i 's/system/nas/g' /usr/lib/lua/luci/view/diskman/*.htm
