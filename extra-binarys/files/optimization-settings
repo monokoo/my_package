@@ -50,6 +50,14 @@ sed -i 's/cbi.submit\"] = true/cbi.submit\"] = \"1\"/g' /usr/lib/lua/luci/dispat
 	fi
 }
 
+#for VPN section
+[ -f "/usr/share/luci/menu.d/luci-base.json" ] && {
+	rownum=$(sed -n -e '/title": "VPN"/=' /usr/share/luci/menu.d/luci-base.json)
+	if [ -n "$rownum" ]; then
+		sed -e "$(($rownum + 1))s/order\":\ 70/order\":\ 49/" /usr/share/luci/menu.d/luci-base.json
+	fi
+}
+
 [ -f "/etc/init.d/iptvhelper" ] && {
 	chmod +x /etc/init.d/iptvhelper
 }
