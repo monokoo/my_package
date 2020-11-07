@@ -63,6 +63,12 @@ sed -i 's/cbi.submit\"] = true/cbi.submit\"] = \"1\"/g' /usr/lib/lua/luci/dispat
 	fi
 }
 
+#for passwall
+sed -i 's/\"services\"/\"vpn\"/g' /usr/lib/lua/luci/controller/passwall.lua
+sed -i 's/services/vpn/g' /usr/lib/lua/luci/model/cbi/passwall/*/*.lua
+sed -i 's/services/vpn/g' /usr/lib/lua/luci/view/passwall/*/*.htm
+
+#for iptvhelper
 [ -f "/etc/init.d/iptvhelper" ] && {
 	chmod +x /etc/init.d/iptvhelper
 }
