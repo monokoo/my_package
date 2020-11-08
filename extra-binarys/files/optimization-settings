@@ -80,7 +80,7 @@ sed -i 's/services/vpn/g' /usr/lib/lua/luci/view/passwall/*/*.htm
 
 #for argon theme
 [ -f "/usr/lib/lua/luci/view/themes/argon/header.htm" ] && {
-	sed -i 's#https://cdn.polyfill.io/v2/polyfill.min.js#<%=media%>/js/polyfill.min.js#g'
+	sed -i 's#https://cdn.polyfill.io/v2/polyfill.min.js#<%=media%>/js/polyfill.min.js#g' /usr/lib/lua/luci/view/themes/argon/header.htm
 }
 
 #for diskman
