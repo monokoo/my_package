@@ -78,6 +78,11 @@ sed -i 's/services/vpn/g' /usr/lib/lua/luci/view/passwall/*/*.htm
 	chmod +x /etc/init.d/AdGuardHome
 }
 
+#for argon theme
+[ -f "/usr/lib/lua/luci/view/themes/argon/header.htm" ] && {
+	sed -i 's#https://cdn.polyfill.io/v2/polyfill.min.js#<%=media%>/js/polyfill.min.js#g'
+}
+
 #for diskman
 sed -i 's/\"system\"/\"nas\"/g' /usr/lib/lua/luci/controller/diskman.lua
 sed -i 's/system/nas/g' /usr/lib/lua/luci/view/diskman/*.htm
