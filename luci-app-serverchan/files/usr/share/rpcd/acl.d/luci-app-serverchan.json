@@ -1,0 +1,11 @@
+{
+    "luci-app-serverchan": {
+        "description": "Luci interface for the serverchan",
+        "read": {
+            "uci": [ "serverchan" ]
+        },
+        "write": {
+            "uci": [ "serverchan" ]
+        }
+    }
+}
