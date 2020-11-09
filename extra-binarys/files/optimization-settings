@@ -34,6 +34,9 @@ sed -i 's/services/nas/g' /usr/lib/lua/luci/view/minidlna_status.htm
 }
 
 ln -sf /sbin/ip /usr/bin/ip
+[ ! -f "/bin/date" ] && {
+	ln -sf /bin/date /usr/bin/date
+}
 
 sed -i 's#http://downloads.openwrt.org#https://mirrors.cloud.tencent.com/lede#g' /etc/opkg/distfeeds.conf
 sed -i 's/root::0:0:99999:7:::/root:$1$V4UetPzk$CYXluq4wUazHjmCDBCqXF.:0:0:99999:7:::/g' /etc/shadow
