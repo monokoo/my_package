@@ -50,7 +50,7 @@ start() {
 
 stop()
 {
-	pids=$(ps| grep -v grep | grep "/usr/bin/serverchan_monitor" | awk '{print $1}')
+	pids=$(ps| grep -v grep | grep "subscribe dnsmasq" | awk '{print $1}')
 	for pid in $pids
 	do
 		kill -9 $pid
