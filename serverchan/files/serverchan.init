@@ -44,11 +44,16 @@ start() {
 	config_get sckey global sckey
 	config_get send_mode timing_message send_mode send_mode
 	[ "$enabled" -gt 0 ] && [ -n "$sckey" ] || exit
-	
+	/usr/bin/serverchan_monitor &
 	[ "$send_mode" != "disable" ] && sc_add_cru
 }
 
 stop()
 {
+	pids=$(ps| grep -v grep | grep "/usr/bin/serverchan_monitor" | awk '{print $1}')
+	for pid in $pids
+	do
+		kill -9 $pid
+	done
 	sc_del_cru
 }
