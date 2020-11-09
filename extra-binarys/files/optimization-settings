@@ -73,9 +73,9 @@ sed -i 's/services/vpn/g' /usr/lib/lua/luci/model/cbi/passwall/*/*.lua
 sed -i 's/services/vpn/g' /usr/lib/lua/luci/view/passwall/*/*.htm
 
 #for Hello World
-sed -i 's/\"services\"/\"vpn\"/g' /usr/lib/lua/luci/controller/vssr.lua
-sed -i 's/services/vpn/g' /usr/lib/lua/luci/model/cbi/vssr/*/*.lua
-sed -i 's/services/vpn/g' /usr/lib/lua/luci/view/vssr/*/*.htm
+sed -i "s/'services'/'vpn'/g" /usr/lib/lua/luci/controller/vssr.lua
+sed -i 's/services/vpn/g' /usr/lib/lua/luci/model/cbi/vssr/*.lua
+sed -i 's/services/vpn/g' /usr/lib/lua/luci/view/vssr/*.htm
 
 #for iptvhelper
 [ -f "/etc/init.d/iptvhelper" ] && {
