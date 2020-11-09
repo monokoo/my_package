@@ -3,10 +3,6 @@
 
 server=http://sc.ftqq.com
 
-version=$(cat /etc/openwrt_release 2>/dev/null| grep -w DISTRIB_RELEASE | grep -w "By stones")
-version2=$(cat /etc/openwrt_release 2>/dev/null| grep -w DISTRIB_DESCRIPTION | grep -w Koolshare)
-[ -z "$version" -a -z "$version2" ] && exit 0
-
 TYPE=$1
 ACTION=$2
 PARAM3=$3

@@ -4,10 +4,6 @@
 server=http://sc.ftqq.com
 CONFIG=/etc/config/serverchan
 
-version=$(cat /etc/openwrt_release 2>/dev/null| grep -w DISTRIB_RELEASE | grep -w "By stones")
-version2=$(cat /etc/openwrt_release 2>/dev/null| grep -w DISTRIB_DESCRIPTION | grep -w Koolshare)
-[ -z "$version" -a -z "$version2" ] && exit 0
-
 config_t_get() {
         local ret=$(uci get $CONFIG.$1.$2 2>/dev/null)
         #echo ${ret:=$3}
@@ -141,7 +137,7 @@ get_koolss_status(){
 	koolss_status="
 
 ****
-**koolss连接状态：**
+**网络连通状态：**
 
 国内连接：$koolss_china
 
