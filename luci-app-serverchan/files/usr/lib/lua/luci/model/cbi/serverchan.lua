@@ -71,7 +71,7 @@ e=t:option(Button,"_add",translate("手动发送"))
 e.inputtitle=translate("发送")
 e.inputstyle="apply"
 function e.write(e,e)
-luci.sys.exec("/usr/bin/serverchan start")
+luci.sys.exec("/usr/bin/serverchan start &")
 end
 t=a:section(NamedSection,"trigger_message","serverchan",translate("触发发送通知消息 (短消息)"))
 t.anonymous=true
