@@ -34,7 +34,7 @@ sed -i 's/services/nas/g' /usr/lib/lua/luci/view/minidlna_status.htm
 }
 
 ln -sf /sbin/ip /usr/bin/ip
-[ ! -f "/bin/date" ] && {
+[ ! -f "/usr/bin/date" ] && {
 	ln -sf /bin/date /usr/bin/date
 }
 
