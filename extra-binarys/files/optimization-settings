@@ -103,6 +103,16 @@ sed -i 's/\"system\"/\"nas\"/g' /usr/lib/lua/luci/controller/diskman.lua
 sed -i 's/system/nas/g' /usr/lib/lua/luci/view/diskman/*.htm
 sed -i 's/system/nas/g' /usr/lib/lua/luci/model/cbi/diskman/*.lua
 
+#默认禁用samba4自动启动
+[ -f "/etc/init.d/wsdd2" ] && {
+	/etc/init.d/wsdd2 stop
+	/etc/init.d/wsdd2 disable
+}
+[ -f "/etc/init.d/samba4" ] && {
+        /etc/init.d/samba4 stop
+        /etc/init.d/samba4 disable
+}
+
 echo 'hsts=0' > /root/.wgetrc
 
 rm -rf /tmp/luci-modulecache/
