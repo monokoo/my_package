@@ -109,8 +109,8 @@ sed -i 's/system/nas/g' /usr/lib/lua/luci/model/cbi/diskman/*.lua
 	/etc/init.d/wsdd2 disable
 }
 [ -f "/etc/init.d/samba4" ] && {
-        /etc/init.d/samba4 stop
-        /etc/init.d/samba4 disable
+	/etc/init.d/samba4 stop
+	/etc/init.d/samba4 disable
 }
 
 echo 'hsts=0' > /root/.wgetrc
