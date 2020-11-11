@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=serverchan
 PKG_VERSION:=1.0
-PKG_RELEASE=3
+PKG_RELEASE=2
 
 PKG_MAINTAINER:=monokoo
 
@@ -38,7 +38,6 @@ define Package/serverchan/install
 	$(INSTALL_DIR) $(1)/usr/bin $(1)/etc/init.d $(1)/etc/hotplug.d/dhcp $(1)/etc/config $(1)/etc/ppp/ip-up.d
 	$(INSTALL_BIN)	$(PKG_BUILD_DIR)/serverchan $(1)/usr/bin/serverchan
 	$(INSTALL_BIN)	$(PKG_BUILD_DIR)/serverchan_trigger $(1)/usr/bin/serverchan_trigger
-	$(INSTALL_BIN)	$(PKG_BUILD_DIR)/serverchan_monitor $(1)/usr/bin/serverchan_monitor
 	$(INSTALL_BIN) ./files/serverchan.init $(1)/etc/init.d/serverchan
 	$(INSTALL_BIN) ./files/serverchan.hotplug-dhcp $(1)/etc/hotplug.d/dhcp/10-serverchan
 	$(INSTALL_BIN) ./files/serverchan.hotplug-iface $(1)/etc/ppp/ip-up.d/serverchan

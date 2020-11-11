@@ -24,4 +24,5 @@ t_period=`uci -q get serverchan.trigger_message.t_period`
 		fi
 	}
 }
+[ "$ACTION" == "update" ] && exit 0
 /usr/bin/serverchan_trigger dhcp "$ACTION" "$MACADDR" "$IPADDR" "$HOSTNAME"
