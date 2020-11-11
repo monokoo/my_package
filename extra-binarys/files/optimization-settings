@@ -77,6 +77,11 @@ sed -i "s/'services'/'vpn'/g" /usr/lib/lua/luci/controller/vssr.lua
 sed -i 's/services/vpn/g' /usr/lib/lua/luci/model/cbi/vssr/*.lua
 sed -i 's/services/vpn/g' /usr/lib/lua/luci/view/vssr/*.htm
 
+#for ssr-plus
+sed -i 's/\"services\"/\"vpn\"/g' /usr/lib/lua/luci/controller/shadowsocksr.lua
+sed -i 's/services/vpn/g' /usr/lib/lua/luci/model/cbi/shadowsocksr/*.lua
+sed -i 's/services/vpn/g' /usr/lib/lua/luci/view/shadowsocksr/*.htm
+
 #for iptvhelper
 [ -f "/etc/init.d/iptvhelper" ] && {
 	chmod +x /etc/init.d/iptvhelper
