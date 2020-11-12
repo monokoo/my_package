@@ -49,6 +49,7 @@ define Package/$(PKG_NAME)/install
 
 	$(INSTALL_DIR) $(1)/usr/share/xt_geoip
 	$(CP) -R ./files/usr/share/xt_geoip/* $(1)/usr/share/xt_geoip/
+	$(LN) -S $(1)/usr/share/xt_geoip/BE/* $(1)/usr/share/xt_geoip/
 
 endef
 
