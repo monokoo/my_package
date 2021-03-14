@@ -48,6 +48,8 @@ sed -i "s/# //g" /etc/opkg/distfeeds.conf
 
 sed -i 's/cbi.submit\"] = true/cbi.submit\"] = \"1\"/g' /usr/lib/lua/luci/dispatcher.lua
 
+#for wget-ssl
+ln -s $(command -v wget) /usr/bin/wget-ssl
 
 #for vim-full
 [ -n "$(ls /usr/share/vim/vim*/defaults.vim 2>/dev/null)" ] && {
